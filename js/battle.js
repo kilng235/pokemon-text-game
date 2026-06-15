@@ -140,7 +140,17 @@ function battleVictory() {
   addLog(msg)
   addLog(`获得 ${totalExp} 点经验值！`)
   const active = getActivePokemon()
-  if (active) addExp(active, totalExp)
+  if (active) {
+    for (const ep of b.enemyTeam) {
+      const yields = getEVYield(ep.id)
+      if (addEV(active, yields)) {
+        const names = ['HP','攻击','防御','特攻','特防','速度']
+        const gained = yields.map((y,i) => y > 0 ? names[i] : null).filter(Boolean)
+        if (gained.length) addLog(`${active.name}的${gained.join('、')}基础点数提升了！`)
+      }
+    }
+    addExp(active, totalExp)
+  }
   if (b.type === 'elite' && b.extra.round < 3) {
     const next = b.extra.round + 1
     addLog('--- 下一位挑战者 ---')
