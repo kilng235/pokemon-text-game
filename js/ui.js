@@ -87,14 +87,14 @@ function renderExplore() {
       const tKey = townMap[k]
       if (tKey === G.player.position) {
         if (v[4] <= G.player.badge) {
-          html += `<button class="btn disabled">✔ ${v[1]}（已通过）</button>`
+          html += `<button class="btn disabled">✔ ${v[0]}道馆（已通过）</button>`
         } else {
-          html += `<button class="btn" onclick="challengeGym('${k}')">⚔ 挑战 ${v[1]}（${v[3]}属性）</button>`
+          html += `<button class="btn" onclick="challengeGym('${k}')">⚔ 挑战 ${v[0]}（${v[2]}属性）</button>`
         }
       }
     }
     html += `<button class="btn" onclick="G.view='shop';render()">🛒 商店</button>`
-    html += `<button class="btn" onclick="healAtCenter()">🏥 宝可梦中心</button>`
+    if (loc[3]) html += `<button class="btn" onclick="healAtCenter()">🏥 宝可梦中心</button>`
   }
   if (loc[2] !== 'town') {
     html += `<button class="btn" onclick="tryWildEncounter()">🌿 探索（遇敌）</button>`
