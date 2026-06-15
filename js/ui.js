@@ -105,6 +105,7 @@ function renderExplore() {
     <button class="btn" onclick="G.view='pokemon';render()">队伍</button>
     <button class="btn" onclick="G.view='bag';render()">背包</button>
     <button class="btn" onclick="G.view='pokedex';render()">图鉴</button>
+    <button class="btn" onclick="restartGame()" style="color:#cc3333;border-color:#cc3333;">重新开始</button>
   `
 }
 

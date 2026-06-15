@@ -139,11 +139,17 @@ function buyItem(key) {
   addLog(`购买了 ${item.name}！`); saveGame(); render()
 }
 
+function restartGame() {
+  if (confirm('确认重新开始吗？所有进度将丢失！')) {
+    resetGame(); G.view = 'start'; render()
+  }
+}
+
 // 暴露到全局（用于内联 onclick）
 const globalFns = [startNewGame, continueGame, selectStarter, travelTo, challengeGym,
   tryWildEncounter, battleSub, playerAttack, tryFlee, enemyTurn,
   useItemInBattle, useItemFromBag, switchPokemon, closeBag, healAtCenter, buyItem,
-  advanceDialogue, skipDialogue, finishDialogue, startDialogueBattle]
+  advanceDialogue, skipDialogue, finishDialogue, startDialogueBattle, restartGame]
 for (const fn of globalFns) window[fn.name] = fn
 
 document.addEventListener('DOMContentLoaded', () => {
