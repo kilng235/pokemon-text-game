@@ -1,60 +1,136 @@
-// 关都地图
-// 每个地点: [id, name, desc, type, center(是否宝可梦中心), gym(道馆id|false), connections]
-const LOCATIONS = {
-  pallet:    ['真新镇','宁静祥和的小镇，大木博士的研究所就在这里。','town',true,false, ['route1']],
-  viridian:  ['常青市','通往联盟的关卡城市，街道整洁。','town',true,false, ['route1','route22','viridianForest','victoryRoad']],
-  pewter:    ['深灰市','关都西部的矿物城市，化石研究室所在地。','town',true,'brock', ['route2','route3']],
-  cerulean:  ['华蓝市','水边城市，自行车道从这里开始。','town',true,'misty', ['route4','route5','route9']],
-  vermilion: ['枯叶市','港口城市，游轮圣安奴号停泊于此。','town',true,'ltSurge', ['route5','route6','route11']],
-  lavender:  ['紫苑镇','宝可梦之塔所在地，安宁的墓园小镇。','town',true,false, ['route6','route7','route10']],
-  celadon:   ['彩虹市','关都最大的商业城市，拥有百货大楼。','town',true,'erika', ['route7','route8','route16']],
-  saffron:   ['金黄市','交通枢纽大都市，希鲁夫公司总部所在地。','town',true,'sabrina', ['route8','route5','route6','route7']],
-  fuchsia:   ['浅红市','南国风情城市，拥有野生原野区。','town',true,'koga', ['route9','route10','route11','route15']],
-  cinnabar:  ['红莲镇','火山岛上的研究城市，宝可梦研究所在此。','town',true,'blaine', ['route21','route20']],
-  indigo:    ['宝可梦联盟','关都地区的顶点，四天王所在地。','town',false,false, ['victoryRoad','route23']],
-  route1:    ['1号道路','真新镇到常青市的平坦道路。','route',false,false, ['pallet','viridian'],
-    { common: {ids:[16,19], lv:[2,5], w:60}, uncommon: {ids:[21], lv:[3,6], w:30}, rare: {ids:[56], lv:[4,7], w:10} }],
-  route2:    ['2号道路','常青市到深灰市的森林之路。','route',false,false, ['viridian','pewter'],
-    { common: {ids:[10,13,16], lv:[3,7], w:60}, uncommon: {ids:[19,48], lv:[4,8], w:30}, rare: {ids:[25], lv:[5,9], w:10} }],
-  route3:    ['3号道路','深灰市到月见山的山路。','route',false,false, ['pewter','mtMoon'],
-    { common: {ids:[16,56,66], lv:[6,10], w:60}, uncommon: {ids:[23,27], lv:[7,11], w:30}, rare: {ids:[52,39], lv:[8,12], w:10} }],
-  mtMoon:    ['月见山','深灰市旁的洞穴，常有火箭队出没。','cave',false,false, ['route3','route4'],
-    { common: {ids:[41,74], lv:[7,12], w:55}, uncommon: {ids:[35,96], lv:[8,13], w:30}, rare: {ids:[104,46], lv:[10,15], w:15} }],
-  route4:    ['4号道路','月见山到华蓝市的山道。','route',false,false, ['mtMoon','cerulean'],
-    { common: {ids:[16,19,56], lv:[9,14], w:60}, uncommon: {ids:[37,54], lv:[10,15], w:30}, rare: {ids:[27,66], lv:[11,16], w:10} }],
-  route5:    ['5号道路','华蓝市到金黄市的近路。','route',false,false, ['cerulean','saffron'],
-    { common: {ids:[19,56,52], lv:[10,15], w:60}, uncommon: {ids:[63,39], lv:[12,16], w:30}, rare: {ids:[35,133], lv:[13,17], w:10} }],
-  route6:    ['6号道路','枯叶市与紫苑镇间的道路。','route',false,false, ['vermillion','saffron','lavender'],
-    { common: {ids:[19,52,48], lv:[11,16], w:60}, uncommon: {ids:[54,120], lv:[12,17], w:30}, rare: {ids:[84,128], lv:[14,18], w:10} }],
-  route7:    ['7号道路','彩虹市到金黄市的短程道路。','route',false,false, ['celadon','saffron','lavender'],
-    { common: {ids:[19,56,117], lv:[13,18], w:60}, uncommon: {ids:[84,37], lv:[14,19], w:30}, rare: {ids:[58,123], lv:[16,20], w:10} }],
-  route8:    ['8号道路','彩虹市到金黄市的另一条路。','route',false,false, ['celadon','saffron'],
-    { common: {ids:[48,23,56], lv:[14,19], w:60}, uncommon: {ids:[81,96], lv:[15,20], w:30}, rare: {ids:[125,126], lv:[17,22], w:10} }],
-  route9:    ['9号道路','华蓝市到浅红市的岩石路。','route',false,false, ['cerulean','fuchsia'],
-    { common: {ids:[19,84,98], lv:[15,20], w:60}, uncommon: {ids:[23,111], lv:[17,22], w:30}, rare: {ids:[61,22], lv:[19,24], w:10} }],
-  route10:   ['10号道路','紫苑镇到浅红市的电力之路。','route',false,false, ['lavender','fuchsia'],
-    { common: {ids:[100,81,41], lv:[16,22], w:55}, uncommon: {ids:[25,100], lv:[18,24], w:30}, rare: {ids:[125,135], lv:[20,26], w:15} }],
-  route11:   ['11号道路','枯叶市到浅红市的道路。','route',false,false, ['vermillion','fuchsia'],
-    { common: {ids:[19,84,98], lv:[17,23], w:60}, uncommon: {ids:[21,100], lv:[19,25], w:30}, rare: {ids:[113,128], lv:[21,27], w:10} }],
-  route15:   ['15号道路','浅红市向东的道路。','route',false,false, ['fuchsia'],
-    { common: {ids:[48,56,84], lv:[18,24], w:60}, uncommon: {ids:[43,64], lv:[20,26], w:30}, rare: {ids:[83,106], lv:[22,28], w:10} }],
-  route16:   ['16号道路','彩虹市向东南的道路。','route',false,false, ['celadon'],
-    { common: {ids:[19,21,84], lv:[19,25], w:60}, uncommon: {ids:[37,48], lv:[21,27], w:30}, rare: {ids:[52,123], lv:[23,29], w:10} }],
-  route20:   ['20号水道','红莲镇附近的水路。','water',false,false, ['cinnabar'],
-    { common: {ids:[72,118,98], lv:[22,28], w:55}, uncommon: {ids:[54,116], lv:[24,30], w:30}, rare: {ids:[129,131], lv:[26,35], w:15} }],
-  route21:   ['21号水道','真新镇到红莲镇的水路。','water',false,false, ['pallet','cinnabar'],
-    { common: {ids:[72,118,129], lv:[5,10], w:55}, uncommon: {ids:[98,54], lv:[8,14], w:30}, rare: {ids:[79,120], lv:[10,18], w:15} }],
-  route22:   ['22号道路','常青市向西的河道。','route',false,false, ['viridian'],
-    { common: {ids:[19,21,56], lv:[2,6], w:60}, uncommon: {ids:[54,23], lv:[3,7], w:30}, rare: {ids:[25,133], lv:[5,9], w:10} }],
-  route23:   ['23号道路','联盟的最终考验之路。','route',false,false, ['indigo'],
-    { common: {ids:[75,42,34], lv:[35,42], w:50}, uncommon: {ids:[64,22], lv:[38,44], w:30}, rare: {ids:[65,149], lv:[40,48], w:20} }],
-  victoryRoad: ['冠军之路','通往联盟的险峻洞穴。','cave',false,false, ['viridian','indigo'],
-    { common: {ids:[41,74,42], lv:[30,38], w:50}, uncommon: {ids:[95,111], lv:[33,40], w:30}, rare: {ids:[112,142], lv:[36,45], w:20} }],
-  viridianForest: ['常青森林','常青市旁的密林。','cave',false,false, ['viridian'],
-    { common: {ids:[10,13,16], lv:[3,6], w:60}, uncommon: {ids:[48,46], lv:[4,7], w:30}, rare: {ids:[25,69], lv:[5,8], w:10} }],
+const TRAINERS = {
+  route1: [
+    { id:'r1_1', name:'短裤少年',msg:'来对战吧！',team:[[19,3]],money:100 },
+    { id:'r1_2', name:'精英训练家',msg:'让我看看你的实力！',team:[[16,4]],money:200 },
+  ],
+  route2: [
+    { id:'r2_1', name:'捕虫少年',msg:'我抓了好多虫！',team:[[10,3],[13,4]],money:120 },
+    { id:'r2_2', name:'迷你裙',msg:'可爱就赢了吗？',team:[[16,4],[39,5]],money:180 },
+  ],
+  route3: [
+    { id:'r3_1', name:'登山男',msg:'登山健将在此！',team:[[74,7],[27,8]],money:220 },
+    { id:'r3_2', name:'精英训练家',msg:'我要认真了！',team:[[56,8],[21,7]],money:250 },
+  ],
+  mtMoon: [
+    { id:'mt_1', name:'火箭队手下',msg:'火箭队办事，闲人退散！',team:[[23,8],[41,9]],money:300 },
+    { id:'mt_2', name:'研究员',msg:'我在研究化石……',team:[[35,7],[79,9]],money:200 },
+  ],
+  route4: [
+    { id:'r4_1', name:'钓鱼人',msg:'钓到了什么？',team:[[118,10]],money:200 },
+    { id:'r4_2', name:'泳裤男',msg:'来水里玩玩？',team:[[120,11],[72,10]],money:250 },
+  ],
+  route5: [
+    { id:'r5_1', name:'少年',msg:'我每天都在训练！',team:[[19,11],[52,12]],money:250 },
+    { id:'r5_2', name:'女学生',msg:'作业做完了才来玩的~',team:[[63,12],[35,11]],money:280 },
+    { id:'r5_3', name:'空手道王',msg:'看我的拳头！',team:[[56,13],[66,14]],money:350 },
+  ],
+  route6: [
+    { id:'r6_1', name:'精英训练家',msg:'你来晚了！',team:[[54,12],[120,13]],money:300 },
+    { id:'r6_2', name:'露营少年',msg:'野外求生训练！',team:[[56,12],[23,13]],money:250 },
+  ],
+  viridianForest: [
+    { id:'vf_1', name:'捕虫少年',msg:'森林是我的地盘！',team:[[10,4],[13,5],[48,5]],money:150 },
+    { id:'vf_2', name:'野餐女孩',msg:'来野餐顺便对战~',team:[[69,5],[46,6]],money:180 },
+  ],
+  route7: [
+    { id:'r7_1', name:'女学生',msg:'彩虹市的百货公司超好逛！',team:[[84,14],[37,15]],money:300 },
+    { id:'r7_2', name:'精英训练家',msg:'一步都不会让你前进了！',team:[[58,16],[25,15]],money:400 },
+  ],
+  route8: [
+    { id:'r8_1', name:'精英训练家',msg:'我可是很强的不像外表那样',team:[[81,16],[96,17]],money:400 },
+    { id:'r8_2', name:'超能者',msg:'你的心思被我读透了……',team:[[63,17],[64,18]],money:450 },
+  ],
+  route9: [
+    { id:'r9_1', name:'登山男',msg:'岩石才是我的伙伴！',team:[[74,17],[111,18]],money:380 },
+    { id:'r9_2', name:'精英训练家',msg:'还没完呢！',team:[[98,18],[84,17],[61,19]],money:500 },
+  ],
+  route10: [
+    { id:'r10_1', name:'电工',msg:'小心高压电！',team:[[100,18],[81,19]],money:400 },
+    { id:'r10_2', name:'研究员',msg:'我在研究宝可梦生态。',team:[[25,19],[125,21]],money:450 },
+  ],
+  route11: [
+    { id:'r11_1', name:'少年',msg:'我比看上去强多了！',team:[[19,18],[84,19],[100,20]],money:450 },
+    { id:'r11_2', name:'钓鱼人',msg:'手上的宝可梦你猜得到吗？',team:[[118,19],[119,21]],money:420 },
+  ],
+  route15: [
+    { id:'r15_1', name:'女学生',msg:'我已经收集了很多徽章！',team:[[48,20],[64,21],[83,20]],money:500 },
+    { id:'r15_2', name:'精英训练家',msg:'最后的考验！',team:[[106,22],[107,21],[123,23]],money:600 },
+  ],
+  route16: [
+    { id:'r16_1', name:'空手道王',msg:'格斗至上！',team:[[66,21],[56,22],[67,23]],money:520 },
+    { id:'r16_2', name:'超能者',msg:'你没有胜算……',team:[[96,22],[97,24]],money:550 },
+  ],
+  route20: [
+    { id:'r20_1', name:'泳客',msg:'水温刚好！',team:[[72,23],[120,24],[73,25]],money:550 },
+  ],
+  route21: [
+    { id:'r21_1', name:'钓鱼人',msg:'从真新镇钓上来的！',team:[[129,8],[118,10]],money:200 },
+  ],
+  route22: [
+    { id:'r22_1', name:'精英训练家',msg:'常青市的木桥是我的舞台！',team:[[56,5],[21,6]],money:220 },
+  ],
+  victoryRoad: [
+    { id:'vr_1', name:'精英训练家',msg:'这里是冠军之路！',team:[[75,32],[42,33],[34,34]],money:800 },
+    { id:'vr_2', name:'精英训练家',msg:'四天王在等你！',team:[[112,34],[64,35],[22,33]],money:900 },
+    { id:'vr_3', name:'精英训练家',msg:'我不会让你通过的！',team:[[65,36],[94,35],[68,34]],money:1000 },
+  ],
 }
 
-// 地图连接标签（用于按钮显示）
+// 关都地图
+const LOCATIONS = {
+  pallet:    ['真新镇','大木博士的研究所就在这里。','town',true,false, ['route1','route21']],
+  viridian:  ['常青市','通往联盟的关卡城市。','town',true,false, ['route1','route22','viridianForest','victoryRoad']],
+  pewter:    ['深灰市','化石研究室所在地。','town',true,'brock', ['route2','route3']],
+  cerulean:  ['华蓝市','水边的美丽城市。','town',true,'misty', ['route4','route5','route9']],
+  vermilion: ['枯叶市','港口城市，圣安奴号在此。','town',true,'ltSurge', ['route5','route6','route11']],
+  lavender:  ['紫苑镇','安宁的墓园小镇。','town',true,false, ['route6','route7','route10']],
+  celadon:   ['彩虹市','关都最大的商业城市。','town',true,'erika', ['route7','route8','route16']],
+  saffron:   ['金黄市','交通枢纽大都市。','town',true,'sabrina', ['route8','route5','route6','route7']],
+  fuchsia:   ['浅红市','拥有野生原野区。','town',true,'koga', ['route9','route10','route11','route15']],
+  cinnabar:  ['红莲镇','火山岛上的研究城市。','town',true,'blaine', ['route21','route20']],
+  indigo:    ['宝可梦联盟','关都顶点！','town',false,false, ['victoryRoad','route23']],
+  route1:    ['1号道路','真新镇到常青市的平坦道路。','route',false,false, ['pallet','viridian'],
+    { common:{ids:[16,19],lv:[2,5],w:60}, uncommon:{ids:[21],lv:[3,6],w:30}, rare:{ids:[56],lv:[4,7],w:10} }],
+  route2:    ['2号道路','常青市到深灰市的森林路。','route',false,false, ['viridian','pewter'],
+    { common:{ids:[10,13,16],lv:[3,7],w:60}, uncommon:{ids:[19,48],lv:[4,8],w:30}, rare:{ids:[25],lv:[5,9],w:10} }],
+  route3:    ['3号道路','深灰市到月见山的山路。','route',false,false, ['pewter','mtMoon'],
+    { common:{ids:[16,56,66],lv:[6,10],w:60}, uncommon:{ids:[23,27],lv:[7,11],w:30}, rare:{ids:[52,39],lv:[8,12],w:10} }],
+  mtMoon:    ['月见山','据说有化石的洞穴。','cave',false,false, ['route3','route4'],
+    { common:{ids:[41,74],lv:[7,12],w:55}, uncommon:{ids:[35,96],lv:[8,13],w:30}, rare:{ids:[104,46],lv:[10,15],w:15} }],
+  route4:    ['4号道路','月见山到华蓝市的山道。','route',false,false, ['mtMoon','cerulean'],
+    { common:{ids:[16,19,56],lv:[9,14],w:60}, uncommon:{ids:[37,54],lv:[10,15],w:30}, rare:{ids:[27,66],lv:[11,16],w:10} }],
+  route5:    ['5号道路','华蓝市到金黄市的近路。','route',false,false, ['cerulean','saffron'],
+    { common:{ids:[19,56,52],lv:[10,15],w:60}, uncommon:{ids:[63,39],lv:[12,16],w:30}, rare:{ids:[35,133],lv:[13,17],w:10} }],
+  route6:    ['6号道路','枯叶市与紫苑镇间。','route',false,false, ['vermillion','saffron','lavender'],
+    { common:{ids:[19,52,48],lv:[11,16],w:60}, uncommon:{ids:[54,120],lv:[12,17],w:30}, rare:{ids:[84,128],lv:[14,18],w:10} }],
+  route7:    ['7号道路','彩虹市到金黄市的短程。','route',false,false, ['celadon','saffron','lavender'],
+    { common:{ids:[19,56,117],lv:[13,18],w:60}, uncommon:{ids:[84,37],lv:[14,19],w:30}, rare:{ids:[58,123],lv:[16,20],w:10} }],
+  route8:    ['8号道路','彩虹市到金黄市的另一条路。','route',false,false, ['celadon','saffron'],
+    { common:{ids:[48,23,56],lv:[14,19],w:60}, uncommon:{ids:[81,96],lv:[15,20],w:30}, rare:{ids:[125,126],lv:[17,22],w:10} }],
+  route9:    ['9号道路','华蓝市到浅红市的岩石路。','route',false,false, ['cerulean','fuchsia'],
+    { common:{ids:[19,84,98],lv:[15,20],w:60}, uncommon:{ids:[23,111],lv:[17,22],w:30}, rare:{ids:[61,22],lv:[19,24],w:10} }],
+  route10:   ['10号道路','紫苑镇到浅红市的电力之路。','route',false,false, ['lavender','fuchsia'],
+    { common:{ids:[100,81,41],lv:[16,22],w:55}, uncommon:{ids:[25,100],lv:[18,24],w:30}, rare:{ids:[125,135],lv:[20,26],w:15} }],
+  route11:   ['11号道路','枯叶市到浅红市。','route',false,false, ['vermillion','fuchsia'],
+    { common:{ids:[19,84,98],lv:[17,23],w:60}, uncommon:{ids:[21,100],lv:[19,25],w:30}, rare:{ids:[113,128],lv:[21,27],w:10} }],
+  route15:   ['15号道路','浅红市向东。','route',false,false, ['fuchsia'],
+    { common:{ids:[48,56,84],lv:[18,24],w:60}, uncommon:{ids:[43,64],lv:[20,26],w:30}, rare:{ids:[83,106],lv:[22,28],w:10} }],
+  route16:   ['16号道路','彩虹市向东南。','route',false,false, ['celadon'],
+    { common:{ids:[19,21,84],lv:[19,25],w:60}, uncommon:{ids:[37,48],lv:[21,27],w:30}, rare:{ids:[52,123],lv:[23,29],w:10} }],
+  route20:   ['20号水道','红莲镇附近的水路。','water',false,false, ['cinnabar'],
+    { common:{ids:[72,118,98],lv:[22,28],w:55}, uncommon:{ids:[54,116],lv:[24,30],w:30}, rare:{ids:[129,131],lv:[26,35],w:15} }],
+  route21:   ['21号水道','真新镇到红莲镇的水路。','water',false,false, ['pallet','cinnabar'],
+    { common:{ids:[72,118,129],lv:[5,10],w:55}, uncommon:{ids:[98,54],lv:[8,14],w:30}, rare:{ids:[79,120],lv:[10,18],w:15} }],
+  route22:   ['22号道路','常青市向西的河道。','route',false,false, ['viridian'],
+    { common:{ids:[19,21,56],lv:[2,6],w:60}, uncommon:{ids:[54,23],lv:[3,7],w:30}, rare:{ids:[25,133],lv:[5,9],w:10} }],
+  route23:   ['23号道路','联盟的最终考验之路。','route',false,false, ['indigo'],
+    { common:{ids:[75,42,34],lv:[35,42],w:50}, uncommon:{ids:[64,22],lv:[38,44],w:30}, rare:{ids:[65,149],lv:[40,48],w:20} }],
+  victoryRoad: ['冠军之路','通往联盟的险峻洞穴。','cave',false,false, ['viridian','indigo'],
+    { common:{ids:[41,74,42],lv:[30,38],w:50}, uncommon:{ids:[95,111],lv:[33,40],w:30}, rare:{ids:[112,142],lv:[36,45],w:20} }],
+  viridianForest: ['常青森林','常青市旁的密林。','cave',false,false, ['viridian'],
+    { common:{ids:[10,13,16],lv:[3,6],w:60}, uncommon:{ids:[48,46],lv:[4,7],w:30}, rare:{ids:[25,69],lv:[5,8],w:10} }],
+}
+
 const LINK_LABELS = {
   pallet:    { route1:'1号道路', route21:'21号水道' },
   viridian:  { route1:'1号道路', route22:'22号道路', viridianForest:'常青森林', victoryRoad:'冠军之路' },
@@ -69,11 +145,7 @@ const LINK_LABELS = {
   indigo:    { victoryRoad:'冠军之路', route23:'23号道路' },
 }
 
-const LOCATION_TYPES = { town: '城镇', route: '道路', cave: '洞穴', water: '水道' }
-
 function getLocation(id) { return LOCATIONS[id] }
 function getLeader(id) { return GYM_LEADERS[id] }
-function getLocationConnections(id) {
-  const loc = LOCATIONS[id]
-  return loc ? loc[5] : []
-}
+function getLocationConnections(id) { const l = LOCATIONS[id]; return l ? l[5] : [] }
+function getTrainersForArea(id) { return TRAINERS[id] || [] }

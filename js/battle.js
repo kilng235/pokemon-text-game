@@ -14,6 +14,14 @@ function startWildBattle() {
   return startBattle('wild', null, [createPokemon(id, level)])
 }
 
+function startTrainerBattle(trainer) {
+  if (!trainer || !trainer.team || trainer.team.length === 0) return false
+  const team = trainer.team.map(p => createPokemon(p[0], p[1]))
+  const result = startBattle('trainer', { trainer }, team)
+  if (result) addLog(`${trainer.name} 向你发起了挑战！`)
+  return result
+}
+
 function startStoryBattle(eventId) {
   const ev = STORY_EVENTS[eventId]
   if (!ev || !ev.battle) return false
@@ -94,7 +102,8 @@ function playerAttack(moveIndex) {
     if (b.enemyIndex < b.enemyTeam.length) {
       b.enemy = b.enemyTeam[b.enemyIndex]; b.enemy.hp = b.enemy.maxHp
       let prefix = ''
-      if (b.type === 'gym') prefix = `${b.extra.data[1]} 派出了 `
+      if (b.type === 'trainer') prefix = `${b.extra.trainer.name} 派出了 `
+      else if (b.type === 'gym') prefix = `${b.extra.data[1]} 派出了 `
       else if (b.type === 'elite') prefix = `${b.extra.name} 派出了 `
       else if (b.type === 'story') prefix = `${b.extra.name} 派出了 `
       else prefix = '野生的 '
@@ -118,6 +127,11 @@ function battleVictory() {
     msg = `★ 你击败了道馆馆主 ${ld[1]}！获得 ${ld[2]} 徽章！获得 ¥${ld[3]}`
   } else if (b.type === 'elite') {
     msg = `★ 击败了四天王 ${b.extra.name}！`
+  } else if (b.type === 'trainer') {
+    const t = b.extra.trainer
+    if (!G.player.trainersDefeated.includes(t.id)) G.player.trainersDefeated.push(t.id)
+    addMoney(t.money || 100)
+    msg = `★ 击败了 ${t.name}！获得 ¥${t.money || 100}`
   } else if (b.type === 'story') {
     if (b.extra.onFinish) {
       const r = b.extra.onFinish(); if (r) msg = r
@@ -151,7 +165,7 @@ function enemyTurn() {
       addLog('你飞回了宝可梦中心…'); healAll()
       G.player.position = findNearestCenter()
     } else {
-      addLog(`你输给了 ${b.type === 'gym' ? b.extra.data[1] : b.extra.name}……`)
+      addLog(`你输给了 ${b.type === 'trainer' ? b.extra.trainer.name : b.type === 'gym' ? b.extra.data[1] : b.extra ? b.extra.name : '对手'}……`)
     }
     G.battle = null; saveGame(); render(); return
   }
@@ -172,7 +186,7 @@ function enemyTurn() {
         addLog('你飞回了宝可梦中心…'); healAll()
         G.player.position = findNearestCenter()
       } else {
-        addLog(`你输给了 ${b.type === 'gym' ? b.extra.data[1] : b.extra.name}……`)
+      addLog(`你输给了 ${b.type === 'trainer' ? b.extra.trainer.name : b.type === 'gym' ? b.extra.data[1] : b.extra ? b.extra.name : '对手'}……`)
       }
       G.battle = null; saveGame(); render(); return
     }
@@ -212,7 +226,7 @@ function tryCapture() {
 }
 
 function tryFlee() {
-  const b = G.battle; if (!b || b.type !== 'wild') { addLog('不能逃跑！'); return }
+  const b = G.battle; if (!b || (b.type !== 'wild')) { addLog('不能逃跑！'); return }
   const pkm = getActivePokemon(); if (!pkm) return
   const chance = Math.min(0.9, 0.5 + (pkm.spe - b.enemy.spe) / 200)
   if (Math.random() < chance) { addLog('成功逃跑了！'); G.battle = null; saveGame() }

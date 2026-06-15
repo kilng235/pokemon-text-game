@@ -51,14 +51,21 @@ function challengeGym(leaderId) {
 function tryWildEncounter(fromTravel) {
   const loc = getLocation(G.player.position)
   if (!loc || loc[2] === 'town') return
-  // 先检查是否能触发剧情
+  // 先检查剧情触发
   const storyKey = checkStoryTrigger(G.player.position)
   if (storyKey) {
     const ev = STORY_EVENTS[storyKey]
     G.dialogue = { eventKey: storyKey, lines: ev.dialogue, index: 0, battle: ev.battle !== null, canSkip: false }
     G.view = 'dialogue'; render(); return
   }
-  if (!loc[6]) return
+  // 检查是否有未击败的训练家
+  const trainers = getTrainersForArea(G.player.position)
+  const undefeated = trainers.filter(t => !G.player.trainersDefeated.includes(t.id))
+  if (undefeated.length > 0 && Math.random() < 0.5) {
+    const t = undefeated[Math.floor(Math.random() * undefeated.length)]
+    if (startTrainerBattle(t)) { G.view = 'battle'; render(); return }
+  }
+  if (!loc[6]) { addLog('这里什么都没有。'); saveGame(); render(); return }
   const roll = Math.random()
   if (roll < 0.35) {
     if (startWildBattle()) { G.view = 'battle'; render() }

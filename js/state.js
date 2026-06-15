@@ -12,6 +12,7 @@ function createInitialState() {
       position: 'pallet',
       money: 500,
       seen: [],
+      trainersDefeated: [],
     },
     battle: null,
     bagView: 'use',
@@ -34,6 +35,7 @@ function loadGame() {
     if (raw) {
       G = JSON.parse(raw)
       if (!G.player.seen) G.player.seen = []
+      if (!G.player.trainersDefeated) G.player.trainersDefeated = []
       if (!G.storyFlags) G.storyFlags = {}
       return true
     }
