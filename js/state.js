@@ -55,7 +55,7 @@ function getPokemonStats(id, level, ivs, evs) {
   if (!base) return null
   const iv = ivs || { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
   const ev = evs || { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
-  const [,,,,bhp,batk,bdef,bspa,bspd,bspe] = base
+  const [,,,bhp,batk,bdef,bspa,bspd,bspe] = base
   const calc = (baseStat, ivVal, evVal, isHp) => {
     const s = Math.floor((2 * baseStat + ivVal + Math.floor(Math.sqrt(evVal) / 4)) * level / 100)
     return isHp ? s + level + 10 : s + 5
@@ -79,7 +79,7 @@ function createPokemon(id, level) {
   const ivs = { hp:randIV(), atk:randIV(), def:randIV(), spa:randIV(), spd:randIV(), spe:randIV() }
   const evs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
   const stats = getPokemonStats(id, level, ivs, evs)
-  const moveIds = base[11] || [1]
+  const moveIds = base[12] || [1]
   return {
     id, name: base[1], types, level, ...stats,
     moves: moveIds.map(mid => {
@@ -112,7 +112,7 @@ function getEVYield(id) {
   const max = Math.max(...stats)
   const yields = [0,0,0,0,0,0]
   for (let i = 0; i < 6; i++) {
-    if (stats[i] === max) yields[i] = base[10] ? 2 : 1
+    if (stats[i] === max) yields[i] = base[11] ? 1 : 2
   }
   return yields
 }
@@ -143,12 +143,12 @@ function addExp(pokemon, exp) {
     pokemon.nextLevel = calcExpToLevel(pokemon.level)
     addLog(`${pokemon.name} 升到了 Lv.${pokemon.level}！`)
     const base = getPokemonData(pokemon.id)
-    if (base && base[10] && pokemon.level >= base[10][0]) {
-      const evoTo = base[10][1]; const evoData = getPokemonData(evoTo)
+    if (base && base[11] && pokemon.level >= base[11][0]) {
+      const evoTo = base[11][1]; const evoData = getPokemonData(evoTo)
       if (evoData) {
         addLog(`咦？${pokemon.name} 开始发光了！`)
         pokemon.id = evoData[0]; pokemon.name = evoData[1]; pokemon.types = evoData[2].split(',')
-        pokemon.moves = (evoData[11] || [1]).map(mid => {
+        pokemon.moves = (evoData[12] || [1]).map(mid => {
           const m = getMoveData(mid)
           return m ? { id:mid, name:m[1], type:m[2], power:m[3], pp:m[4], currentPp:m[4] } : null
         }).filter(Boolean)
