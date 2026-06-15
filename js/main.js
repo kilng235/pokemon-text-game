@@ -5,6 +5,14 @@ function startNewGame() {
   render()
 }
 
+function restartGame() {
+  if (confirm('确定要重新开始吗？当前进度将被清除。')) {
+    resetGame()
+    G.view = 'start'
+    render()
+  }
+}
+
 function continueGame() {
   if (loadGame()) {
     G.view = G.battle ? 'battle' : 'explore'
@@ -147,6 +155,7 @@ function buyItem(key) {
 }
 
 window.startNewGame = startNewGame
+window.restartGame = restartGame
 window.continueGame = continueGame
 window.selectStarter = selectStarter
 window.travelTo = travelTo

@@ -96,14 +96,26 @@ function playerAttack(moveIndex) {
     b.enemy.fainted = true
     addLog(`${b.enemy.name} 倒下了！`)
     if (b.type === 'wild') {
-      const exp = Math.floor(b.enemy.level * POKEMON_DATA.find(p => p.id === b.enemy.id).exp / 7)
+      const defeatedData = POKEMON_DATA.find(p => p.id === b.enemy.id)
+      const exp = Math.floor(b.enemy.level * defeatedData.exp / 7)
       addLog(`获得 ${exp} 点经验值！`)
       addExp(playerPkm, exp)
+      if (defeatedData.evYield) {
+        addEvs(playerPkm, defeatedData.evYield)
+        const evMsg = Object.entries(defeatedData.evYield).map(([s, v]) => `${s} +${v}`).join(' ')
+        addLog(`努力值增加！${evMsg}`)
+      }
       b.enemy = null
       G.battle = null
       saveGame()
       return
     } else if (b.type === 'gym') {
+      const gymDefeated = POKEMON_DATA.find(p => p.id === b.enemy.id)
+      if (gymDefeated && gymDefeated.evYield) {
+        addEvs(playerPkm, gymDefeated.evYield)
+        const evMsg = Object.entries(gymDefeated.evYield).map(([s, v]) => `${s} +${v}`).join(' ')
+        addLog(`努力值增加！${evMsg}`)
+      }
       b.enemyIndex++
       if (b.enemyIndex < b.enemyTeam.length) {
         b.enemy = b.enemyTeam[b.enemyIndex]

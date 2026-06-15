@@ -102,6 +102,7 @@ function renderExplore() {
   $('actions').innerHTML = `
     <button class="btn" onclick="G.view='pokemon';render()">队伍</button>
     <button class="btn" onclick="G.view='bag';render()">背包</button>
+    <button class="btn" onclick="restartGame()">重新开始</button>
   `
 }
 
@@ -199,12 +200,16 @@ function renderPokemon() {
     div.className = 'pkm-card'
     if (p) {
       const hpBar = '█'.repeat(Math.max(1, Math.floor(p.hp / Math.max(1, p.maxHp) * 8))) + '░'.repeat(8 - Math.max(1, Math.floor(p.hp / Math.max(1, p.maxHp) * 8)))
+      const ivDisplay = `个体: HP ${p.ivs.hp} 攻 ${p.ivs.atk} 防 ${p.ivs.def} 特攻 ${p.ivs.spa} 特防 ${p.ivs.spd} 速 ${p.ivs.spe}`
+      const evDisplay = `努力: HP ${p.evs.hp} 攻 ${p.evs.atk} 防 ${p.evs.def} 特攻 ${p.evs.spa} 特防 ${p.evs.spd} 速 ${p.evs.spe}`
       div.innerHTML = `
         <div class="pkm-name">${p.name} <span class="pkm-level">Lv.${p.level}</span></div>
         <div class="pkm-types">${p.types.join(' / ')}</div>
         <div>HP: ${hpBar} ${p.hp}/${p.maxHp}</div>
-        <div class="pkm-moves">${p.moves.map(m => `${m.name}[${m.type}] 威:${m.power} PP:${m.currentPp}/${m.pp}`).join(' ')}</div>
+        <div class="pkm-moves">${p.moves.map(m => `${m.name}[${m.type}] 威:${m.power} PP:${m.currentPp}/${m.pp}`).join(' | ')}</div>
         <div class="pkm-exp">EXP: ${p.exp}/${p.nextLevel}</div>
+        <div class="pkm-iv" style="font-size:11px;color:#006a1a;">${ivDisplay}</div>
+        <div class="pkm-ev" style="font-size:11px;color:#006a1a;">${evDisplay}</div>
       `
     } else {
       div.innerHTML = '<div class="empty-slot">[空位]</div>'
