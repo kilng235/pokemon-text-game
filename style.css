@@ -112,6 +112,13 @@ body {
   font-size: 12px;
 }
 
+.pokedex-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 6px;
+  margin: 8px 0;
+}
+
 .btn-row {
   display: flex;
   gap: 8px;

@@ -10,11 +10,13 @@ function createInitialState() {
       items: { pokeball: 5, potion: 2 },
       badge: 0,
       position: 'town',
+      seen: [],
       steps: 0,
       money: 500,
     },
     battle: null,
     bagView: 'use',
+    pokedexDetail: null,
     logs: ['欢迎来到宝可梦世界！'],
   }
 }
@@ -40,6 +42,7 @@ function loadGame() {
     const raw = localStorage.getItem(SAVE_KEY)
     if (raw) {
       G = JSON.parse(raw)
+      if (!G.player.seen) G.player.seen = []
       for (const p of G.player.pokemon) migratePokemon(p)
       for (const p of G.player.pc) migratePokemon(p)
       return true

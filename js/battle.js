@@ -1,3 +1,7 @@
+function trackSeen(id) {
+  if (!G.player.seen.includes(id)) G.player.seen.push(id)
+}
+
 function startWildBattle() {
   const area = AREAS[G.player.position || 'grass']
   if (!area || !area.encounters) return false
@@ -17,6 +21,7 @@ function startWildBattle() {
     addLog('你没有能战斗的宝可梦！')
     return false
   }
+  trackSeen(id)
   G.battle = {
     type: 'wild',
     enemy: wild,
@@ -42,7 +47,7 @@ function startGymBattle(leaderKey) {
     addLog('你没有能战斗的宝可梦！')
     return false
   }
-  const enemyTeam = leader.pokemon.map(p => createPokemon(p.id, p.level))
+  const enemyTeam = leader.pokemon.map(p => { trackSeen(p.id); return createPokemon(p.id, p.level) })
   G.battle = {
     type: 'gym',
     enemy: enemyTeam[0],

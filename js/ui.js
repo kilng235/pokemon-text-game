@@ -9,8 +9,9 @@ function render() {
   else if (v === 'battle') renderBattle()
   else if (v === 'bag') renderBag()
   else if (v === 'pokemon') renderPokemon()
-  else if (v === 'shop') renderShop()
-  else if (v === 'center') renderCenter()
+    else if (v === 'shop') renderShop()
+    else if (v === 'center') renderCenter()
+    else if (v === 'pokedex') renderPokedex()
   renderLog()
 }
 
@@ -102,7 +103,7 @@ function renderExplore() {
   $('actions').innerHTML = `
     <button class="btn" onclick="G.view='pokemon';render()">队伍</button>
     <button class="btn" onclick="G.view='bag';render()">背包</button>
-    <button class="btn" onclick="restartGame()">重新开始</button>
+    <button class="btn" onclick="G.view='pokedex';render()">图鉴</button>
   `
 }
 
@@ -237,6 +238,54 @@ function renderShop() {
     list.appendChild(div)
   }
   $('actions').innerHTML = '<button class="btn" onclick="G.view=\'explore\';render();saveGame()">↩ 离开商店</button>'
+}
+
+function renderPokedex() {
+  const main = $('main')
+  if (G.pokedexDetail) {
+    const p = POKEMON_DATA.find(d => d.id === G.pokedexDetail)
+    if (!p) { G.pokedexDetail = null; renderPokedex(); return }
+    const seen = G.player.seen.includes(p.id)
+    const evoInfo = p.evo ? `→ Lv.${p.evo.level} ${POKEMON_DATA.find(d => d.id === p.evo.to)?.name || '???'}` : '最终形态'
+    main.innerHTML = `
+      <p class="section-title">📖 图鉴 #${String(p.id).padStart(2,'0')}</p>
+      <div class="pkm-card" style="border-color:#00ff41;">
+        <div class="pkm-name">${seen ? p.name : '???'}</div>
+        <div class="pkm-types">${seen ? p.types.join(' / ') : '???'}</div>
+        <div class="pkm-stat" style="color:#00cc33;">身高/体重: ???</div>
+        <hr style="border-color:#003a10;margin:6px 0;">
+        <div class="pkm-stat">HP: ${seen ? p.stats.hp : '???'}</div>
+        <div class="pkm-stat">攻击: ${seen ? p.stats.atk : '???'}</div>
+        <div class="pkm-stat">防御: ${seen ? p.stats.def : '???'}</div>
+        <div class="pkm-stat">特攻: ${seen ? p.stats.spa : '???'}</div>
+        <div class="pkm-stat">特防: ${seen ? p.stats.spd : '???'}</div>
+        <div class="pkm-stat">速度: ${seen ? p.stats.spe : '???'}</div>
+        <hr style="border-color:#003a10;margin:6px 0;">
+        <div class="pkm-stat">捕获率: ${seen ? p.catchRate : '???'}</div>
+        <div class="pkm-stat">进化: ${seen ? evoInfo : '???'}</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="G.pokedexDetail=null;render()">↩ 返回列表</button>
+        <button class="btn" onclick="G.view='explore';render()">↩ 返回</button>
+      </div>
+    `
+  } else {
+    main.innerHTML = '<p class="section-title">📖 宝可梦图鉴</p><div class="pokedex-grid"></div>'
+    const grid = main.querySelector('.pokedex-grid')
+    for (const p of POKEMON_DATA) {
+      const seen = G.player.seen.includes(p.id)
+      const div = document.createElement('div')
+      div.className = 'pkm-card'
+      div.style.cssText = 'cursor:pointer;' + (seen ? '' : 'opacity:0.45;')
+      div.innerHTML = `
+        <div class="pkm-name">#${String(p.id).padStart(2,'0')} ${seen ? p.name : '???'}</div>
+        <div class="pkm-types">${seen ? p.types.join(' / ') : '???'}</div>
+      `
+      if (seen) div.onclick = () => { G.pokedexDetail = p.id; render() }
+      grid.appendChild(div)
+    }
+  }
+  $('actions').innerHTML = '<button class="btn" onclick="G.pokedexDetail=null;G.view=\'explore\';render()">↩ 返回</button>'
 }
 
 function renderCenter() {
