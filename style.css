@@ -1,0 +1,276 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #0a0a0a;
+  color: #00ff41;
+  font-family: 'Source Code Pro', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#app {
+  width: 720px;
+  max-width: 96vw;
+  background: #0d0d0d;
+  border: 2px solid #00ff41;
+  border-radius: 4px;
+  padding: 16px;
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+}
+
+#header {
+  text-align: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #00ff41;
+  margin-bottom: 12px;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+
+#main {
+  min-height: 280px;
+  padding: 8px 4px;
+}
+
+.start-box {
+  text-align: center;
+}
+
+.title-art {
+  font-size: 12px;
+  line-height: 1.3;
+  color: #00ff41;
+  margin-bottom: 12px;
+}
+
+.start-desc {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #00ff41;
+  border-bottom: 1px solid #0a3a0a;
+  padding-bottom: 4px;
+}
+
+.location-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #33ff77;
+}
+
+.area-desc {
+  color: #00aa33;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+.btn {
+  background: #0a1a0a;
+  color: #00ff41;
+  border: 1px solid #00ff41;
+  padding: 8px 16px;
+  margin: 4px;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-radius: 2px;
+}
+
+.btn:hover {
+  background: #00ff41;
+  color: #0a0a0a;
+}
+
+.btn:active {
+  background: #00cc33;
+  color: #0a0a0a;
+}
+
+.btn.disabled, .btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  background: #0a1a0a;
+  color: #004a1a;
+  border-color: #004a1a;
+}
+
+.btn.small {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.btn-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.btn-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: stretch;
+}
+
+.choose-grid {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+
+.choose-card {
+  background: #0a1a0a;
+  border: 1px solid #00ff41;
+  padding: 12px;
+  text-align: center;
+  min-width: 150px;
+}
+
+.pkm-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #33ff77;
+}
+
+.pkm-level {
+  color: #00aa33;
+  font-size: 13px;
+}
+
+.pkm-types {
+  color: #008a22;
+  font-size: 12px;
+  margin: 2px 0;
+}
+
+.pkm-stat {
+  font-size: 11px;
+  color: #00992a;
+  margin: 1px 0;
+}
+
+.battle-enemy, .battle-player {
+  background: #0a1a0a;
+  border: 1px solid #003a10;
+  padding: 8px 12px;
+  margin: 6px 0;
+}
+
+.battle-divider {
+  text-align: center;
+  color: #003a10;
+  margin: 4px 0;
+}
+
+.hp-row {
+  font-size: 13px;
+  color: #00cc33;
+  margin: 2px 0;
+}
+
+.pkm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pkm-card {
+  background: #0a1a0a;
+  border: 1px solid #003a10;
+  padding: 8px 10px;
+}
+
+.pkm-moves {
+  font-size: 11px;
+  color: #008a22;
+  margin-top: 2px;
+}
+
+.pkm-exp {
+  font-size: 11px;
+  color: #006a1a;
+}
+
+.empty-slot {
+  color: #004a1a;
+  text-align: center;
+  padding: 12px;
+}
+
+.item-list, .shop-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+.item-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #0a1a0a;
+  border: 1px solid #003a10;
+  padding: 6px 10px;
+}
+
+.item-desc {
+  color: #008a22;
+  font-size: 12px;
+  flex: 1;
+}
+
+#actions {
+  padding: 8px 0;
+  border-top: 1px solid #003a10;
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+}
+
+#log {
+  margin-top: 6px;
+  padding: 8px;
+  background: #050505;
+  border: 1px solid #003a10;
+  font-size: 12px;
+  color: #00aa33;
+  min-height: 60px;
+  max-height: 100px;
+  overflow-y: auto;
+  line-height: 1.6;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #003a10;
+}
+
+@media (max-width: 600px) {
+  #app { padding: 10px; font-size: 12px; }
+  .btn { padding: 6px 10px; font-size: 11px; }
+  .choose-grid { flex-direction: column; align-items: center; }
+  .title-art { font-size: 9px; }
+}
