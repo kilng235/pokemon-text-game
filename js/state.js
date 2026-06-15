@@ -1,4 +1,4 @@
-const SAVE_KEY = 'pokemon_text_save'
+const SAVE_KEY = 'pokemon_text_save_v2'
 
 function createInitialState() {
   return {
@@ -7,16 +7,16 @@ function createInitialState() {
       name: '小智',
       pokemon: [],
       pc: [],
-      items: { pokeball: 5, potion: 2 },
+      items: { pokeball: 10, potion: 5 },
       badge: 0,
-      position: 'town',
-      seen: [],
-      steps: 0,
+      position: 'pallet',
       money: 500,
+      seen: [],
     },
     battle: null,
     bagView: 'use',
     pokedexDetail: null,
+    storyFlags: {},
     logs: ['欢迎来到宝可梦世界！'],
   }
 }
@@ -24,17 +24,8 @@ function createInitialState() {
 let G = createInitialState()
 
 function saveGame() {
-  try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(G))
-  } catch (e) {
-    console.warn('存档失败:', e)
-  }
-}
-
-function migratePokemon(p) {
-  if (!p.ivs) p.ivs = { hp: 15, atk: 15, def: 15, spa: 15, spd: 15, spe: 15 }
-  if (!p.evs) p.evs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
-  return p
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(G)) }
+  catch (e) { console.warn('存档失败:', e) }
 }
 
 function loadGame() {
@@ -43,13 +34,10 @@ function loadGame() {
     if (raw) {
       G = JSON.parse(raw)
       if (!G.player.seen) G.player.seen = []
-      for (const p of G.player.pokemon) migratePokemon(p)
-      for (const p of G.player.pc) migratePokemon(p)
+      if (!G.storyFlags) G.storyFlags = {}
       return true
     }
-  } catch (e) {
-    console.warn('读档失败:', e)
-  }
+  } catch (e) { console.warn('读档失败:', e) }
   return false
 }
 
@@ -63,55 +51,40 @@ function addLog(msg) {
   if (G.logs.length > 100) G.logs.splice(0, 20)
 }
 
-function randIV() {
-  return Math.floor(Math.random() * 32)
-}
-
-function getPokemonStats(id, level, ivs, evs) {
-  const base = POKEMON_DATA.find(p => p.id === id)
+function getPokemonStats(id, level) {
+  const base = getPokemonData(id)
   if (!base) return null
-  const iv = ivs || { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
-  const ev = evs || { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
-  const calc = (baseStat, ivVal, evVal, isHp) => {
-    const stat = Math.floor((2 * baseStat + ivVal + Math.floor(evVal / 4)) * level / 100)
-    return isHp ? stat + level + 10 : stat + 5
-  }
-  const hp = calc(base.stats.hp, iv.hp, ev.hp, true)
-  const atk = calc(base.stats.atk, iv.atk, ev.atk, false)
-  const def = calc(base.stats.def, iv.def, ev.def, false)
-  const spa = calc(base.stats.spa, iv.spa, ev.spa, false)
-  const spd = calc(base.stats.spd, iv.spd, ev.spd, false)
-  const spe = calc(base.stats.spe, iv.spe, ev.spe, false)
-  return { hp, maxHp: hp, atk, def, spa, spd, spe }
+  const [,,,,hp,atk,def,spa,spd,spe] = base
+  const HP = Math.floor((hp * 2 + 15) * level / 100 + level + 10)
+  const Atk = Math.floor((atk * 2 + 10) * level / 100 + 5)
+  const Def = Math.floor((def * 2 + 10) * level / 100 + 5)
+  const Spa = Math.floor((spa * 2 + 10) * level / 100 + 5)
+  const Spd = Math.floor((spd * 2 + 10) * level / 100 + 5)
+  const Spe = Math.floor((spe * 2 + 10) * level / 100 + 5)
+  return { hp:HP, maxHp:HP, atk:Atk, def:Def, spa:Spa, spd:Spd, spe:Spe }
 }
 
 function createPokemon(id, level) {
-  const base = POKEMON_DATA.find(p => p.id === id)
+  const base = getPokemonData(id)
   if (!base) return null
-  const ivs = { hp: randIV(), atk: randIV(), def: randIV(), spa: randIV(), spd: randIV(), spe: randIV() }
-  const evs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
-  const stats = getPokemonStats(id, level, ivs, evs)
+  const [_, name, typesStr] = base
+  const types = typesStr.split(',')
+  const stats = getPokemonStats(id, level)
+  const moveIds = base[11] || [1]
   return {
-    id,
-    name: base.name,
-    types: [...base.types],
-    level,
-    ivs,
-    evs,
+    id, name, types, level,
     ...stats,
-    moves: base.moves.map(mid => ({ ...MOVES.find(m => m.id === mid), currentPp: MOVES.find(m => m.id === mid).pp })),
+    moves: moveIds.map(mid => {
+      const m = getMoveData(mid)
+      return m ? { ...{id:mid, name:m[1], type:m[2], power:m[3], pp:m[4], currentPp:m[4]} } : null
+    }).filter(Boolean),
     exp: 0,
     nextLevel: Math.floor(level ** 3 * 0.8 + 10),
-    status: null,
-    fainted: false,
+    status: null, fainted: false,
   }
 }
 
-function calcExpToLevel(level) {
-  return Math.floor(level ** 3 * 0.8 + 10)
-}
-
-const STAT_KEYS = ['hp', 'atk', 'def', 'spa', 'spd', 'spe']
+function calcExpToLevel(level) { return Math.floor(level ** 3 * 0.8 + 10) }
 
 function addExp(pokemon, exp) {
   pokemon.exp += exp
@@ -119,86 +92,47 @@ function addExp(pokemon, exp) {
   while (pokemon.exp >= pokemon.nextLevel) {
     pokemon.exp -= pokemon.nextLevel
     pokemon.level++
-    const news = getPokemonStats(pokemon.id, pokemon.level, pokemon.ivs, pokemon.evs)
-    pokemon.maxHp = news.hp
-    pokemon.hp = Math.min(pokemon.hp + Math.floor(news.hp / 6), news.hp)
-    pokemon.atk = news.atk
-    pokemon.def = news.def
-    pokemon.spa = news.spa
-    pokemon.spd = news.spd
-    pokemon.spe = news.spe
+    const news = getPokemonStats(pokemon.id, pokemon.level)
+    for (const k of ['hp','maxHp','atk','def','spa','spd','spe']) pokemon[k] = news[k]
+    pokemon.hp = Math.min(pokemon.hp + Math.floor(news.maxHp / 6), news.maxHp)
     pokemon.nextLevel = calcExpToLevel(pokemon.level)
     addLog(`${pokemon.name} 升到了 Lv.${pokemon.level}！`)
-    const base = POKEMON_DATA.find(p => p.id === pokemon.id)
-    if (base && base.evo && pokemon.level >= base.evo.level) {
-      const evoData = POKEMON_DATA.find(p => p.id === base.evo.to)
+    const base = getPokemonData(pokemon.id)
+    if (base && base[10] && pokemon.level >= base[10][0]) {
+      const evoTo = base[10][1]
+      const evoData = getPokemonData(evoTo)
       if (evoData) {
         addLog(`咦？${pokemon.name} 开始发光了！`)
-        pokemon.id = evoData.id
-        pokemon.name = evoData.name
-        pokemon.types = [...evoData.types]
-        pokemon.moves = evoData.moves.map(mid => ({ ...MOVES.find(m => m.id === mid), currentPp: MOVES.find(m => m.id === mid).pp }))
-        const newStats = getPokemonStats(pokemon.id, pokemon.level, pokemon.ivs, pokemon.evs)
-        pokemon.maxHp = newStats.hp
-        pokemon.hp = newStats.hp
-        pokemon.atk = newStats.atk
-        pokemon.def = newStats.def
-        pokemon.spa = newStats.spa
-        pokemon.spd = newStats.spd
-        pokemon.spe = newStats.spe
-        addLog(`★ ${pokemon.name} 进化了！`)
-        evolved = true
+        pokemon.id = evoData[0]; pokemon.name = evoData[1]; pokemon.types = evoData[2].split(',')
+        const newMoves = (evoData[11] || [1])
+        pokemon.moves = newMoves.map(mid => {
+          const m = getMoveData(mid)
+          return m ? { id:mid, name:m[1], type:m[2], power:m[3], pp:m[4], currentPp:m[4] } : null
+        }).filter(Boolean)
+        const ns = getPokemonStats(pokemon.id, pokemon.level)
+        for (const k of ['hp','maxHp','atk','def','spa','spd','spe']) pokemon[k] = ns[k]
+        addLog(`★ ${pokemon.name} 进化了！`); evolved = true
       }
     }
   }
   return evolved
 }
 
-function addEvs(pokemon, evYield) {
-  let total = 0
-  for (const k of STAT_KEYS) total += pokemon.evs[k]
-  let changed = false
-  for (const [stat, val] of Object.entries(evYield)) {
-    if (total >= 510) break
-    const add = Math.min(val, 510 - total, 252 - pokemon.evs[stat])
-    if (add > 0) changed = true
-    pokemon.evs[stat] += add
-    total += add
-  }
-  if (changed) recalcStats(pokemon)
-}
-
-function recalcStats(pokemon) {
-  const s = getPokemonStats(pokemon.id, pokemon.level, pokemon.ivs, pokemon.evs)
-  if (!s) return
-  pokemon.maxHp = s.hp
-  pokemon.hp = Math.min(pokemon.hp, s.hp)
-  pokemon.atk = s.atk
-  pokemon.def = s.def
-  pokemon.spa = s.spa
-  pokemon.spd = s.spd
-  pokemon.spe = s.spe
-}
-
-function isPokemonUsable(p) {
-  return p && !p.fainted && p.hp > 0
-}
-
-function allFainted() {
-  return G.player.pokemon.every(p => p.fainted || p.hp <= 0)
-}
-
-function getActivePokemon() {
-  return G.player.pokemon.find(p => isPokemonUsable(p))
-}
+function isPokemonUsable(p) { return p && !p.fainted && p.hp > 0 }
+function allFainted() { return G.player.pokemon.every(p => p.fainted || p.hp <= 0) }
+function getActivePokemon() { return G.player.pokemon.find(p => isPokemonUsable(p)) }
 
 function healAll() {
   for (const p of G.player.pokemon) {
-    p.hp = p.maxHp
-    p.fainted = false
-    p.status = null
-    for (const m of p.moves) {
-      m.currentPp = m.pp
-    }
+    p.hp = p.maxHp; p.fainted = false; p.status = null
+    for (const m of p.moves) m.currentPp = m.pp
   }
 }
+
+function trackSeen(id) {
+  if (!G.player.seen.includes(id)) G.player.seen.push(id)
+}
+
+function getBadgeCount() { return G.player.badge }
+function setBadge(n) { G.player.badge = Math.max(G.player.badge, n) }
+function addMoney(n) { G.player.money += n }
