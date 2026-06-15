@@ -14,6 +14,7 @@ function render() {
   else if (v === 'shop') renderShop()
   else if (v === 'center') renderCenter()
   else if (v === 'dialogue') renderDialogue()
+  renderMap()
   renderLog()
 }
 
@@ -308,6 +309,46 @@ function renderCenter() {
       <button class="btn" onclick="G.view='explore';render();saveGame()">不用了，谢谢</button>
     </div>`
   $('actions').innerHTML = ''
+}
+
+function renderMap() {
+  const panel = $('map-panel')
+  const loc = getLocation(G.player.position)
+  if (!loc || G.view === 'start' || G.view === 'choose') {
+    panel.innerHTML = '<div class="map-title">🗺 关都地图</div><div class="map-stats" style="text-align:center;color:#003a10;">开始冒险后显示</div>'
+    return
+  }
+  const typeIcon = { town:'🏘', route:'🌿', cave:'⛰', water:'🌊' }[loc[2]] || '📍'
+  let html = `<div class="map-title">🗺 关都地图</div>
+    <div class="map-loc">${typeIcon} ${loc[0]}</div>
+    <div class="map-type">${loc[2]==='town'?'城镇':loc[2]==='route'?'道路':loc[2]==='cave'?'洞穴':'水道'}</div>`
+  const conns = loc[5] || []
+  if (conns.length) {
+    html += '<div style="margin-top:4px;">'
+    for (const c of conns) {
+      const cl = getLocation(c)
+      if (!cl) continue
+      const tIcon = { town:'🏘', route:'🌿', cave:'⛰', water:'🌊' }[cl[2]] || ''
+      const gym = Object.entries(GYM_LEADERS).find(([k,v]) => {
+        const m = { brock:'pewter', misty:'cerulean', ltSurge:'vermilion', erika:'celadon', sabrina:'saffron', koga:'fuchsia', blaine:'cinnabar', giovanni:'viridian' }
+        return m[k] === c
+      })
+      let label = `${tIcon} ${cl[0]}`
+      if (gym) {
+        if (gym[1][4] <= G.player.badge) label = `✔ ${cl[0]}`
+        else label = `⚔ ${cl[0]}`
+      }
+      html += `<div class="map-conn">${label}</div>`
+    }
+    html += '</div>'
+  }
+  const visited = G.player.seen.length
+  html += `<div class="map-stats">
+    访问: ${visited}/151<br>
+    徽章: ${G.player.badge}/8<br>
+    ¥${G.player.money}
+  </div>`
+  panel.innerHTML = html
 }
 
 function renderLog() {
