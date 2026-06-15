@@ -25,7 +25,30 @@ function startTrainerBattle(trainer) {
 function startStoryBattle(eventId) {
   const ev = STORY_EVENTS[eventId]
   if (!ev || !ev.battle) return false
-  return startBattle('story', ev, ev.battle.team.map(p => createPokemon(p[0], p[1])))
+  const bType = ev.battleType || 'story'
+  return startBattle(bType, ev, ev.battle.team.map(p => createPokemon(p[0], p[1])))
+}
+
+function startRivalBattle(team, name, onFinish) {
+  return startBattle('rival', { name, onFinish }, team.map(p => createPokemon(p[0], p[1])))
+}
+
+function startChampionBattle() {
+  if (!startBattle('rival', {
+    name: '小茂',
+    onFinish: () => {
+      G.storyFlags.championDefeated = true
+      return '★ ★ ★ 你击败了冠军小茂，成为了新的宝可梦联盟冠军！★ ★ ★'
+    },
+  }, [
+    createPokemon(18, 54),
+    createPokemon(59, 54),
+    createPokemon(112, 53),
+    createPokemon(103, 52),
+    createPokemon(130, 52),
+  ])) return false
+  G.battle.battleMsg = '冠军小茂：你终于来了！冠军是我的！'
+  return true
 }
 
 function startGymBattle(leaderId, gymKey) {
@@ -59,13 +82,25 @@ function startBattle(type, extra, enemyTeam) {
     type, extra, enemyTeam,
     enemy: enemyTeam[0], enemyIndex: 0,
     turn: 'player', subState: 'main',
-    ran: false, captured: false,
+    ran: false, captured: false, battleMsg: '',
   }
   const name = enemyTeam[0].name
-  if (type === 'wild') addLog(`野生的 ${name} 出现了！ (Lv.${enemyTeam[0].level})`)
-  else if (type === 'gym') addLog(`道馆馆主 ${extra.data[1]} 派出了 ${name}！`)
-  else if (type === 'story') addLog(`${extra.name} 派出了 ${name}！`)
-  else if (type === 'elite') addLog(`四天王 ${extra.name} 派出了 ${name}！`)
+  if (type === 'wild') {
+    addLog(`野生的 ${name} 出现了！ (Lv.${enemyTeam[0].level})`)
+    G.battle.battleMsg = `野生的 ${name} 跳出来了！`
+  } else if (type === 'gym') {
+    addLog(`道馆馆主 ${extra.data[1]} 派出了 ${name}！`)
+    G.battle.battleMsg = `馆主 ${extra.data[1]}：来吧！`
+  } else if (type === 'rival') {
+    addLog(`${extra.name} 向你发起了挑战！`)
+    G.battle.battleMsg = `${extra.name}：来对战吧！`
+  } else if (type === 'story') {
+    addLog(`${extra.name} 派出了 ${name}！`)
+    G.battle.battleMsg = `${extra.name}：你逃不掉的！`
+  } else if (type === 'elite') {
+    addLog(`四天王 ${extra.name} 派出了 ${name}！`)
+    G.battle.battleMsg = `四天王 ${extra.name}：让你见识一下！`
+  }
   return true
 }
 
@@ -95,19 +130,25 @@ function playerAttack(moveIndex) {
   move.currentPp--
   const result = calcDamage(pkm, b.enemy, move)
   b.enemy.hp -= result.damage
+  if (result.effectiveness >= 2) b.battleMsg = '效果拔群！'
+  else if (result.effectiveness === 0) b.battleMsg = '没有效果…'
+  else if (result.effectiveness < 1) b.battleMsg = '效果不太好…'
+  else b.battleMsg = `使用了 ${move.name}！`
   if (b.enemy.hp <= 0) {
     b.enemy.hp = 0; b.enemy.fainted = true
     addLog(`${b.enemy.name} 倒下了！`)
     b.enemyIndex++
     if (b.enemyIndex < b.enemyTeam.length) {
       b.enemy = b.enemyTeam[b.enemyIndex]; b.enemy.hp = b.enemy.maxHp
-      let prefix = ''
-      if (b.type === 'trainer') prefix = `${b.extra.trainer.name} 派出了 `
-      else if (b.type === 'gym') prefix = `${b.extra.data[1]} 派出了 `
-      else if (b.type === 'elite') prefix = `${b.extra.name} 派出了 `
-      else if (b.type === 'story') prefix = `${b.extra.name} 派出了 `
+      let prefix = '', msg = ''
+      if (b.type === 'trainer') { prefix = `${b.extra.trainer.name} 派出了 `; msg = `${b.extra.trainer.name}：去吧！` }
+      else if (b.type === 'gym') { prefix = `${b.extra.data[1]} 派出了 `; msg = `${b.extra.data[1]}：哼！` }
+      else if (b.type === 'elite') { prefix = `${b.extra.name} 派出了 `; msg = `${b.extra.name}：还没完！` }
+      else if (b.type === 'rival') { prefix = `${b.extra.name} 派出了 `; msg = `${b.extra.name}：还没完呢！` }
+      else if (b.type === 'story') { prefix = `${b.extra.name} 派出了 `; msg = `${b.extra.name}：你等着！` }
       else prefix = '野生的 '
       addLog(`${prefix}${b.enemy.name}！`)
+      b.battleMsg = msg || ''
       b.turn = 'player'; return
     } else {
       battleVictory(); return
@@ -161,8 +202,18 @@ function battleVictory() {
     return
   }
   if (b.type === 'elite' && b.extra.round >= 3) {
-    G.storyFlags.championDefeated = true
-    addLog('★ ★ ★ 恭喜成为宝可梦联盟冠军！★ ★ ★')
+    addLog('★ 你击败了四天王！')
+    addLog('冠军 小茂 向你走来……')
+    setTimeout(() => {
+      if (startChampionBattle()) { G.view = 'battle'; render() }
+      else { G.battle = null; G.view = 'explore'; render() }
+    }, 500)
+    return
+  }
+  if (b.type === 'rival') {
+    if (b.extra.onFinish) {
+      const r = b.extra.onFinish(); if (r) msg = r
+    }
   }
   G.battle = null; saveGame(); render()
 }
@@ -184,6 +235,10 @@ function enemyTurn() {
   const move = usable[Math.floor(Math.random() * usable.length)]
   move.currentPp--
   const result = calcDamage(b.enemy, pkm, move)
+  if (result.effectiveness >= 2) b.battleMsg = '效果拔群！'
+  else if (result.effectiveness === 0) b.battleMsg = '没有效果…'
+  else if (result.effectiveness < 1) b.battleMsg = '效果不太好…'
+  else b.battleMsg = `对方使用了 ${move.name}！`
   pkm.hp -= result.damage
   if (pkm.hp <= 0) {
     pkm.hp = 0; pkm.fainted = true
@@ -225,7 +280,9 @@ function tryCapture() {
   const a = Math.floor((3 * b.enemy.maxHp - 2 * Math.max(0, b.enemy.hp)) * rate / (3 * b.enemy.maxHp))
   const chance = Math.min(1, (a * item.catchRate) / 255)
   addLog(`你丢出了 ${item.name}！`)
+  b.battleMsg = '1… 2… 3…'
   if (Math.random() < chance) {
+    b.battleMsg = `成功捕捉了 ${b.enemy.name}！`
     addLog(`★ 成功捕捉了 ${b.enemy.name}！`)
     if (G.player.pokemon.length < 6) G.player.pokemon.push(b.enemy)
     else { G.player.pc.push(b.enemy); addLog(`${b.enemy.name} 被传送到了电脑中。`) }
@@ -240,7 +297,7 @@ function tryFlee() {
   const pkm = getActivePokemon(); if (!pkm) return
   const chance = Math.min(0.9, 0.5 + (pkm.spe - b.enemy.spe) / 200)
   if (Math.random() < chance) { addLog('成功逃跑了！'); G.battle = null; saveGame(); render() }
-  else { addLog('逃跑失败！'); b.turn = 'enemy'; setTimeout(enemyTurn, 500) }
+  else { b.battleMsg = '无法逃脱！'; addLog('逃跑失败！'); b.turn = 'enemy'; setTimeout(enemyTurn, 500) }
 }
 
 function useItem(itemKey) {

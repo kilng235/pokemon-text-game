@@ -43,7 +43,11 @@ function renderStart() {
 
 function renderChoose() {
   const main = $('main')
-  main.innerHTML = `<p class="section-title">选择你的初始宝可梦：</p><div class="choose-grid"></div>`
+  main.innerHTML = `
+    <p class="section-title">🏛 大木博士的研究所</p>
+    <p style="color:#00aa33;margin-bottom:10px;">博士把三个精灵球放在桌上，笑眯眯地看着你。</p>
+    <div class="choose-grid"></div>
+  `
   const grid = main.querySelector('.choose-grid')
   for (const id of [4,7,1]) {
     const p = getPokemonData(id)
@@ -126,7 +130,7 @@ function renderBattle() {
       <span class="pkm-types">${b.enemy.types.join('/')}</span>
       <div class="hp-row">HP: ${hpBar(b.enemy.hp,b.enemy.maxHp)} ${b.enemy.hp}/${b.enemy.maxHp}</div>
     </div>
-    <div class="battle-divider">━━ V.S. ━━</div>
+    ${b.battleMsg ? `<div class="battle-msg">${b.battleMsg}</div>` : `<div class="battle-divider">━━ V.S. ━━</div>`}
     <div class="battle-player">
       <span class="pkm-name">${pkm ? pkm.name : '---'}</span>
       <span class="pkm-level">${pkm ? 'Lv.'+pkm.level : ''}</span>
@@ -134,7 +138,7 @@ function renderBattle() {
       <div class="hp-row">HP: ${pkm ? hpBar(pkm.hp,pkm.maxHp)+' '+pkm.hp+'/'+pkm.maxHp : '倒下了'}</div>
       ${pkm ? `<div class="exp-row">EXP: ${pkm.exp}/${pkm.nextLevel}</div>` : ''}
     </div>
-    <div class="battle-status">#${b.enemyIndex+1}/${b.enemyTeam.length} ${b.type==='gym'?'🏛'+b.extra.data[1]:b.type==='elite'?'👑四天王':b.type==='story'?'💀'+b.extra.name:'🌿野生'}</div>
+    <div class="battle-status">#${b.enemyIndex+1}/${b.enemyTeam.length} ${b.type==='gym'?'🏛'+b.extra.data[1]:b.type==='elite'?'👑四天王':b.type==='story'?'💀'+b.extra.name:b.type==='rival'?'💢'+b.extra.name:'🌿野生'}</div>
   `
   const actions = $('actions')
   if (b.subState === 'main') {

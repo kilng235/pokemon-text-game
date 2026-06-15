@@ -1,6 +1,18 @@
 function startNewGame() {
   resetGame()
-  G.view = 'choose'; saveGame(); render()
+  G.dialogue = {
+    lines: [
+      { speaker: '', text: '你走进了大木博士的研究所……' },
+      { speaker: '大木博士', text: '哦！你来了！我等你好久了！' },
+      { speaker: '大木博士', text: '我叫大木，是研究宝可梦的专家。' },
+      { speaker: '大木博士', text: '这个世界生活着各种各样的宝可梦，人们和它们一起生活、对战。' },
+      { speaker: '大木博士', text: '你也要成为一名训练家，开始冒险了吧？' },
+      { speaker: '大木博士', text: '我这里有三只宝可梦，选一只做你的搭档吧！' },
+    ],
+    index: 0, battle: false, canSkip: true,
+    onComplete: 'starter',
+  }
+  G.view = 'dialogue'; render()
 }
 
 function continueGame() {
@@ -9,12 +21,24 @@ function continueGame() {
 }
 
 function selectStarter(id) {
-  G.player.pokemon = [createPokemon(id, 5)]
+  const pkm = createPokemon(id, 5)
+  G.player.pokemon = [pkm]
   G.player.items = { pokeball:10, potion:5, superball:3 }
   trackSeen(id)
-  const name = getPokemonData(id)[1]
-  addLog(`你选择了 ${name}！`); addLog('冒险正式开始！')
-  G.view = 'explore'; saveGame(); render()
+  addLog(`你选择了 ${pkm.name}！`)
+  G.dialogue = {
+    lines: [
+      { speaker: '', text: '这时一个人冲了进来！' },
+      { speaker: '小茂', text: '爷爷！！你也给我一只宝可梦！！' },
+      { speaker: '大木博士', text: '哎呀……小茂你来晚了。最后一只是这位少年的了。' },
+      { speaker: '小茂', text: '什么？！居然给了你？！' },
+      { speaker: '小茂', text: '哼！我可是大木博士的孙子！' },
+      { speaker: '小茂', text: '我要让你看看谁更强！！上吧！' },
+    ],
+    index: 0, battle: true, canSkip: true,
+    eventKey: 'firstRival',
+  }
+  G.view = 'dialogue'; render()
 }
 
 function travelTo(key) {
@@ -78,6 +102,23 @@ function tryWildEncounter(fromTravel) {
 function startDialogueBattle() {
   const d = G.dialogue; if (!d) return
   G.dialogue = null
+  if (d.eventKey === 'eliteFour') {
+    if (startEliteFour(0)) { G.view = 'battle'; render() }
+    else { G.view = 'explore'; render() }
+    return
+  }
+  if (d.eventKey === 'firstRival') {
+    G.storyFlags.firstRivalDone = true
+    if (startBattle('rival', {
+      name: '小茂',
+      onFinish: () => '首次击败小茂！获得 ¥200',
+    }, [createPokemon(133, 5)])) {
+      G.view = 'battle'; render()
+    } else {
+      G.view = 'explore'; render()
+    }
+    return
+  }
   if (startStoryBattle(d.eventKey)) { G.view = 'battle'; render() }
   else { G.view = 'explore'; render() }
 }
@@ -102,7 +143,12 @@ function finishDialogue() {
   if (d && d.battle) {
     startDialogueBattle(); return
   }
-  G.dialogue = null; saveGame()
+  const onComplete = d ? d.onComplete : null
+  G.dialogue = null
+  if (onComplete === 'starter') {
+    G.view = 'choose'; saveGame(); render(); return
+  }
+  saveGame()
   G.view = 'explore'; render()
 }
 
