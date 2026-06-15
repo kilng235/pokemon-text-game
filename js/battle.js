@@ -164,7 +164,7 @@ function battleVictory() {
     G.storyFlags.championDefeated = true
     addLog('★ ★ ★ 恭喜成为宝可梦联盟冠军！★ ★ ★')
   }
-  G.battle = null; saveGame()
+  G.battle = null; saveGame(); render()
 }
 
 function enemyTurn() {
@@ -229,7 +229,7 @@ function tryCapture() {
     addLog(`★ 成功捕捉了 ${b.enemy.name}！`)
     if (G.player.pokemon.length < 6) G.player.pokemon.push(b.enemy)
     else { G.player.pc.push(b.enemy); addLog(`${b.enemy.name} 被传送到了电脑中。`) }
-    b.enemy = null; G.battle = null; saveGame()
+    b.enemy = null; G.battle = null; saveGame(); render()
   } else {
     addLog(`${b.enemy.name} 挣脱了！`); b.turn = 'enemy'; setTimeout(enemyTurn, 500)
   }
@@ -239,7 +239,7 @@ function tryFlee() {
   const b = G.battle; if (!b || (b.type !== 'wild')) { addLog('不能逃跑！'); return }
   const pkm = getActivePokemon(); if (!pkm) return
   const chance = Math.min(0.9, 0.5 + (pkm.spe - b.enemy.spe) / 200)
-  if (Math.random() < chance) { addLog('成功逃跑了！'); G.battle = null; saveGame() }
+  if (Math.random() < chance) { addLog('成功逃跑了！'); G.battle = null; saveGame(); render() }
   else { addLog('逃跑失败！'); b.turn = 'enemy'; setTimeout(enemyTurn, 500) }
 }
 
