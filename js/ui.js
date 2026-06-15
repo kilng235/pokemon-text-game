@@ -230,6 +230,8 @@ function renderPokemon() {
           <div>HP: ${hb} ${p.hp}/${p.maxHp}${p.fainted?' ⚠濒死':''}</div>
           <div class="pkm-moves">${p.moves.map(m=>`${m.name}[${m.type}] 威:${m.power} PP:${m.currentPp}/${m.pp}`).join(' | ')}</div>
           <div class="pkm-exp">EXP: ${p.exp}/${p.nextLevel}</div>
+          <div class="pkm-iv">个体: H${p.ivs.hp} A${p.ivs.atk} D${p.ivs.def} SA${p.ivs.spa} SD${p.ivs.spd} S${p.ivs.spe}</div>
+          <div class="pkm-ev">努力: H${p.evs.hp} A${p.evs.atk} D${p.evs.def} SA${p.evs.spa} SD${p.evs.spd} S${p.evs.spe}</div>
         </div>`
     } else {
       list.innerHTML += '<div class="pkm-card"><div class="empty-slot">[空位]</div></div>'

@@ -61,6 +61,8 @@ body {
 .pkm-stat { font-size:11px; color:#00992a; margin:1px 0; }
 .pkm-moves { font-size:10px; color:#008a22; margin-top:2px; line-height:1.4; }
 .pkm-exp { font-size:10px; color:#006a1a; }
+.pkm-iv { font-size:10px; color:#004a1a; }
+.pkm-ev { font-size:10px; color:#003a0a; }
 
 .battle-enemy, .battle-player { background:#0a1a0a; border:1px solid #003a10; padding:6px 10px; margin:4px 0; }
 .battle-divider { text-align:center; color:#003a10; margin:3px 0; font-size:12px; }
