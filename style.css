@@ -126,6 +126,83 @@ body {
 ::-webkit-scrollbar { width:4px; background:#050505; }
 ::-webkit-scrollbar-thumb { background:#003a10; }
 
+/* 全屏地图样式 */
+.world-map {
+  font-size: 10px;
+  line-height: 1.2;
+  color: #00ff41;
+  background: #060a06;
+  border: 1px solid #003a10;
+  padding: 8px;
+  margin-bottom: 10px;
+  overflow-x: auto;
+}
+
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 8px 0;
+  padding: 6px;
+  background: #0a1a0a;
+  border: 1px solid #003a10;
+  font-size: 11px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legend-icon {
+  color: #00ff41;
+  font-weight: bold;
+}
+
+.map-info-panel {
+  background: #0a1a0a;
+  border: 1px solid #003a10;
+  padding: 8px;
+}
+
+.map-info-section {
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #003a10;
+}
+
+.map-info-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.map-info-title {
+  color: #33ff77;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.map-info-content {
+  color: #00aa33;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.gym-badge {
+  margin-right: 8px;
+}
+
+.gym-badge.completed {
+  color: #00ff41;
+}
+
+.pokemon-area {
+  margin-bottom: 2px;
+}
+
 @media (max-width:750px) {
   #app { padding:8px; font-size:12px; }
   #main-wrap { flex-direction:column; }

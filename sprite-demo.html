@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>CSS像素画 - 妙蛙种子</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a0a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Courier New', monospace;
+    color: #00ff41;
+  }
+  .demo {
+    text-align: center;
+    background: #0d0d0d;
+    border: 2px solid #00ff41;
+    padding: 40px 60px;
+    border-radius: 4px;
+    box-shadow: 0 0 30px rgba(0,255,65,0.15);
+  }
+  h2 { margin-bottom: 30px; font-size: 18px; letter-spacing: 2px; }
+
+  /* 像素画容器 */
+  .sprite-container {
+    position: relative;
+    width: 128px;
+    height: 128px;
+    margin: 0 auto;
+    image-rendering: pixelated;
+  }
+
+  /* 妙蛙种子 - 16x16 每格8px = 128x128 */
+  .bulbasaur {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    background: transparent;
+    box-shadow:
+      /* === 耳朵 === */
+      24px 0px 0 #2d7a30,
+      32px 0px 0 #2d7a30,
+      88px 0px 0 #2d7a30,
+      96px 0px 0 #2d7a30,
+      16px 8px 0 #2d7a30,
+      24px 8px 0 #4caf50,
+      32px 8px 0 #4caf50,
+      40px 8px 0 #2d7a30,
+      80px 8px 0 #2d7a30,
+      88px 8px 0 #4caf50,
+      96px 8px 0 #4caf50,
+      104px 8px 0 #2d7a30,
+      24px 16px 0 #2d7a30,
+      32px 16px 0 #4caf50,
+      40px 16px 0 #4caf50,
+      80px 16px 0 #4caf50,
+      88px 16px 0 #4caf50,
+      96px 16px 0 #2d7a30,
+
+      /* === 头顶 === */
+      32px 16px 0 #4caf50,
+      40px 16px 0 #4caf50,
+      48px 16px 0 #388e3c,
+      56px 16px 0 #388e3c,
+      64px 16px 0 #388e3c,
+      72px 16px 0 #388e3c,
+      80px 16px 0 #4caf50,
+      88px 16px 0 #4caf50,
+      40px 24px 0 #388e3c,
+      48px 24px 0 #66bb6a,
+      56px 24px 0 #66bb6a,
+      64px 24px 0 #66bb6a,
+      72px 24px 0 #66bb6a,
+      80px 24px 0 #388e3c,
+
+      /* === 脸部 === */
+      24px 32px 0 #2d7a30,
+      32px 32px 0 #4caf50,
+      40px 32px 0 #66bb6a,
+      48px 32px 0 #66bb6a,
+      56px 32px 0 #66bb6a,
+      64px 32px 0 #66bb6a,
+      72px 32px 0 #66bb6a,
+      80px 32px 0 #66bb6a,
+      88px 32px 0 #4caf50,
+      96px 32px 0 #2d7a30,
+
+      /* 眼睛行 */
+      16px 40px 0 #1b5e20,
+      24px 40px 0 #4caf50,
+      32px 40px 0 #66bb6a,
+      40px 40px 0 #1a1a1a,  /* 左眼黑 */
+      48px 40px 0 #1a1a1a,
+      40px 40px 0 #c62828,  /* 左眼红 */
+      48px 40px 0 #ffffff,  /* 左眼高光 */
+      56px 40px 0 #66bb6a,
+      64px 40px 0 #66bb6a,
+      72px 40px 0 #c62828,  /* 右眼红 */
+      80px 40px 0 #1a1a1a,
+      80px 40px 0 #ffffff,  /* 右眼高光 */
+      88px 40px 0 #4caf50,
+      96px 40px 0 #1b5e20,
+      104px 40px 0 #1b5e20,
+
+      /* 嘴巴/鼻子 */
+      24px 48px 0 #1b5e20,
+      32px 48px 0 #4caf50,
+      40px 48px 0 #66bb6a,
+      48px 48px 0 #66bb6a,
+      56px 48px 0 #66bb6a,
+      64px 48px 0 #66bb6a,
+      72px 48px 0 #66bb6a,
+      80px 48px 0 #66bb6a,
+      88px 48px 0 #4caf50,
+      96px 48px 0 #1b5e20,
+
+      /* 脸颊 */
+      24px 56px 0 #1b5e20,
+      32px 56px 0 #4caf50,
+      40px 56px 0 #66bb6a,
+      48px 56px 0 #e57373,  /* 左腮红 */
+      56px 56px 0 #66bb6a,
+      64px 56px 0 #66bb6a,
+      72px 56px 0 #e57373,  /* 右腮红 */
+      80px 56px 0 #66bb6a,
+      88px 56px 0 #4caf50,
+      96px 56px 0 #1b5e20,
+
+      /* === 身体 === */
+      16px 64px 0 #1b5e20,
+      24px 64px 0 #388e3c,
+      32px 64px 0 #4caf50,
+      40px 64px 0 #4caf50,
+      48px 64px 0 #4caf50,
+      56px 64px 0 #4caf50,
+      64px 64px 0 #4caf50,
+      72px 64px 0 #4caf50,
+      80px 64px 0 #4caf50,
+      88px 64px 0 #4caf50,
+      96px 64px 0 #388e3c,
+      104px 64px 0 #1b5e20,
+
+      8px 72px 0 #2e7d32,  /* 球茎开始 */
+      16px 72px 0 #388e3c,
+      24px 72px 0 #4caf50,
+      32px 72px 0 #4caf50,
+      40px 72px 0 #388e3c,  /* 身体花纹 */
+      48px 72px 0 #4caf50,
+      56px 72px 0 #4caf50,
+      64px 72px 0 #4caf50,
+      72px 72px 0 #4caf50,
+      80px 72px 0 #388e3c,  /* 身体花纹 */
+      88px 72px 0 #4caf50,
+      96px 72px 0 #4caf50,
+      104px 72px 0 #388e3c,
+      112px 72px 0 #2e7d32,  /* 球茎结束 */
+
+      /* 球茎主体 */
+      0px 80px 0 #1b5e20,
+      8px 80px 0 #2e7d32,
+      16px 80px 0 #388e3c,
+      24px 80px 0 #388e3c,
+      32px 80px 0 #388e3c,
+      40px 80px 0 #388e3c,
+      48px 80px 0 #388e3c,
+      56px 80px 0 #388e3c,
+      64px 80px 0 #388e3c,
+      72px 80px 0 #388e3c,
+      80px 80px 0 #388e3c,
+      88px 80px 0 #388e3c,
+      96px 80px 0 #388e3c,
+      104px 80px 0 #388e3c,
+      112px 80px 0 #2e7d32,
+      120px 80px 0 #1b5e20,
+
+      /* 球茎底部 */
+      0px 88px 0 #1b5e20,
+      8px 88px 0 #2e7d32,
+      16px 88px 0 #388e3c,
+      24px 88px 0 #388e3c,
+      32px 88px 0 #388e3c,
+      40px 88px 0 #388e3c,
+      48px 88px 0 #388e3c,
+      56px 88px 0 #388e3c,
+      64px 88px 0 #388e3c,
+      72px 88px 0 #388e3c,
+      80px 88px 0 #388e3c,
+      88px 88px 0 #388e3c,
+      96px 88px 0 #388e3c,
+      104px 88px 0 #388e3c,
+      112px 88px 0 #2e7d32,
+      120px 88px 0 #1b5e20,
+
+      /* 球茎尖端 */
+      8px 96px 0 #1b5e20,
+      16px 96px 0 #2e7d32,
+      24px 96px 0 #2e7d32,
+      32px 96px 0 #2e7d32,
+      40px 96px 0 #2e7d32,
+      48px 96px 0 #2e7d32,
+      56px 96px 0 #2e7d32,
+      64px 96px 0 #2e7d32,
+      72px 96px 0 #2e7d32,
+      80px 96px 0 #2e7d32,
+      88px 96px 0 #2e7d32,
+      96px 96px 0 #2e7d32,
+      104px 96px 0 #2e7d32,
+      112px 96px 0 #1b5e20,
+
+      /* === 腿 === */
+      24px 80px 0 #388e3c,
+      32px 80px 0 #388e3c,
+      40px 80px 0 #388e3c,
+      24px 88px 0 #2e7d32,
+      32px 88px 0 #388e3c,
+      40px 88px 0 #2e7d32,
+      24px 96px 0 #1b5e20,
+      32px 96px 0 #2e7d32,
+      40px 96px 0 #1b5e20,
+
+      72px 80px 0 #388e3c,
+      80px 80px 0 #388e3c,
+      88px 80px 0 #388e3c,
+      72px 88px 0 #2e7d32,
+      80px 88px 0 #388e3c,
+      88px 88px 0 #2e7d32,
+      72px 96px 0 #1b5e20,
+      80px 96px 0 #2e7d32,
+      88px 96px 0 #1b5e20;
+  }
+
+  .label {
+    margin-top: 30px;
+    font-size: 16px;
+    color: #00ff41;
+  }
+  .label span {
+    color: #33ff77;
+    font-weight: bold;
+    font-size: 18px;
+  }
+  .label small {
+    display: block;
+    margin-top: 5px;
+    color: #008a22;
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="demo">
+  <h2>◆ CSS像素画 - 妙蛙种子 ◆</h2>
+  <div class="sprite-container">
+    <div class="bulbasaur"></div>
+  </div>
+  <div class="label">
+    <span>#001 妙蛙种子</span>
+    <small>草 / 毒</small>
+  </div>
+</div>
+</body>
+</html>

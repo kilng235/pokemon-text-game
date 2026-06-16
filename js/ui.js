@@ -14,6 +14,7 @@ function render() {
   else if (v === 'shop') renderShop()
   else if (v === 'center') renderCenter()
   else if (v === 'dialogue') renderDialogue()
+  else if (v === 'worldMap') renderWorldMap()
   try { renderMap() } catch(e) { console.warn('map:',e) }
   renderLog()
 }
@@ -107,6 +108,7 @@ function renderExplore() {
   html += `</div>`
   main.innerHTML = html
   $('actions').innerHTML = `
+    <button class="btn" onclick="G.view='worldMap';render()">🗺 地图</button>
     <button class="btn" onclick="G.view='pokemon';render()">队伍</button>
     <button class="btn" onclick="G.view='bag';render()">背包</button>
     <button class="btn" onclick="G.view='pokedex';render()">图鉴</button>
@@ -201,12 +203,16 @@ function renderBattle() {
     actions.innerHTML = html
   } else if (b.subState === 'item') {
     let html = ''
+    let hasItems = false
     for (const [key, val] of Object.entries(ITEMS)) {
-      if (val.type === 'key') continue
+      if (val.type === 'key' || val.type === 'safari') continue
       const c = G.player.items[key] || 0
       if (c <= 0) continue
-      html += `<button class="btn" onclick="useItemInBattle('${key}")">${val.name} x${c}</button>`
+      hasItems = true
+      const label = val.heal && !val.catchRate ? `${val.name} x${c} (回复${val.heal === 999 ? '满' : val.heal + 'HP'})` : `${val.name} x${c}`
+      html += `<button class="btn" onclick="useItemInBattle('${key}')">${label}</button>`
     }
+    if (!hasItems) html += '<div style="color:#006a1a;padding:8px;">没有可用的道具</div>'
     html += '<button class="btn" onclick="battleSub(\'main\')">↩ 返回</button>'
     actions.innerHTML = html
   }

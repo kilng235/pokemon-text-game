@@ -9,7 +9,7 @@ const STORY_EVENTS = {
       { speaker: '火箭队手下', text: '站住！这里是火箭队的地盘！' },
       { speaker: '火箭队手下', text: '我们在挖掘化石，不想死就快滚！' },
     ],
-    battle: { name: '火箭队手下', team: [[23,10], [41,10]] },
+    battle: { name: '火箭队手下', team: [[23,8], [41,8]] },
     onFinish: () => {
       G.storyFlags.mtMoonDone = true
       G.player.money += 300
@@ -26,7 +26,7 @@ const STORY_EVENTS = {
       { speaker: '', text: '你鼓起勇气走进宝可梦之塔……' },
       { speaker: '火箭队手下', text: '可恶！谁让你进来的！' },
     ],
-    battle: { name: '火箭队手下', team: [[92,15], [41,14], [42,16]] },
+    battle: { name: '火箭队手下', team: [[92,13], [41,12], [42,14]] },
     onFinish: () => {
       G.storyFlags.lavenderDone = true
       G.player.money += 500
@@ -43,7 +43,7 @@ const STORY_EVENTS = {
       { speaker: '', text: '你冲进了希鲁夫公司总部……' },
       { speaker: '火箭队干部', text: '哼！又是你！别想妨碍火箭队的计划！' },
     ],
-    battle: { name: '火箭队干部', team: [[24,22], [34,22], [89,24], [110,24]] },
+    battle: { name: '火箭队干部', team: [[24,20], [34,20], [89,22], [110,22]] },
     onFinish: () => {
       G.storyFlags.silphDone = true
       G.player.money += 1000
@@ -78,7 +78,7 @@ const STORY_EVENTS = {
       { speaker: '小茂', text: '看来你也稍微有点本事了。' },
       { speaker: '小茂', text: '不过跟我比还差得远呢！上吧！' },
     ],
-    battle: { name: '小茂', team: [[17,9], [133,8]] },
+    battle: { name: '小茂', team: [[17,7], [133,6]] },
     battleType: 'rival',
     onFinish: () => {
       G.storyFlags.rivalRoute4 = true
@@ -96,7 +96,7 @@ const STORY_EVENTS = {
       { speaker: '小茂', text: '……算了，反正你肯定不如我！' },
       { speaker: '小茂', text: '来啊，让我看看你的成长！' },
     ],
-    battle: { name: '小茂', team: [[17,15], [64,14], [58,16]] },
+    battle: { name: '小茂', team: [[17,13], [64,12], [58,14]] },
     battleType: 'rival',
     onFinish: () => {
       G.storyFlags.rivalRoute5 = true
@@ -114,7 +114,7 @@ const STORY_EVENTS = {
       { speaker: '小茂', text: '我忙着训练，没空管那些。' },
       { speaker: '小茂', text: '倒是你，别多管闲事！来对战！' },
     ],
-    battle: { name: '小茂', team: [[17,18], [58,18], [102,17]] },
+    battle: { name: '小茂', team: [[17,16], [58,16], [102,15]] },
     battleType: 'rival',
     onFinish: () => {
       G.storyFlags.rivalRoute8 = true
@@ -132,7 +132,7 @@ const STORY_EVENTS = {
       { speaker: '小茂', text: '……可恶，我绝对不会输给你！' },
       { speaker: '小茂', text: '这次是我最后的警告！输了别哭鼻子！' },
     ],
-    battle: { name: '小茂', team: [[18,28], [59,28], [102,26], [112,27]] },
+    battle: { name: '小茂', team: [[18,26], [59,26], [102,24], [112,25]] },
     battleType: 'rival',
     onFinish: () => {
       G.storyFlags.rivalRoute16 = true
@@ -150,7 +150,7 @@ const STORY_EVENTS = {
       { speaker: '小茂', text: '这就是最后的道路。通往联盟的路……' },
       { speaker: '小茂', text: '但只有一个人能通过！那就是我！' },
     ],
-    battle: { name: '小茂', team: [[18,35], [59,35], [102,32], [112,34], [130,33]] },
+    battle: { name: '小茂', team: [[18,33], [59,33], [102,30], [112,32], [130,31]] },
     battleType: 'rival',
     onFinish: () => {
       G.storyFlags.rivalRoute22_2 = true
@@ -193,7 +193,7 @@ const STORY_EVENTS = {
       { speaker: '船长', text: '呜……我晕船了……' },
       { speaker: '船长', text: '年轻的训练家啊，来和我对战吧！也许转移注意力会好受些！' },
     ],
-    battle: { name: '船长', team: [[72,18], [98,20], [120,22]] },
+    battle: { name: '船长', team: [[72,16], [98,18], [120,20]] },
     battleType: 'story',
     onFinish: () => {
       G.storyFlags.ssAnneDone = true
@@ -215,7 +215,7 @@ const STORY_EVENTS = {
       { speaker: '坂木', text: '哼……竟然能来到这里，有点本事。' },
       { speaker: '坂木', text: '但你也就到此为止了！' },
     ],
-    battle: { name: '坂木', team: [[52,25], [111,27], [34,29]] },
+    battle: { name: '坂木', team: [[52,23], [111,25], [34,27]] },
     battleType: 'story',
     onFinish: () => {
       G.storyFlags.rocketHideoutDone = true

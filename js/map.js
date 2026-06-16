@@ -1,93 +1,93 @@
 const TRAINERS = {
   route1: [
-    { id:'r1_1', name:'短裤少年',msg:'来对战吧！',team:[[19,3]],money:100 },
-    { id:'r1_2', name:'精英训练家',msg:'让我看看你的实力！',team:[[16,4]],money:200 },
+    { id:'r1_1', name:'短裤少年',msg:'来对战吧！',team:[[19,2]],money:100 },
+    { id:'r1_2', name:'精英训练家',msg:'让我看看你的实力！',team:[[16,3]],money:200 },
   ],
   route2: [
-    { id:'r2_1', name:'捕虫少年',msg:'我抓了好多虫！',team:[[10,3],[13,4]],money:120 },
-    { id:'r2_2', name:'迷你裙',msg:'可爱就赢了吗？',team:[[16,4],[39,5]],money:180 },
+    { id:'r2_1', name:'捕虫少年',msg:'我抓了好多虫！',team:[[10,2],[13,3]],money:120 },
+    { id:'r2_2', name:'迷你裙',msg:'可爱就赢了吗？',team:[[16,3],[39,4]],money:180 },
   ],
   route3: [
-    { id:'r3_1', name:'登山男',msg:'登山健将在此！',team:[[74,7],[27,8]],money:220 },
-    { id:'r3_2', name:'精英训练家',msg:'我要认真了！',team:[[56,8],[21,7]],money:250 },
+    { id:'r3_1', name:'登山男',msg:'登山健将在此！',team:[[74,5],[27,6]],money:220 },
+    { id:'r3_2', name:'精英训练家',msg:'我要认真了！',team:[[56,6],[21,5]],money:250 },
   ],
   mtMoon: [
-    { id:'mt_1', name:'火箭队手下',msg:'火箭队办事，闲人退散！',team:[[23,8],[41,9]],money:300 },
-    { id:'mt_2', name:'研究员',msg:'我在研究化石……',team:[[35,7],[79,9]],money:200 },
+    { id:'mt_1', name:'火箭队手下',msg:'火箭队办事，闲人退散！',team:[[23,6],[41,7]],money:300 },
+    { id:'mt_2', name:'研究员',msg:'我在研究化石……',team:[[35,5],[79,7]],money:200 },
   ],
   route4: [
-    { id:'r4_1', name:'钓鱼人',msg:'钓到了什么？',team:[[118,10]],money:200 },
-    { id:'r4_2', name:'泳裤男',msg:'来水里玩玩？',team:[[120,11],[72,10]],money:250 },
+    { id:'r4_1', name:'钓鱼人',msg:'钓到了什么？',team:[[118,8]],money:200 },
+    { id:'r4_2', name:'泳裤男',msg:'来水里玩玩？',team:[[120,9],[72,8]],money:250 },
   ],
   route5: [
-    { id:'r5_1', name:'少年',msg:'我每天都在训练！',team:[[19,11],[52,12]],money:250 },
-    { id:'r5_2', name:'女学生',msg:'作业做完了才来玩的~',team:[[63,12],[35,11]],money:280 },
-    { id:'r5_3', name:'空手道王',msg:'看我的拳头！',team:[[56,13],[66,14]],money:350 },
+    { id:'r5_1', name:'少年',msg:'我每天都在训练！',team:[[19,9],[52,10]],money:250 },
+    { id:'r5_2', name:'女学生',msg:'作业做完了才来玩的~',team:[[63,10],[35,9]],money:280 },
+    { id:'r5_3', name:'空手道王',msg:'看我的拳头！',team:[[56,11],[66,12]],money:350 },
   ],
   route6: [
-    { id:'r6_1', name:'精英训练家',msg:'你来晚了！',team:[[54,12],[120,13]],money:300 },
-    { id:'r6_2', name:'露营少年',msg:'野外求生训练！',team:[[56,12],[23,13]],money:250 },
+    { id:'r6_1', name:'精英训练家',msg:'你来晚了！',team:[[54,10],[120,11]],money:300 },
+    { id:'r6_2', name:'露营少年',msg:'野外求生训练！',team:[[56,10],[23,11]],money:250 },
   ],
   viridianForest: [
-    { id:'vf_1', name:'捕虫少年',msg:'森林是我的地盘！',team:[[10,4],[13,5],[48,5]],money:150 },
-    { id:'vf_2', name:'野餐女孩',msg:'来野餐顺便对战~',team:[[69,5],[46,6]],money:180 },
+    { id:'vf_1', name:'捕虫少年',msg:'森林是我的地盘！',team:[[10,3],[13,4],[48,4]],money:150 },
+    { id:'vf_2', name:'野餐女孩',msg:'来野餐顺便对战~',team:[[69,4],[46,5]],money:180 },
   ],
   route7: [
-    { id:'r7_1', name:'女学生',msg:'彩虹市的百货公司超好逛！',team:[[84,14],[37,15]],money:300 },
-    { id:'r7_2', name:'精英训练家',msg:'一步都不会让你前进了！',team:[[58,16],[25,15]],money:400 },
+    { id:'r7_1', name:'女学生',msg:'彩虹市的百货公司超好逛！',team:[[84,12],[37,13]],money:300 },
+    { id:'r7_2', name:'精英训练家',msg:'一步都不会让你前进了！',team:[[58,14],[25,13]],money:400 },
   ],
   route8: [
-    { id:'r8_1', name:'精英训练家',msg:'我可是很强的不像外表那样',team:[[81,16],[96,17]],money:400 },
-    { id:'r8_2', name:'超能者',msg:'你的心思被我读透了……',team:[[63,17],[64,18]],money:450 },
+    { id:'r8_1', name:'精英训练家',msg:'我可是很强的不像外表那样',team:[[81,14],[96,15]],money:400 },
+    { id:'r8_2', name:'超能者',msg:'你的心思被我读透了……',team:[[63,15],[64,16]],money:450 },
   ],
   route9: [
-    { id:'r9_1', name:'登山男',msg:'岩石才是我的伙伴！',team:[[74,17],[111,18]],money:380 },
-    { id:'r9_2', name:'精英训练家',msg:'还没完呢！',team:[[98,18],[84,17],[61,19]],money:500 },
+    { id:'r9_1', name:'登山男',msg:'岩石才是我的伙伴！',team:[[74,15],[111,16]],money:380 },
+    { id:'r9_2', name:'精英训练家',msg:'还没完呢！',team:[[98,16],[84,15],[61,17]],money:500 },
   ],
   route10: [
-    { id:'r10_1', name:'电工',msg:'小心高压电！',team:[[100,18],[81,19]],money:400 },
-    { id:'r10_2', name:'研究员',msg:'我在研究宝可梦生态。',team:[[25,19],[125,21]],money:450 },
+    { id:'r10_1', name:'电工',msg:'小心高压电！',team:[[100,16],[81,17]],money:400 },
+    { id:'r10_2', name:'研究员',msg:'我在研究宝可梦生态。',team:[[25,17],[125,19]],money:450 },
   ],
   route11: [
-    { id:'r11_1', name:'少年',msg:'我比看上去强多了！',team:[[19,18],[84,19],[100,20]],money:450 },
-    { id:'r11_2', name:'钓鱼人',msg:'手上的宝可梦你猜得到吗？',team:[[118,19],[119,21]],money:420 },
+    { id:'r11_1', name:'少年',msg:'我比看上去强多了！',team:[[19,16],[84,17],[100,18]],money:450 },
+    { id:'r11_2', name:'钓鱼人',msg:'手上的宝可梦你猜得到吗？',team:[[118,17],[119,19]],money:420 },
   ],
   route15: [
-    { id:'r15_1', name:'女学生',msg:'我已经收集了很多徽章！',team:[[48,20],[64,21],[83,20]],money:500 },
-    { id:'r15_2', name:'精英训练家',msg:'最后的考验！',team:[[106,22],[107,21],[123,23]],money:600 },
+    { id:'r15_1', name:'女学生',msg:'我已经收集了很多徽章！',team:[[48,18],[64,19],[83,18]],money:500 },
+    { id:'r15_2', name:'精英训练家',msg:'最后的考验！',team:[[106,20],[107,19],[123,21]],money:600 },
   ],
   route16: [
-    { id:'r16_1', name:'空手道王',msg:'格斗至上！',team:[[66,21],[56,22],[67,23]],money:520 },
-    { id:'r16_2', name:'超能者',msg:'你没有胜算……',team:[[96,22],[97,24]],money:550 },
+    { id:'r16_1', name:'空手道王',msg:'格斗至上！',team:[[66,19],[56,20],[67,21]],money:520 },
+    { id:'r16_2', name:'超能者',msg:'你没有胜算……',team:[[96,20],[97,22]],money:550 },
   ],
   route20: [
-    { id:'r20_1', name:'泳客',msg:'水温刚好！',team:[[72,23],[120,24],[73,25]],money:550 },
+    { id:'r20_1', name:'泳客',msg:'水温刚好！',team:[[72,21],[120,22],[73,23]],money:550 },
   ],
   route21: [
-    { id:'r21_1', name:'钓鱼人',msg:'从真新镇钓上来的！',team:[[129,8],[118,10]],money:200 },
+    { id:'r21_1', name:'钓鱼人',msg:'从真新镇钓上来的！',team:[[129,6],[118,8]],money:200 },
   ],
   route22: [
-    { id:'r22_1', name:'精英训练家',msg:'常青市的木桥是我的舞台！',team:[[56,5],[21,6]],money:220 },
+    { id:'r22_1', name:'精英训练家',msg:'常青市的木桥是我的舞台！',team:[[56,3],[21,4]],money:220 },
   ],
   route24: [
-    { id:'r24_1', name:'捕虫少年',msg:'虫子才是最强的！',team:[[10,9],[13,10],[14,11]],money:250 },
-    { id:'r24_2', name:'短裤小子',msg:'来对战吧！',team:[[19,10],[29,11]],money:280 },
-    { id:'r24_3', name:'迷你裙',msg:'我每天都在锻炼！',team:[[16,11],[39,12]],money:260 },
+    { id:'r24_1', name:'捕虫少年',msg:'虫子才是最强的！',team:[[10,7],[13,8],[14,9]],money:250 },
+    { id:'r24_2', name:'短裤小子',msg:'来对战吧！',team:[[19,8],[29,9]],money:280 },
+    { id:'r24_3', name:'迷你裙',msg:'我每天都在锻炼！',team:[[16,9],[39,10]],money:260 },
   ],
   ssAnne: [
-    { id:'ss_1', name:'水手',msg:'在海上锻炼出来的男人！',team:[[98,12],[72,13]],money:350 },
-    { id:'ss_2', name:'水手',msg:'风浪越大我心越浪！',team:[[118,14],[120,13]],money:360 },
-    { id:'ss_3', name:'精英训练家',msg:'这艘船上我最强！',team:[[58,16],[25,15],[55,17]],money:500 },
+    { id:'ss_1', name:'水手',msg:'在海上锻炼出来的男人！',team:[[98,10],[72,11]],money:350 },
+    { id:'ss_2', name:'水手',msg:'风浪越大我心越浪！',team:[[118,12],[120,11]],money:360 },
+    { id:'ss_3', name:'精英训练家',msg:'这艘船上我最强！',team:[[58,14],[25,13],[55,15]],money:500 },
   ],
   rocketHideout: [
-    { id:'rh_1', name:'火箭队手下',msg:'你发现了秘密基地！',team:[[19,15],[52,16]],money:300 },
-    { id:'rh_2', name:'火箭队手下',msg:'别想通过这里！',team:[[23,17],[41,18]],money:320 },
-    { id:'rh_3', name:'火箭队干部',msg:'解决这个碍事的家伙！',team:[[109,20],[24,21],[110,22]],money:600 },
+    { id:'rh_1', name:'火箭队手下',msg:'你发现了秘密基地！',team:[[19,13],[52,14]],money:300 },
+    { id:'rh_2', name:'火箭队手下',msg:'别想通过这里！',team:[[23,15],[41,16]],money:320 },
+    { id:'rh_3', name:'火箭队干部',msg:'解决这个碍事的家伙！',team:[[109,18],[24,19],[110,20]],money:600 },
   ],
   victoryRoad: [
-    { id:'vr_1', name:'精英训练家',msg:'这里是冠军之路！',team:[[75,32],[42,33],[34,34]],money:800 },
-    { id:'vr_2', name:'精英训练家',msg:'四天王在等你！',team:[[112,34],[64,35],[22,33]],money:900 },
-    { id:'vr_3', name:'精英训练家',msg:'我不会让你通过的！',team:[[65,36],[94,35],[68,34]],money:1000 },
+    { id:'vr_1', name:'精英训练家',msg:'这里是冠军之路！',team:[[75,30],[42,31],[34,32]],money:800 },
+    { id:'vr_2', name:'精英训练家',msg:'四天王在等你！',team:[[112,32],[64,33],[22,31]],money:900 },
+    { id:'vr_3', name:'精英训练家',msg:'我不会让你通过的！',team:[[65,34],[94,33],[68,32]],money:1000 },
   ],
 }
 
@@ -184,3 +184,254 @@ function getLocation(id) { return LOCATIONS[id] }
 function getLeader(id) { return GYM_LEADERS[id] }
 function getLocationConnections(id) { const l = LOCATIONS[id]; return l ? l[5] : [] }
 function getTrainersForArea(id) { return TRAINERS[id] || [] }
+
+// 关都地图坐标 (用于全屏ASCII地图)
+const MAP_COORDS = {
+  pallet:      { x:28, y:14, icon:'🏠' },
+  viridian:    { x:28, y:10, icon:'🏙' },
+  pewter:      { x:18, y:6,  icon:'🏛' },
+  cerulean:    { x:38, y:6,  icon:'💧' },
+  vermilion:   { x:42, y:12, icon:'⚓' },
+  lavender:    { x:20, y:12, icon:'🗼' },
+  celadon:     { x:12, y:12, icon:'🎰' },
+  saffron:     { x:28, y:8,  icon:'🏢' },
+  fuchsia:     { x:38, y:16, icon:'🎪' },
+  cinnabar:    { x:6,  y:18, icon:'🌋' },
+  indigo:      { x:50, y:4,  icon:'👑' },
+  route1:      { x:28, y:12, icon:'·' },
+  route2:      { x:22, y:8,  icon:'·' },
+  route3:      { x:14, y:6,  icon:'·' },
+  route4:      { x:30, y:6,  icon:'·' },
+  route5:      { x:32, y:8,  icon:'·' },
+  route6:      { x:36, y:12, icon:'·' },
+  route7:      { x:16, y:12, icon:'·' },
+  route8:      { x:20, y:8,  icon:'·' },
+  route9:      { x:34, y:12, icon:'·' },
+  route10:     { x:24, y:12, icon:'·' },
+  route11:     { x:40, y:14, icon:'·' },
+  route12:     { x:30, y:16, icon:'·' },
+  route15:     { x:36, y:16, icon:'·' },
+  route16:     { x:12, y:14, icon:'·' },
+  route17:     { x:24, y:16, icon:'·' },
+  route20:     { x:4,  y:18, icon:'~' },
+  route21:     { x:18, y:18, icon:'~' },
+  route22:     { x:22, y:10, icon:'·' },
+  route23:     { x:50, y:6,  icon:'·' },
+  mtMoon:      { x:22, y:6,  icon:'⛰' },
+  viridianForest:{x:24, y:10, icon:'🌲' },
+  victoryRoad: { x:46, y:6,  icon:'🏔' },
+  billHouse:   { x:44, y:4,  icon:'🏠' },
+  ssAnne:      { x:44, y:12, icon:'🚢' },
+  rocketHideout:{x:10, y:12, icon:'💀' },
+  powerPlant:  { x:24, y:10, icon:'⚡' },
+  seafoamIslands:{x:4, y:16, icon:'❄' },
+  pokemonMansion:{x:6, y:16, icon:'🏚' },
+  ceruleanCave:{ x:42, y:6,  icon:'🕳' },
+  safariZone:  { x:38, y:18, icon:'🦒' },
+}
+
+// ASCII地图渲染
+function renderWorldMap() {
+  const main = $('main')
+  const pos = G.player.position
+  const badge = G.player.badge
+  
+  // 构建地图网格 (52列 x 22行)
+  const W = 54, H = 24
+  const grid = Array.from({length:H}, () => Array(W).fill(' '))
+  
+  // 绘制边框
+  for (let x = 0; x < W; x++) { grid[0][x] = '═'; grid[H-1][x] = '═' }
+  for (let y = 0; y < H; y++) { grid[y][0] = '║'; grid[y][W-1] = '║' }
+  grid[0][0] = '╔'; grid[0][W-1] = '╗'; grid[H-1][0] = '╚'; grid[H-1][W-1] = '╝'
+  
+  // 绘制标题
+  const title = '◆ 关都地区全图 ◆'
+  const titleX = Math.floor((W - title.length) / 2)
+  for (let i = 0; i < title.length; i++) grid[1][titleX + i] = title[i]
+  
+  // 绘制连接线
+  const connections = [
+    [28,14, 28,12], // pallet -> route1
+    [28,12, 28,10], // route1 -> viridian
+    [28,10, 22,10], // viridian -> route22
+    [28,10, 24,10], // viridian -> viridianForest
+    [28,10, 46,6],  // viridian -> victoryRoad
+    [22,8, 18,6],   // route2 -> pewter
+    [18,6, 14,6],   // pewter -> route3
+    [14,6, 22,6],   // route3 -> mtMoon
+    [22,6, 30,6],   // mtMoon -> route4
+    [30,6, 38,6],   // route4 -> cerulean
+    [38,6, 44,4],   // cerulean -> billHouse
+    [38,6, 42,6],   // cerulean -> ceruleanCave
+    [38,6, 32,8],   // cerulean -> route5
+    [38,6, 34,12],  // cerulean -> route9
+    [32,8, 28,8],   // route5 -> saffron
+    [28,8, 20,8],   // saffron -> route8
+    [28,8, 16,12],  // saffron -> route7
+    [28,8, 36,12],  // saffron -> route6
+    [20,8, 12,12],  // route8 -> celadon
+    [16,12, 12,12], // route7 -> celadon
+    [12,12, 10,12], // celadon -> rocketHideout
+    [12,12, 12,14], // celadon -> route16
+    [36,12, 42,12], // route6 -> vermilion
+    [36,12, 20,12], // route6 -> lavender
+    [42,12, 44,12], // vermilion -> ssAnne
+    [42,12, 40,14], // vermilion -> route11
+    [20,12, 24,12], // lavender -> route10
+    [20,12, 30,16], // lavender -> route12
+    [24,12, 38,16], // route10 -> fuchsia
+    [40,14, 38,16], // route11 -> fuchsia
+    [30,16, 38,16], // route12 -> fuchsia
+    [36,16, 38,16], // route15 -> fuchsia
+    [12,14, 24,16], // route16 -> route17
+    [24,16, 38,16], // route17 -> fuchsia
+    [6,18, 4,18],   // cinnabar -> route20
+    [18,18, 6,18],  // route21 -> cinnabar
+    [28,14, 18,18], // pallet -> route21
+    [46,6, 50,6],   // victoryRoad -> route23
+    [50,6, 50,4],   // route23 -> indigo
+    [38,18, 38,16], // safariZone -> fuchsia
+  ]
+  
+  // 绘制连接线
+  for (const [x1,y1,x2,y2] of connections) {
+    if (y1 === y2) {
+      for (let x = Math.min(x1,x2); x <= Math.max(x1,x2); x++) {
+        if (grid[y1][x] === ' ') grid[y1][x] = '─'
+      }
+    } else if (x1 === x2) {
+      for (let y = Math.min(y1,y2); y <= Math.max(y1,y2); y++) {
+        if (grid[y][x1] === ' ') grid[y][x1] = '│'
+      }
+    }
+  }
+  
+  // 绘制地点
+  for (const [id, coord] of Object.entries(MAP_COORDS)) {
+    const loc = LOCATIONS[id]
+    if (!loc) continue
+    const {x, y, icon} = coord
+    const isTown = loc[2] === 'town'
+    const hasGym = loc[4]
+    const isCurrent = id === pos
+    
+    // 确定显示字符
+    let display = icon
+    if (isCurrent) display = '★'
+    else if (isTown && hasGym) {
+      const gymData = GYM_LEADERS[loc[4]]
+      display = gymData && gymData[4] <= badge ? '✔' : '!'
+    } else if (isTown) display = 'T'
+    else if (loc[2] === 'cave') display = 'C'
+    else if (loc[2] === 'water') display = '~'
+    
+    // 绘制地点名（简短版）
+    const shortName = loc[0].substring(0, 2)
+    if (x >= 0 && x < W && y >= 0 && y < H) {
+      grid[y][x] = display
+      // 在旁边写名字（如果有空间）
+      if (x + 2 < W - 1) {
+        grid[y][x+1] = shortName[0] || ''
+        grid[y][x+2] = shortName[1] || ''
+      }
+    }
+  }
+  
+  // 转换为HTML
+  let html = '<pre class="world-map">'
+  for (let y = 0; y < H; y++) {
+    html += grid[y].join('') + '\n'
+  }
+  html += '</pre>'
+  
+  // 图例
+  html += `
+    <div class="map-legend">
+      <span class="legend-item"><span class="legend-icon">★</span> 当前位置</span>
+      <span class="legend-item"><span class="legend-icon">T</span> 城镇</span>
+      <span class="legend-item"><span class="legend-icon">!</span> 未通过道馆</span>
+      <span class="legend-item"><span class="legend-icon">✔</span> 已通过道馆</span>
+      <span class="legend-item"><span class="legend-icon">·</span> 道路</span>
+    </div>
+  `
+  
+  // 详细信息面板
+  html += renderMapInfo()
+  
+  main.innerHTML = html
+  $('actions').innerHTML = '<button class="btn" onclick="G.view=\'explore\';render()">↩ 返回</button>'
+}
+
+// 地图详细信息
+function renderMapInfo() {
+  const pos = G.player.position
+  const loc = LOCATIONS[pos]
+  if (!loc) return ''
+  
+  const badge = G.player.badge
+  const pkmLevel = G.player.pokemon.length > 0 ? Math.max(...G.player.pokemon.map(p => p.level)) : 1
+  
+  let html = '<div class="map-info-panel">'
+  
+  // 当前位置
+  html += `<div class="map-info-section">`
+  html += `<div class="map-info-title">📍 当前位置</div>`
+  html += `<div class="map-info-content">${loc[0]} (${loc[2] === 'town' ? '城镇' : loc[2] === 'cave' ? '洞穴' : loc[2] === 'water' ? '水道' : '道路'})</div>`
+  html += `</div>`
+  
+  // 道馆进度
+  html += `<div class="map-info-section">`
+  html += `<div class="map-info-title">🏛 道馆进度 (${badge}/8)</div>`
+  html += `<div class="map-info-content">`
+  const gymOrder = ['brock','misty','ltSurge','erika','sabrina','koga','blaine','giovanni']
+  const gymNames = ['深灰','华蓝','枯叶','彩虹','金黄','浅红','红莲','常青']
+  for (let i = 0; i < gymOrder.length; i++) {
+    const g = GYM_LEADERS[gymOrder[i]]
+    const status = g[4] <= badge ? '✔' : '○'
+    html += `<span class="gym-badge ${g[4] <= badge ? 'completed' : ''}">[${status}]${gymNames[i]}</span> `
+  }
+  html += `</div></div>`
+  
+  // 等级推荐
+  html += `<div class="map-info-section">`
+  html += `<div class="map-info-title">🎯 等级推荐</div>`
+  html += `<div class="map-info-content">当前 Lv.${pkmLevel} → `
+  if (pkmLevel <= 10) html += '推荐区域：真新镇周边(2-8级)'
+  else if (pkmLevel <= 15) html += '推荐区域：华蓝市周边(8-14级)'
+  else if (pkmLevel <= 20) html += '推荐区域：枯叶市周边(14-20级)'
+  else if (pkmLevel <= 25) html += '推荐区域：彩虹市周边(20-26级)'
+  else if (pkmLevel <= 30) html += '推荐区域：浅红市周边(26-32级)'
+  else if (pkmLevel <= 35) html += '推荐区域：红莲镇周边(32-36级)'
+  else html += '推荐区域：冠军之路(34-40级)'
+  html += `</div></div>`
+  
+  // 主线任务
+  html += `<div class="map-info-section">`
+  html += `<div class="map-info-title">📋 主线任务</div>`
+  html += `<div class="map-info-content">`
+  const q = getCurrentQuest()
+  if (q) html += `${q.name} - ${q.guidance}`
+  else html += '所有主线任务已完成！'
+  html += `</div></div>`
+  
+  // 宝可梦分布
+  html += `<div class="map-info-section">`
+  html += `<div class="map-info-title">🐾 周边宝可梦</div>`
+  html += `<div class="map-info-content">`
+  const connections = loc[5] || []
+  for (const conn of connections.slice(0, 3)) {
+    const cLoc = LOCATIONS[conn]
+    if (!cLoc || !cLoc[6]) continue
+    const enc = cLoc[6]
+    const common = enc.common.ids.slice(0, 3).map(id => {
+      const p = getPokemonData(id)
+      return p ? p[1] : '?'
+    }).join('/')
+    html += `<div class="pokemon-area">${cLoc[0]}: ${common} (Lv.${enc.common.lv[0]}-${enc.common.lv[1]})</div>`
+  }
+  html += `</div></div>`
+  
+  html += `</div>`
+  return html
+}

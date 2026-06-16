@@ -50,11 +50,11 @@ function startChampionBattle() {
       return '★ ★ ★ 你击败了冠军小茂，成为了新的宝可梦联盟冠军！★ ★ ★'
     },
   }, [
-    createPokemon(18, 54),
-    createPokemon(59, 54),
-    createPokemon(112, 53),
-    createPokemon(103, 52),
-    createPokemon(130, 52),
+    createPokemon(18, 50),
+    createPokemon(59, 50),
+    createPokemon(112, 49),
+    createPokemon(103, 48),
+    createPokemon(130, 48),
   ])) return false
   G.battle.battleMsg = '冠军小茂：你终于来了！冠军是我的！'
   return true
@@ -245,7 +245,7 @@ function playerAttack(moveIndex, skipTurnCheck) {
 function battleVictory() {
   const b = G.battle; if (!b) return
   const totalExp = b.enemyTeam.reduce((s,p) => {
-    const d = getPokemonData(p.id); return s + Math.floor(p.level * (d ? d[9] : 60) / 7)
+    const d = getPokemonData(p.id); return s + Math.floor(p.level * (d ? d[9] : 60) / 5)
   }, 0)
   let msg = '你获得了胜利！'
   if (b.type === 'gym') {
@@ -512,9 +512,9 @@ function useItem(itemKey) {
     if (G.battle && G.battle.turn === 'player') {
       G.battle.turn = 'enemy'
       G.battle.subState = 'main'
-      G.battle.battleMsg = `使用了 ${item.name}！`
+      G.battle.battleMsg = `使用了 ${item.name}，${target.name} 的HP回复了！`
       render()
-      setTimeout(enemyTurn, 500)
+      setTimeout(enemyTurn, 800)
     }
     saveGame()
   }
