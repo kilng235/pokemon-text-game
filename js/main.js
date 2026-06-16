@@ -48,6 +48,14 @@ function selectStarter(id) {
 function travelTo(key) {
   const loc = getLocation(key)
   if (!loc) { addLog('无法到达那里。'); render(); return }
+  if (key === 'ssAnne' && (!G.player.items.sailTicket || G.player.items.sailTicket <= 0)) {
+    addLog('港口的工作人员拦住了你："没有船票不能登船。"')
+    render(); return
+  }
+  if (key === 'ceruleanCave' && G.player.badge < 8) {
+    addLog('洞穴入口被强大的封印挡住了……需要集齐所有徽章才能进入。')
+    render(); return
+  }
   G.player.position = key
   updateQuest()
   G.view = 'explore'; saveGame(); render()

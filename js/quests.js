@@ -34,19 +34,19 @@ const QUESTS = {
     id: 'get_package', name: '领取包裹',
     desc: '去友好商店领取大木博士的包裹',
     guidance: '去常青市的友好商店取一个包裹。',
-    check: () => G.storyFlags.gotPackage,
+    check: () => G.player.badge >= 1 || G.storyFlags.gotPackage,
   },
   deliver_package: {
     id: 'deliver_package', name: '交付包裹',
     desc: '把包裹送回大木博士的研究所',
     guidance: '把包裹带回真新镇的大木博士研究所。',
-    check: () => G.storyFlags.deliveredPackage,
+    check: () => G.player.badge >= 1 || G.storyFlags.deliveredPackage,
   },
   get_pokedex: {
     id: 'get_pokedex', name: '获得图鉴',
     desc: '从大木博士那里获得宝可梦图鉴',
     guidance: '大木博士给了你宝可梦图鉴！可以记录遇到的宝可梦了。',
-    check: () => G.storyFlags.gotPokedex,
+    check: () => G.player.badge >= 1 || G.storyFlags.gotPokedex,
   },
   go_pewter: {
     id: 'go_pewter', name: '前往深灰市',

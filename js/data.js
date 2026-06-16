@@ -232,6 +232,8 @@ const ITEMS = {
   hyperPotion: { name:'厉害伤药', desc:'回复120HP', price:1500, heal:120 },
   fullHeal: { name:'全回复药', desc:'完全回复HP', price:2500, heal:999 },
   revive: { name:'活力碎片', desc:'回复濒死宝可梦50%HP', price:1500, heal:.5, revive:true },
+  sailTicket: { name:'船票', desc:'圣安奴号的船票', type:'key' },
+  cutHM: { name:'HM01居合术', desc:'秘传机01——居合斩', type:'key' },
 }
 
 const POKE_NAMES = POKEMON.map(p=>p[1])

@@ -171,9 +171,10 @@ function renderBattle() {
   } else if (b.subState === 'item') {
     let html = ''
     for (const [key, val] of Object.entries(ITEMS)) {
+      if (val.type === 'key') continue
       const c = G.player.items[key] || 0
       if (c <= 0) continue
-      html += `<button class="btn" onclick="useItemInBattle('${key}')">${val.name} x${c}</button>`
+      html += `<button class="btn" onclick="useItemInBattle('${key}")">${val.name} x${c}</button>`
     }
     html += '<button class="btn" onclick="battleSub(\'main\')">↩ 返回</button>'
     actions.innerHTML = html
@@ -291,6 +292,7 @@ function renderShop() {
     <p>当前余额：¥${G.player.money}</p>`
   const list = main.querySelector('.shop-list')
   for (const [key, val] of Object.entries(ITEMS)) {
+    if (val.type === 'key') continue
     list.innerHTML += `
       <div class="item-row">
         <span>${val.name}</span>

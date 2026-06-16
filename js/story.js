@@ -159,6 +159,71 @@ const STORY_EVENTS = {
     },
   },
 
+  // 海角小屋 - 正辉的求助
+  billHouse: {
+    location: 'billHouse',
+    condition: () => !G.storyFlags.billDone,
+    dialogue: [
+      { speaker: '', text: '你走进了海角小屋……' },
+      { speaker: '', text: '咦？桌上有一只奇怪的宝可梦——等等，那不是宝可梦！' },
+      { speaker: '正辉', text: '救命啊！我被传输装置卡住了！！快帮我按下电脑！' },
+      { speaker: '', text: '你按下了电脑上的传输按钮……' },
+      { speaker: '', text: '——哔哔——传输完成——' },
+      { speaker: '正辉', text: '哦！终于得救了！谢谢你救了我！' },
+      { speaker: '正辉', text: '作为谢礼，这张圣安奴号的船票给你吧！枯叶港口的船就要出发了！' },
+    ],
+    battle: null,
+    onFinish: () => {
+      G.storyFlags.billDone = true
+      G.player.items.sailTicket = (G.player.items.sailTicket || 0) + 1
+      addLog('获得了圣安奴号的船票！')
+      return '正辉感谢你的帮助，送给你一张圣安奴号的船票！'
+    },
+  },
+
+  // 圣安奴号 - 船长的挑战
+  ssAnne: {
+    location: 'ssAnne',
+    condition: () => G.storyFlags.billDone && !G.storyFlags.ssAnneDone,
+    dialogue: [
+      { speaker: '', text: '你登上了圣安奴号！' },
+      { speaker: '', text: '甲板上正在举行盛大的宴会，到处都是训练家。' },
+      { speaker: '', text: '你一路击败了挑战者，来到了船长室……' },
+      { speaker: '', text: '船长正痛苦地躺在椅子上。' },
+      { speaker: '船长', text: '呜……我晕船了……' },
+      { speaker: '船长', text: '年轻的训练家啊，来和我对战吧！也许转移注意力会好受些！' },
+    ],
+    battle: { name: '船长', team: [[72,18], [98,20], [120,22]] },
+    battleType: 'story',
+    onFinish: () => {
+      G.storyFlags.ssAnneDone = true
+      G.player.money += 500
+      G.player.items.cutHM = (G.player.items.cutHM || 0) + 1
+      return '击败了晕船的船长！获得了HM01居合术！获得 ¥500！'
+    },
+  },
+
+  // 火箭队秘密基地 - 坂木登场
+  rocketHideout: {
+    location: 'rocketHideout',
+    condition: () => G.player.badge >= 4 && !G.storyFlags.rocketHideoutDone,
+    dialogue: [
+      { speaker: '', text: '你在彩虹市游戏厅发现了一条隐秘的楼梯……' },
+      { speaker: '', text: '地下竟然别有洞天！这是一个巨大的火箭队基地！' },
+      { speaker: '火箭队手下', text: '有人入侵！！干掉他！' },
+      { speaker: '', text: '你一路击倒守卫，来到了最深处……' },
+      { speaker: '坂木', text: '哼……竟然能来到这里，有点本事。' },
+      { speaker: '坂木', text: '但你也就到此为止了！' },
+    ],
+    battle: { name: '坂木', team: [[52,25], [111,27], [34,29]] },
+    battleType: 'story',
+    onFinish: () => {
+      G.storyFlags.rocketHideoutDone = true
+      G.player.money += 1000
+      return '坂木撤退了！火箭队秘密基地被摧毁！获得 ¥1000！'
+    },
+  },
+
   // 联盟 - 四天王
   eliteFour: {
     location: 'indigo',
