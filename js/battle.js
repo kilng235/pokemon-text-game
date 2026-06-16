@@ -450,9 +450,11 @@ function findNearestCenter() {
 }
 
 function tryCapture() {
-  const b = G.battle; if (!b || b.type !== 'wild' || !b.enemy) return
-  const ball = G.bagView === 'superball' ? 'superball' : G.bagView === 'ultraball' ? 'ultraball' : 'pokeball'
+  const b = G.battle; if (!b || !b.enemy) return
+  if (b.type !== 'wild') { addLog('不能在训练家对战中使用精灵球！'); return }
+  let ball = G.bagView === 'superball' ? 'superball' : G.bagView === 'ultraball' ? 'ultraball' : G.bagView === 'safariBall' ? 'safariBall' : 'pokeball'
   if (!G.player.items[ball] || G.player.items[ball] <= 0) { addLog('没有这个球了！'); return }
+  if (ball === 'safariBall' && G.player.position !== 'safariZone') { addLog('狩猎球只能在狩猎地带使用！'); return }
   G.player.items[ball]--
   const item = ITEMS[ball]
   const base = getPokemonData(b.enemy.id)
@@ -483,6 +485,9 @@ function tryFlee() {
 function useItem(itemKey) {
   const item = ITEMS[itemKey]; if (!item) return
   if (!G.player.items[itemKey] || G.player.items[itemKey] <= 0) { addLog('没有这个道具了！'); return }
+  if (item.catchRate && G.player.position === 'safariZone') {
+    G.bagView = 'safariBall'; tryCapture(); render(); return
+  }
   if (item.catchRate) {
     G.bagView = itemKey; tryCapture(); render(); return
   }
@@ -504,7 +509,13 @@ function useItem(itemKey) {
       target.hp += heal
       addLog(`使用了 ${item.name}，${target.name} 回复了 ${heal}HP！`)
     }
-    if (G.battle && G.battle.turn === 'player') { G.battle.turn = 'enemy'; setTimeout(enemyTurn, 500) }
+    if (G.battle && G.battle.turn === 'player') {
+      G.battle.turn = 'enemy'
+      G.battle.subState = 'main'
+      G.battle.battleMsg = `使用了 ${item.name}！`
+      render()
+      setTimeout(enemyTurn, 500)
+    }
     saveGame()
   }
 }

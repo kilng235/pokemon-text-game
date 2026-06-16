@@ -272,6 +272,25 @@ const STORY_EVENTS = {
       return '交付了包裹！从大木博士那里获得了宝可梦图鉴！'
     },
   },
+
+  // 浅红市 — 狩猎地带
+  safariZone: {
+    location: 'safariZone',
+    condition: () => !G.storyFlags.safariDone,
+    dialogue: [
+      { speaker: '', text: '你来到了狩猎地带的入口……' },
+      { speaker: '公园管理人', text: '欢迎来到狩猎地带！' },
+      { speaker: '公园管理人', text: '这里是关都最大的野生宝可梦保护区。' },
+      { speaker: '公园管理人', text: '这里有很多稀有的宝可梦，好好探索吧！' },
+      { speaker: '', text: '你在狩猎地带里四处探索，发现了许多珍贵的宝可梦！' },
+    ],
+    battle: null,
+    onFinish: () => {
+      G.storyFlags.safariDone = true
+      G.player.items.safariBall = (G.player.items.safariBall || 0) + 30
+      return '探索了狩猎地带！获得了30个狩猎球！'
+    },
+  },
 }
 
 // 战斗后事件触发

@@ -240,6 +240,7 @@ const ITEMS = {
   revive: { name:'活力碎片', desc:'回复濒死宝可梦50%HP', price:1500, heal:.5, revive:true },
   sailTicket: { name:'船票', desc:'圣安奴号的船票', type:'key' },
   cutHM: { name:'HM01居合术', desc:'秘传机01——居合斩', type:'key' },
+  safariBall: { name:'狩猎球', desc:'狩猎地带专用球', price:0, catchRate:1.5, type:'safari' },
 }
 
 const POKE_NAMES = POKEMON.map(p=>p[1])
