@@ -351,6 +351,10 @@ function renderMap() {
       html += '</div>'
     }
     html += '<div class="map-stats">seen:' + G.player.seen.length + '/151 badge:' + G.player.badge + '/8 $' + G.player.money + '</div>'
+    const q = getCurrentQuest()
+    if (q) {
+      html += '<div class="quest-panel"><div class="quest-title">📋 ' + q.name + '</div><div class="quest-guide">' + q.guidance + '</div><div class="quest-progress">' + getQuestProgress() + '</div></div>'
+    }
     panel.innerHTML = html
   } catch(e) {
     const panel = $('map-panel')

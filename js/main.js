@@ -1,5 +1,6 @@
 function startNewGame() {
   resetGame()
+  initQuests()
   G.dialogue = {
     lines: [
       { speaker: '', text: '你走进了大木博士的研究所……' },
@@ -16,8 +17,10 @@ function startNewGame() {
 }
 
 function continueGame() {
-  if (loadGame()) { G.view = G.battle ? 'battle' : 'explore'; render() }
-  else { addLog('没有找到存档。'); render() }
+  if (loadGame()) {
+    initQuests(); updateQuest()
+    G.view = G.battle ? 'battle' : 'explore'; render()
+  } else { addLog('没有找到存档。'); render() }
 }
 
 function selectStarter(id) {
@@ -26,6 +29,7 @@ function selectStarter(id) {
   G.player.items = { pokeball:10, potion:5, superball:3 }
   trackSeen(id)
   addLog(`你选择了 ${pkm.name}！`)
+  updateQuest()
   G.dialogue = {
     lines: [
       { speaker: '', text: '这时一个人冲了进来！' },
@@ -45,6 +49,7 @@ function travelTo(key) {
   const loc = getLocation(key)
   if (!loc) { addLog('无法到达那里。'); render(); return }
   G.player.position = key
+  updateQuest()
   G.view = 'explore'; saveGame(); render()
   // 自动遇敌（非城镇）
   if (loc[2] !== 'town') {

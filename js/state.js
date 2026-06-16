@@ -11,6 +11,7 @@ function createInitialState() {
     },
     battle: null, bagView: 'use', pokedexDetail: null,
     storyFlags: {},
+    quests: { current: 'choose_starter', completed: [] },
     logs: ['欢迎来到宝可梦世界！'],
   }
 }
@@ -30,6 +31,7 @@ function loadGame() {
       if (!G.player.seen) G.player.seen = []
       if (!G.player.trainersDefeated) G.player.trainersDefeated = []
       if (!G.storyFlags) G.storyFlags = {}
+      if (!G.quests) G.quests = { current: 'choose_starter', completed: [] }
       for (const p of [...G.player.pokemon, ...(G.player.pc||[])]) {
         if (!p.ivs) p.ivs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
         if (!p.evs) p.evs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }

@@ -1,3 +1,13 @@
+function getScaledLevel(baseMin, baseMax) {
+  if (G.player.pokemon.length === 0) return baseMin + Math.floor(Math.random() * (baseMax - baseMin + 1))
+  const playerMax = Math.max(...G.player.pokemon.map(p => p.level), 1)
+  const center = (baseMin + baseMax) / 2
+  const bias = (playerMax - center) * 0.4
+  const adjMin = Math.max(2, Math.round(baseMin + bias))
+  const adjMax = Math.max(adjMin, Math.min(Math.round(baseMax + bias), playerMax + 2))
+  return adjMin + Math.floor(Math.random() * (adjMax - adjMin + 1))
+}
+
 function startWildBattle() {
   const area = LOCATIONS[G.player.position]
   if (!area || !area[6]) return false
@@ -9,8 +19,7 @@ function startWildBattle() {
   else tier = 'rare'
   const pool = en[tier]
   const id = pool.ids[Math.floor(Math.random() * pool.ids.length)]
-  const [min, max] = pool.lv
-  const level = min + Math.floor(Math.random() * (max - min + 1))
+  const level = getScaledLevel(pool.lv[0], pool.lv[1])
   return startBattle('wild', null, [createPokemon(id, level)])
 }
 
@@ -215,6 +224,7 @@ function battleVictory() {
       const r = b.extra.onFinish(); if (r) msg = r
     }
   }
+  updateQuest()
   G.battle = null; saveGame(); render()
 }
 

@@ -41,6 +41,10 @@ body {
 .map-conn-dot { color:#003a10; margin:0 2px; }
 .map-type { font-size:10px; color:#006a1a; }
 .map-stats { margin-top:6px; padding-top:4px; border-top:1px solid #003a10; font-size:10px; color:#005a1a; line-height:1.5; }
+.quest-panel { margin-top:6px; padding:6px; border:1px solid #0a3a0a; background:#050f05; font-size:10px; line-height:1.5; }
+.quest-title { color:#ffcc00; font-weight:bold; font-size:11px; margin-bottom:3px; }
+.quest-guide { color:#00aa33; font-size:10px; margin-bottom:2px; }
+.quest-progress { color:#005a1a; font-size:9px; text-align:right; }
 
 .start-box { text-align:center; }
 .title-art { font-size:11px; line-height:1.3; color:#00ff41; margin-bottom:10px; }
