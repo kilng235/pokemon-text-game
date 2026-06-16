@@ -58,6 +58,15 @@ function travelTo(key) {
   }
   G.player.position = key
   updateQuest()
+  // 城镇剧情触发
+  if (loc[2] === 'town') {
+    const storyKey = checkStoryTrigger(key)
+    if (storyKey) {
+      const ev = STORY_EVENTS[storyKey]
+      G.dialogue = { eventKey: storyKey, lines: ev.dialogue, index: 0, battle: ev.battle !== null, canSkip: false }
+      G.view = 'dialogue'; render(); return
+    }
+  }
   G.view = 'explore'; saveGame(); render()
   // 自动遇敌（非城镇）
   if (loc[2] !== 'town') {
@@ -178,7 +187,28 @@ function confirmMove() {
   const idx = b.selectedMove
   b.selectedMove = undefined
   b.subState = 'main'
-  playerAttack(idx)
+
+  const pkm = getActivePokemon()
+  if (!pkm || !b.enemy) { render(); return }
+
+  // Check player status first
+  if (pkm.status && checkStatusSkip(pkm)) {
+    b.turn = 'enemy'; setTimeout(enemyTurn, 500); render(); return
+  }
+
+  // Speed-based turn order
+  const pSpe = pkm.spe + (pkm.tempDebuffs?.spe || 0)
+  const eSpe = b.enemy.spe + (b.enemy.tempDebuffs?.spe || 0)
+  const playerFirst = pSpe > eSpe || (pSpe === eSpe && Math.random() < 0.5)
+
+  if (playerFirst) {
+    playerAttack(idx)
+  } else {
+    syncEnemyAttack()
+    if (G.battle && !allFainted()) {
+      playerAttack(idx, true)
+    }
+  }
   render()
 }
 

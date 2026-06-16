@@ -236,6 +236,42 @@ const STORY_EVENTS = {
     battle: true, // 用于触发战斗按钮
     onFinish: null,
   },
+
+  // 华蓝市 — 领取包裹
+  getPackage: {
+    location: 'cerulean',
+    condition: () => !G.storyFlags.gotPackage,
+    dialogue: [
+      { speaker: '店员', text: '你好！你是大木博士派来的吧？' },
+      { speaker: '店员', text: '这有一个寄给大木博士的包裹，请帮忙转交给他。' },
+      { speaker: '', text: '获得了大木博士的包裹！' },
+    ],
+    battle: null,
+    onFinish: () => {
+      G.storyFlags.gotPackage = true
+      G.player.items.pokeball = (G.player.items.pokeball || 0) + 5
+      return '从店员那里领取了大木博士的包裹！还获得了5个精灵球作为谢礼！'
+    },
+  },
+
+  // 真新镇 — 交付包裹 + 获得图鉴
+  deliverPackage: {
+    location: 'pallet',
+    condition: () => G.storyFlags.gotPackage && !G.storyFlags.deliveredPackage,
+    dialogue: [
+      { speaker: '大木博士', text: '哦！你回来了！' },
+      { speaker: '大木博士', text: '那是我的包裹！真是帮了大忙了！' },
+      { speaker: '大木博士', text: '作为谢礼，我送你这台宝可梦图鉴！' },
+      { speaker: '大木博士', text: '它会自动记录你遇到的宝可梦信息。' },
+      { speaker: '', text: '获得了宝可梦图鉴！' },
+    ],
+    battle: null,
+    onFinish: () => {
+      G.storyFlags.deliveredPackage = true
+      G.storyFlags.gotPokedex = true
+      return '交付了包裹！从大木博士那里获得了宝可梦图鉴！'
+    },
+  },
 }
 
 // 战斗后事件触发

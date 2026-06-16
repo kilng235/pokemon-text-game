@@ -29,6 +29,11 @@ const MOVES = [
   [76,'火焰拳','火',75,15,'用火焰之拳攻击'],[77,'抓','普通',25,35,'用爪子抓对手'],
 ]
 
+// 招式命中率（默认100%）
+const MOVE_ACCURACY = {
+  24: 75, 25: 75, 58: 60, 62: 95,
+}
+
 // 宝可梦数据 [id, name, types_str, hp,atk,def,spa,spd,spe, catchRate, exp, [evoLvl,evoTo]|null, [moveIds]]
 const POKEMON = [
   [1,'妙蛙种子','草,毒',45,49,49,65,65,45,45,64,[16,2],[1,27,21,24]],

@@ -36,6 +36,9 @@ function loadGame() {
         if (!p.ivs) p.ivs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
         if (!p.evs) p.evs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
         if (p.status === undefined) p.status = null
+        if (p.accuracy === undefined) p.accuracy = 100
+        if (p.evasion === undefined) p.evasion = 100
+        if (!p.tempDebuffs) p.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0 }
         if (p.moves) for (const m of p.moves) {
           if (m.effect === undefined) { const md = getMoveData(m.id); m.effect = md ? (md[6] || null) : null }
           if (m.desc === undefined) { const md = getMoveData(m.id); m.desc = md ? (md[5] || '') : '' }
@@ -95,6 +98,7 @@ function createPokemon(id, level, movesOverride) {
     }).filter(Boolean),
     exp: 0, nextLevel: Math.floor(level ** 3 * 0.8 + 10),
     ivs, evs, status: null, fainted: false,
+    accuracy: 100, evasion: 100, tempDebuffs: { accuracy: 0, evasion: 0, spe: 0 },
   }
 }
 
@@ -174,6 +178,7 @@ function getActivePokemon() { return G.player.pokemon.find(p => isPokemonUsable(
 function healAll() {
   for (const p of G.player.pokemon) {
     p.hp = p.maxHp; p.fainted = false; p.status = null
+    if (p.tempDebuffs) p.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0 }
     for (const m of p.moves) m.currentPp = m.pp
   }
 }

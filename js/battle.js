@@ -121,6 +121,12 @@ function handleStatusEffect(target, effect) {
   } else if (effect === 'paralyze') {
     target.status = { type: 'paralyze' }
     addLog(`${target.name} 麻痹了！`); return true
+  } else if (effect === 'accuracyDown') {
+    target.tempDebuffs.accuracy = Math.max(-50, target.tempDebuffs.accuracy - 20)
+    addLog(`${target.name} 的命中率降低了！`); return true
+  } else if (effect === 'speedDown') {
+    target.tempDebuffs.spe = Math.max(-50, target.tempDebuffs.spe - 20)
+    addLog(`${target.name} 的速度降低了！`); return true
   }
   return false
 }
@@ -138,6 +144,15 @@ function checkStatusSkip(pkm) {
 }
 
 function calcDamage(atkPkm, defPkm, move) {
+  // 命中判定
+  const baseAcc = MOVE_ACCURACY[move.id] || 100
+  const effAcc = atkPkm.accuracy + (atkPkm.tempDebuffs?.accuracy || 0)
+  const effEva = defPkm.evasion + (defPkm.tempDebuffs?.evasion || 0)
+  const hitChance = baseAcc * (effAcc / effEva)
+  if (Math.random() * 100 >= hitChance) {
+    addLog(`${atkPkm.name} 的 ${move.name} 没有命中！`)
+    return { damage: 0, effectiveness: 0, missed: true }
+  }
   const isSp = ['火','水','草','电','冰','超能','幽灵','龙','恶'].includes(move.type)
   const atkStat = isSp ? atkPkm.spa : atkPkm.atk
   const defStat = isSp ? defPkm.spd : defPkm.def
@@ -152,11 +167,12 @@ function calcDamage(atkPkm, defPkm, move) {
   else if (eff === 0) msg += ' 对对手没有效果…'
   else if (move.power === 0) msg = `${atkPkm.name} 使用了 ${move.name}！`
   addLog(msg)
-  return { damage, effectiveness: eff }
+  return { damage, effectiveness: eff, missed: false }
 }
 
-function playerAttack(moveIndex) {
-  const b = G.battle; if (!b || b.turn !== 'player') return
+function playerAttack(moveIndex, skipTurnCheck) {
+  const b = G.battle; if (!b) return
+  if (!skipTurnCheck && b.turn !== 'player') return
   const pkm = getActivePokemon(); if (!pkm) return
 
   // Check player status
@@ -171,8 +187,19 @@ function playerAttack(moveIndex) {
 
   const result = calcDamage(pkm, b.enemy, move)
 
+  if (result.missed) {
+    b.battleMsg = '没有命中！'
+    if (skipTurnCheck) { b.turn = 'player'; render(); return }
+    b.turn = 'enemy'; setTimeout(enemyTurn, 500); return
+  }
+
   // Apply status effects (sleep/paralyze)
   if (result.effectiveness > 0 && move.effect && ['sleep','paralyze'].includes(move.effect)) {
+    handleStatusEffect(b.enemy, move.effect)
+  }
+
+  // Apply debuff effects
+  if (result.effectiveness > 0 && move.effect && ['accuracyDown','speedDown'].includes(move.effect)) {
     handleStatusEffect(b.enemy, move.effect)
   }
 
@@ -194,6 +221,7 @@ function playerAttack(moveIndex) {
     b.enemyIndex++
     if (b.enemyIndex < b.enemyTeam.length) {
       b.enemy = b.enemyTeam[b.enemyIndex]; b.enemy.hp = b.enemy.maxHp; b.enemy.status = null
+      b.enemy.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0 }
       let prefix = '', msg = ''
       if (b.type === 'trainer') { prefix = `${b.extra.trainer.name} 派出了 `; msg = `${b.extra.trainer.name}：去吧！` }
       else if (b.type === 'gym') { prefix = `${b.extra.data[1]} 派出了 `; msg = `${b.extra.data[1]}：哼！` }
@@ -207,6 +235,9 @@ function playerAttack(moveIndex) {
     } else {
       battleVictory(); return
     }
+  }
+  if (skipTurnCheck) {
+    b.turn = 'player'; render(); return
   }
   b.turn = 'enemy'; setTimeout(enemyTurn, 500)
 }
@@ -270,7 +301,68 @@ function battleVictory() {
     }
   }
   updateQuest()
+  for (const p of G.player.pokemon) if (p.tempDebuffs) p.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0 }
   G.battle = null; saveGame(); render()
+}
+
+function syncEnemyAttack() {
+  const b = G.battle; if (!b || !b.enemy || b.enemy.fainted) return false
+  const pkm = getActivePokemon(); if (!pkm) {
+    addLog('你没有能战斗的宝可梦了！')
+    if (b.type === 'wild') { addLog('你飞回了宝可梦中心…'); healAll(); G.player.position = findNearestCenter() }
+    else { addLog(`你输给了 ${b.type === 'trainer' ? b.extra.trainer.name : b.type === 'gym' ? b.extra.data[1] : b.extra ? b.extra.name : '对手'}……`) }
+    G.battle = null; saveGame(); return false
+  }
+
+  if (b.enemy.status && checkStatusSkip(b.enemy)) {
+    b.battleMsg = `${b.enemy.name} 无法行动……`; return false
+  }
+
+  const usable = b.enemy.moves.filter(m => m.currentPp > 0)
+  if (!usable.length) { return false }
+  const move = usable[Math.floor(Math.random() * usable.length)]
+  move.currentPp--
+
+  if (move.effect && ['sleep','paralyze'].includes(move.effect)) {
+    const eff = getEffectiveness(move.type, pkm.types)
+    if (eff > 0) handleStatusEffect(pkm, move.effect)
+    b.battleMsg = `对方使用了 ${move.name}！`; return true
+  }
+
+  if (move.effect && ['accuracyDown','speedDown'].includes(move.effect)) {
+    const eff = getEffectiveness(move.type, pkm.types)
+    if (eff > 0) handleStatusEffect(pkm, move.effect)
+    b.battleMsg = `对方使用了 ${move.name}！`; return true
+  }
+
+  const result = calcDamage(b.enemy, pkm, move)
+  if (result.missed) { b.battleMsg = '没有命中！'; return true }
+
+  if (move.effect === 'drain' && result.damage > 0) {
+    const heal = Math.max(1, Math.floor(result.damage * 0.5))
+    b.enemy.hp = Math.min(b.enemy.maxHp, b.enemy.hp + heal)
+    addLog(`${b.enemy.name} 回复了 ${heal} HP！`)
+  }
+
+  if (result.effectiveness >= 2) b.battleMsg = '效果拔群！'
+  else if (result.effectiveness === 0) b.battleMsg = '没有效果…'
+  else if (result.effectiveness < 1) b.battleMsg = '效果不太好…'
+  else b.battleMsg = `对方使用了 ${move.name}！`
+
+  pkm.hp -= result.damage
+  if (pkm.hp <= 0) {
+    pkm.hp = 0; pkm.fainted = true
+    addLog(`${pkm.name} 倒下了！`)
+    const next = getActivePokemon()
+    if (next) { addLog(`上吧！${next.name}！`); b.subState = 'main' }
+    else {
+      addLog('所有宝可梦都失去了战斗能力……')
+      if (b.type === 'wild') { addLog('你飞回了宝可梦中心…'); healAll(); G.player.position = findNearestCenter() }
+      else { addLog(`你输给了 ${b.type === 'trainer' ? b.extra.trainer.name : b.type === 'gym' ? b.extra.data[1] : b.extra ? b.extra.name : '对手'}……`) }
+      G.battle = null; saveGame(); return false
+    }
+  }
+  return true
 }
 
 function enemyTurn() {
@@ -305,7 +397,16 @@ function enemyTurn() {
     b.turn = 'player'; render(); return
   }
 
+  // Handle enemy debuff moves
+  if (move.effect && ['accuracyDown','speedDown'].includes(move.effect)) {
+    const eff = getEffectiveness(move.type, pkm.types)
+    if (eff > 0) handleStatusEffect(pkm, move.effect)
+    b.battleMsg = `对方使用了 ${move.name}！`
+    b.turn = 'player'; render(); return
+  }
+
   const result = calcDamage(b.enemy, pkm, move)
+  if (result.missed) { b.battleMsg = '没有命中！'; b.turn = 'player'; render(); return }
 
   // Handle enemy drain moves
   if (move.effect === 'drain' && result.damage > 0) {
