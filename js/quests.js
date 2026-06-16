@@ -33,8 +33,8 @@ const QUESTS = {
   get_package: {
     id: 'get_package', name: '领取包裹',
     desc: '去友好商店领取大木博士的包裹',
-    guidance: '去常青市的友好商店取一个包裹。',
-    check: () => G.player.badge >= 1 || G.storyFlags.gotPackage,
+    guidance: '去华蓝市的友好商店取一个包裹。',
+    check: () => G.storyFlags.gotPackage,
   },
   deliver_package: {
     id: 'deliver_package', name: '交付包裹',

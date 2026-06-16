@@ -134,8 +134,8 @@ function handleStatusEffect(target, effect) {
 function checkStatusSkip(pkm) {
   if (!pkm.status) return false
   if (pkm.status.type === 'sleep') {
-    pkm.status.turns--
     if (pkm.status.turns <= 0) { pkm.status = null; addLog(`${pkm.name} 醒来了！`); return false }
+    pkm.status.turns--
     addLog(`${pkm.name} 在沉睡……`); return true
   } else if (pkm.status.type === 'paralyze') {
     if (Math.random() < 0.25) { addLog(`${pkm.name} 因为麻痹而无法行动！`); return true }
@@ -205,7 +205,7 @@ function playerAttack(moveIndex, skipTurnCheck) {
 
   // Apply drain effect
   if (move.effect === 'drain' && result.damage > 0) {
-    const heal = Math.max(1, Math.floor(result.damage * 0.5))
+    const heal = Math.max(1, result.damage)
     pkm.hp = Math.min(pkm.maxHp, pkm.hp + heal)
     addLog(`回复了 ${heal} HP！`)
   }
@@ -339,7 +339,7 @@ function syncEnemyAttack() {
   if (result.missed) { b.battleMsg = '没有命中！'; return true }
 
   if (move.effect === 'drain' && result.damage > 0) {
-    const heal = Math.max(1, Math.floor(result.damage * 0.5))
+    const heal = Math.max(1, result.damage)
     b.enemy.hp = Math.min(b.enemy.maxHp, b.enemy.hp + heal)
     addLog(`${b.enemy.name} 回复了 ${heal} HP！`)
   }
@@ -410,7 +410,7 @@ function enemyTurn() {
 
   // Handle enemy drain moves
   if (move.effect === 'drain' && result.damage > 0) {
-    const heal = Math.max(1, Math.floor(result.damage * 0.5))
+    const heal = Math.max(1, result.damage)
     b.enemy.hp = Math.min(b.enemy.maxHp, b.enemy.hp + heal)
     addLog(`${b.enemy.name} 回复了 ${heal} HP！`)
   }
