@@ -113,6 +113,30 @@ function startBattle(type, extra, enemyTeam) {
   return true
 }
 
+function handleStatusEffect(target, effect) {
+  if (target.status) { addLog(`但${target.name}已经有异常状态了。`); return false }
+  if (effect === 'sleep') {
+    target.status = { type: 'sleep', turns: 1 + Math.floor(Math.random() * 3) }
+    addLog(`${target.name} 睡着了！`); return true
+  } else if (effect === 'paralyze') {
+    target.status = { type: 'paralyze' }
+    addLog(`${target.name} 麻痹了！`); return true
+  }
+  return false
+}
+
+function checkStatusSkip(pkm) {
+  if (!pkm.status) return false
+  if (pkm.status.type === 'sleep') {
+    pkm.status.turns--
+    if (pkm.status.turns <= 0) { pkm.status = null; addLog(`${pkm.name} 醒来了！`); return false }
+    addLog(`${pkm.name} 在沉睡……`); return true
+  } else if (pkm.status.type === 'paralyze') {
+    if (Math.random() < 0.25) { addLog(`${pkm.name} 因为麻痹而无法行动！`); return true }
+  }
+  return false
+}
+
 function calcDamage(atkPkm, defPkm, move) {
   const isSp = ['火','水','草','电','冰','超能','幽灵','龙','恶'].includes(move.type)
   const atkStat = isSp ? atkPkm.spa : atkPkm.atk
@@ -134,10 +158,31 @@ function calcDamage(atkPkm, defPkm, move) {
 function playerAttack(moveIndex) {
   const b = G.battle; if (!b || b.turn !== 'player') return
   const pkm = getActivePokemon(); if (!pkm) return
+
+  // Check player status
+  if (pkm.status && checkStatusSkip(pkm)) {
+    b.turn = 'enemy'; b.battleMsg = `${pkm.name} 无法行动……`
+    setTimeout(enemyTurn, 500); return
+  }
+
   const move = pkm.moves[moveIndex]; if (!move) return
   if (move.currentPp <= 0) { addLog(`${move.name} 的PP已经用完了！`); return }
   move.currentPp--
+
   const result = calcDamage(pkm, b.enemy, move)
+
+  // Apply status effects (sleep/paralyze)
+  if (result.effectiveness > 0 && move.effect && ['sleep','paralyze'].includes(move.effect)) {
+    handleStatusEffect(b.enemy, move.effect)
+  }
+
+  // Apply drain effect
+  if (move.effect === 'drain' && result.damage > 0) {
+    const heal = Math.max(1, Math.floor(result.damage * 0.5))
+    pkm.hp = Math.min(pkm.maxHp, pkm.hp + heal)
+    addLog(`回复了 ${heal} HP！`)
+  }
+
   b.enemy.hp -= result.damage
   if (result.effectiveness >= 2) b.battleMsg = '效果拔群！'
   else if (result.effectiveness === 0) b.battleMsg = '没有效果…'
@@ -148,7 +193,7 @@ function playerAttack(moveIndex) {
     addLog(`${b.enemy.name} 倒下了！`)
     b.enemyIndex++
     if (b.enemyIndex < b.enemyTeam.length) {
-      b.enemy = b.enemyTeam[b.enemyIndex]; b.enemy.hp = b.enemy.maxHp
+      b.enemy = b.enemyTeam[b.enemyIndex]; b.enemy.hp = b.enemy.maxHp; b.enemy.status = null
       let prefix = '', msg = ''
       if (b.type === 'trainer') { prefix = `${b.extra.trainer.name} 派出了 `; msg = `${b.extra.trainer.name}：去吧！` }
       else if (b.type === 'gym') { prefix = `${b.extra.data[1]} 派出了 `; msg = `${b.extra.data[1]}：哼！` }
@@ -240,11 +285,35 @@ function enemyTurn() {
     }
     G.battle = null; saveGame(); render(); return
   }
+
+  // Check enemy status
+  if (b.enemy.status && checkStatusSkip(b.enemy)) {
+    b.battleMsg = `${b.enemy.name} 无法行动……`
+    b.turn = 'player'; render(); return
+  }
+
   const usable = b.enemy.moves.filter(m => m.currentPp > 0)
   if (!usable.length) { b.turn = 'player'; render(); return }
   const move = usable[Math.floor(Math.random() * usable.length)]
   move.currentPp--
+
+  // Handle enemy status moves
+  if (move.effect && ['sleep','paralyze'].includes(move.effect)) {
+    const eff = getEffectiveness(move.type, pkm.types)
+    if (eff > 0) handleStatusEffect(pkm, move.effect)
+    b.battleMsg = `对方使用了 ${move.name}！`
+    b.turn = 'player'; render(); return
+  }
+
   const result = calcDamage(b.enemy, pkm, move)
+
+  // Handle enemy drain moves
+  if (move.effect === 'drain' && result.damage > 0) {
+    const heal = Math.max(1, Math.floor(result.damage * 0.5))
+    b.enemy.hp = Math.min(b.enemy.maxHp, b.enemy.hp + heal)
+    addLog(`${b.enemy.name} 回复了 ${heal} HP！`)
+  }
+
   if (result.effectiveness >= 2) b.battleMsg = '效果拔群！'
   else if (result.effectiveness === 0) b.battleMsg = '没有效果…'
   else if (result.effectiveness < 1) b.battleMsg = '效果不太好…'

@@ -35,6 +35,11 @@ function loadGame() {
       for (const p of [...G.player.pokemon, ...(G.player.pc||[])]) {
         if (!p.ivs) p.ivs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
         if (!p.evs) p.evs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
+        if (p.status === undefined) p.status = null
+        if (p.moves) for (const m of p.moves) {
+          if (m.effect === undefined) { const md = getMoveData(m.id); m.effect = md ? (md[6] || null) : null }
+          if (m.desc === undefined) { const md = getMoveData(m.id); m.desc = md ? (md[5] || '') : '' }
+        }
       }
       return true
     }
@@ -86,7 +91,7 @@ function createPokemon(id, level, movesOverride) {
     id, name: base[1], types, level, ...stats,
     moves: moveIds.map(mid => {
       const m = getMoveData(mid)
-      return m ? { id:mid, name:m[1], type:m[2], power:m[3], pp:m[4], currentPp:m[4], desc:m[5]||'' } : null
+      return m ? { id:mid, name:m[1], type:m[2], power:m[3], pp:m[4], currentPp:m[4], desc:m[5]||'', effect:m[6]||null } : null
     }).filter(Boolean),
     exp: 0, nextLevel: Math.floor(level ** 3 * 0.8 + 10),
     ivs, evs, status: null, fainted: false,
