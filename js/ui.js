@@ -154,10 +154,41 @@ function renderBattle() {
     for (let i = 0; i < pkm.moves.length; i++) {
       const m = pkm.moves[i]
       const d = m.currentPp <= 0 ? 'disabled' : ''
-      html += `<button class="btn ${d}" onclick="playerAttack(${i})">${m.name}[${m.type}] 威:${m.power} PP:${m.currentPp}/${m.pp}</button>`
+      html += `<button class="btn ${d}" onclick="battleSub('selectMove',${i})">${m.name}[${m.type}] 威:${m.power} PP:${m.currentPp}/${m.pp}</button>`
     }
     html += '<button class="btn" onclick="battleSub(\'main\')">↩ 返回</button>'
     actions.innerHTML = html
+  } else if (b.subState === 'selectMove') {
+    const moveIndex = b.selectedMove
+    const m = pkm && pkm.moves[moveIndex]
+    if (!m) { b.subState = 'attack'; return }
+    G.view = 'battle'
+    main.innerHTML = `
+      <div class="battle-enemy">
+        <span class="pkm-name">${b.enemy.name}</span>
+        <span class="pkm-level">Lv.${b.enemy.level}</span>
+        <span class="pkm-types">${b.enemy.types.join('/')}</span>
+        <div class="hp-row">HP: ${hpBar(b.enemy.hp,b.enemy.maxHp)} ${b.enemy.hp}/${b.enemy.maxHp}</div>
+      </div>
+      ${b.battleMsg ? `<div class="battle-msg">${b.battleMsg}</div>` : `<div class="battle-divider">━━ V.S. ━━</div>`}
+      <div class="battle-player">
+        <span class="pkm-name">${pkm ? pkm.name : '---'}</span>
+        <span class="pkm-level">${pkm ? 'Lv.'+pkm.level : ''}</span>
+        <span class="pkm-types">${pkm ? pkm.types.join('/') : ''}</span>
+        <div class="hp-row">HP: ${pkm ? hpBar(pkm.hp,pkm.maxHp)+' '+pkm.hp+'/'+pkm.maxHp : '倒下了'}</div>
+        ${pkm ? `<div class="exp-row">EXP: ${pkm.exp}/${pkm.nextLevel}</div>` : ''}
+      </div>
+      <div class="battle-status">#${b.enemyIndex+1}/${b.enemyTeam.length} ${b.type==='gym'?'🏛'+b.extra.data[1]:b.type==='elite'?'👑四天王':b.type==='story'?'💀'+b.extra.name:b.type==='rival'?'💢'+b.extra.name:'🌿野生'}</div>
+      <div class="move-confirm">
+        <div class="move-name">${m.name}</div>
+        <div class="move-info">[${m.type}] 威力:${m.power} PP:${m.currentPp}/${m.pp}</div>
+        <div class="move-desc">${m.desc}</div>
+      </div>
+    `
+    actions.innerHTML = `
+      <button class="btn" onclick="confirmMove()">✅ 确认</button>
+      <button class="btn" onclick="cancelMove()">✖ 取消</button>
+    `
   } else if (b.subState === 'switch') {
     let html = ''
     for (let i = 0; i < G.player.pokemon.length; i++) {

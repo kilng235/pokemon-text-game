@@ -125,7 +125,7 @@ function startDialogueBattle() {
     if (startBattle('rival', {
       name: '小茂',
       onFinish: () => '首次击败小茂！获得 ¥200',
-    }, [createPokemon(133, 5)])) {
+    }, [createPokemon(133, 5, [1, 2, 77, 75])])) {
       G.view = 'battle'; render()
     } else {
       G.view = 'explore'; render()
@@ -165,8 +165,28 @@ function finishDialogue() {
   G.view = 'explore'; render()
 }
 
-function battleSub(state) {
-  if (G.battle) { G.battle.subState = state; render() }
+function battleSub(state, moveIndex) {
+  if (!G.battle) return
+  G.battle.subState = state
+  G.battle.selectedMove = moveIndex !== undefined ? moveIndex : undefined
+  render()
+}
+
+function confirmMove() {
+  const b = G.battle
+  if (!b || b.selectedMove === undefined) return
+  const idx = b.selectedMove
+  b.selectedMove = undefined
+  b.subState = 'main'
+  playerAttack(idx)
+  render()
+}
+
+function cancelMove() {
+  if (!G.battle) return
+  G.battle.selectedMove = undefined
+  G.battle.subState = 'attack'
+  render()
 }
 
 function useItemInBattle(key) { useItem(key); render() }
@@ -208,7 +228,8 @@ function restartGame() {
 const globalFns = [startNewGame, continueGame, selectStarter, travelTo, challengeGym,
   tryWildEncounter, battleSub, playerAttack, tryFlee, enemyTurn,
   useItemInBattle, useItemFromBag, switchPokemon, closeBag, healAtCenter, buyItem,
-  advanceDialogue, skipDialogue, finishDialogue, startDialogueBattle, restartGame]
+  advanceDialogue, skipDialogue, finishDialogue, startDialogueBattle, restartGame,
+  confirmMove, cancelMove]
 for (const fn of globalFns) window[fn.name] = fn
 
 document.addEventListener('DOMContentLoaded', () => {

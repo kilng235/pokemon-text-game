@@ -74,19 +74,19 @@ function getPokemonStats(id, level, ivs, evs) {
 
 function randIV() { return Math.floor(Math.random() * 16) }
 
-function createPokemon(id, level) {
+function createPokemon(id, level, movesOverride) {
   const base = getPokemonData(id)
   if (!base) return null
   const types = base[2].split(',')
   const ivs = { hp:randIV(), atk:randIV(), def:randIV(), spa:randIV(), spd:randIV(), spe:randIV() }
   const evs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
   const stats = getPokemonStats(id, level, ivs, evs)
-  const moveIds = base[12] || [1]
+  const moveIds = movesOverride || base[12] || [1]
   return {
     id, name: base[1], types, level, ...stats,
     moves: moveIds.map(mid => {
       const m = getMoveData(mid)
-      return m ? { id:mid, name:m[1], type:m[2], power:m[3], pp:m[4], currentPp:m[4] } : null
+      return m ? { id:mid, name:m[1], type:m[2], power:m[3], pp:m[4], currentPp:m[4], desc:m[5]||'' } : null
     }).filter(Boolean),
     exp: 0, nextLevel: Math.floor(level ** 3 * 0.8 + 10),
     ivs, evs, status: null, fainted: false,
