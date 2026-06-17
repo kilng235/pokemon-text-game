@@ -1,9 +1,6 @@
 function toggleMap() {
-  G.showBigMap = !G.showBigMap
-  if (!G.showBigMap) {
-    const app = document.getElementById('app')
-    if (app) app.className = ''
-  }
+  G.showBigMap = false
+  G.view = 'worldMap'
   render()
 }
 
@@ -165,10 +162,13 @@ function startDialogueBattle() {
   }
   if (d.eventKey === 'firstRival') {
     G.storyFlags.firstRivalDone = true
+    const rivalEevee = createPokemon(133, 5, [1, 2, 77, 75])
+    rivalEevee.atk = Math.floor(rivalEevee.atk * 0.6)
+    rivalEevee.spa = Math.floor(rivalEevee.spa * 0.6)
     if (startBattle('rival', {
       name: '小茂',
       onFinish: () => '首次击败小茂！获得 ¥200',
-    }, [createPokemon(133, 5, [1, 2, 77, 75])])) {
+    }, [rivalEevee])) {
       G.view = 'battle'; render()
     } else {
       G.view = 'explore'; render()
@@ -204,6 +204,14 @@ function finishDialogue() {
     G.view = 'choice'; render(); return
   }
   const onComplete = d ? d.onComplete : null
+  if (d && d.eventKey) {
+    const ev = STORY_EVENTS[d.eventKey]
+    if (ev && ev.onFinish) {
+      const msg = ev.onFinish()
+      if (msg) addLog(msg)
+      updateQuest()
+    }
+  }
   G.dialogue = null
   if (onComplete === 'starter') {
     G.view = 'choose'; saveGame(); render(); return
@@ -221,6 +229,7 @@ function makeChoice(choiceIndex) {
   if (ev && ev.onFinish) {
     const msg = ev.onFinish(choice)
     if (msg) addLog(msg)
+    updateQuest()
   }
   G.dialogue = null
   saveGame()
@@ -284,6 +293,7 @@ function switchPokemon(index) {
 }
 
 function closeBag() {
+  G.pokemonManager = null
   if (G.battle) { G.view = 'battle'; if (G.battle) G.battle.subState = 'main' }
   else G.view = 'explore'
   render()
@@ -308,6 +318,82 @@ function restartGame() {
 }
 
 // 学习新技能：直接学会（不足4个时）
+function createMoveFromData(mData) {
+  if (!mData) return null
+  return { id:mData[0], name:mData[1], type:mData[2], power:mData[3], pp:mData[4], currentPp:mData[4], desc:mData[5]||'', effect:mData[6]||null }
+}
+
+function ensureRelearnMoves(pkm) {
+  if (!pkm.relearnMoves) pkm.relearnMoves = []
+  return pkm.relearnMoves
+}
+
+function removeRelearnMoveById(pkm, moveId) {
+  const pool = ensureRelearnMoves(pkm)
+  const idx = pool.findIndex(m => m && m.id === moveId)
+  if (idx >= 0) pool.splice(idx, 1)
+}
+
+function addRelearnMove(pkm, move) {
+  if (!pkm || !move) return
+  const pool = ensureRelearnMoves(pkm)
+  if (pkm.moves.some(m => m && m.id === move.id)) return
+  if (pool.some(m => m && m.id === move.id)) return
+  pool.push({
+    id: move.id,
+    name: move.name,
+    type: move.type,
+    power: move.power,
+    pp: move.pp,
+    currentPp: move.pp,
+    desc: move.desc || '',
+    effect: move.effect || null,
+  })
+}
+
+function openPokemonManager(pokemonIndex) {
+  if (!G.player.pokemon[pokemonIndex]) return
+  G.pokemonManager = { pokemonIndex, relearnIndex: null }
+  G.view = 'pokemon'
+  render()
+}
+
+function closePokemonManager() {
+  G.pokemonManager = null
+  render()
+}
+
+function prepareRelearnMove(pokemonIndex, relearnIndex) {
+  const pkm = G.player.pokemon[pokemonIndex]
+  if (!pkm) return
+  const pool = ensureRelearnMoves(pkm)
+  if (!pool[relearnIndex]) return
+  G.pokemonManager = { pokemonIndex, relearnIndex }
+  render()
+}
+
+function cancelRelearnMove() {
+  if (!G.pokemonManager) return
+  G.pokemonManager.relearnIndex = null
+  render()
+}
+
+function swapRelearnMove(pokemonIndex, moveIndex) {
+  const manager = G.pokemonManager
+  const pkm = G.player.pokemon[pokemonIndex]
+  if (!manager || !pkm || manager.pokemonIndex !== pokemonIndex) return
+  const pool = ensureRelearnMoves(pkm)
+  const remembered = pool[manager.relearnIndex]
+  const current = pkm.moves[moveIndex]
+  if (!remembered || !current) return
+  pkm.moves.splice(moveIndex, 1, createMoveFromData([remembered.id, remembered.name, remembered.type, remembered.power, remembered.pp, remembered.desc || '', remembered.effect || null]))
+  pool.splice(manager.relearnIndex, 1)
+  addRelearnMove(pkm, current)
+  G.pokemonManager = { pokemonIndex, relearnIndex: null }
+  addLog(`★ ${pkm.name} 将「${current.name}」收回技能库，换回了「${remembered.name}」！`)
+  saveGame(); render()
+}
+
 function learnMoveDirect(pokemonIndex) {
   const pending = G.pendingMoveLearn
   if (!pending || pending.length === 0) return
@@ -316,7 +402,8 @@ function learnMoveDirect(pokemonIndex) {
   if (!pkm) return
   const mData = getMoveData(info.moveId)
   if (!mData) return
-  pkm.moves.push({ id:mData[0], name:mData[1], type:mData[2], power:mData[3], pp:mData[4], currentPp:mData[4], desc:mData[5]||'', effect:mData[6]||null })
+  removeRelearnMoveById(pkm, info.moveId)
+  pkm.moves.push(createMoveFromData(mData))
   addLog(`★ ${pkm.name} 学会了「${mData[1]}」！`)
   G.pendingMoveLearn.shift()
   saveGame(); render()
@@ -332,9 +419,11 @@ function forgetMove(pokemonIndex, moveIndex) {
   const forgotten = pkm.moves[moveIndex]
   const mData = getMoveData(info.moveId)
   if (!mData) return
-  pkm.moves.splice(moveIndex, 1)
-  pkm.moves.push({ id:mData[0], name:mData[1], type:mData[2], power:mData[3], pp:mData[4], currentPp:mData[4], desc:mData[5]||'', effect:mData[6]||null })
-  addLog(`★ ${pkm.name} 遗忘了「${forgotten.name}」,\n   学会了「${mData[1]}」！`)
+  addRelearnMove(pkm, forgotten)
+  removeRelearnMoveById(pkm, info.moveId)
+  pkm.moves.splice(moveIndex, 1, createMoveFromData(mData))
+  addLog(`★ ${pkm.name} 将「${forgotten.name}」放入可换回技能库，\n   学会了「${mData[1]}」！`)
+
   G.pendingMoveLearn.shift()
   saveGame(); render()
 }
@@ -354,7 +443,8 @@ const globalFns = [startNewGame, continueGame, selectStarter, travelTo, challeng
   tryWildEncounter, battleSub, playerAttack, tryFlee, enemyTurn,
   useItemInBattle, useItemFromBag, switchPokemon, closeBag, healAtCenter, buyItem,
   advanceDialogue, skipDialogue, finishDialogue, startDialogueBattle, restartGame, makeChoice,
-  confirmMove, cancelMove, toggleMap, learnMoveDirect, forgetMove, skipMove]
+  confirmMove, cancelMove, toggleMap, learnMoveDirect, forgetMove, skipMove,
+  openPokemonManager, closePokemonManager, prepareRelearnMove, cancelRelearnMove, swapRelearnMove]
 for (const fn of globalFns) window[fn.name] = fn
 
 document.addEventListener('DOMContentLoaded', () => {

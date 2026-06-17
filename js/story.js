@@ -60,7 +60,7 @@ const STORY_EVENTS = {
       { speaker: '小茂', text: '我可是大木博士的孙子！跟你这种家伙可不一样！' },
       { speaker: '小茂', text: '让我看看你有几斤几两吧！' },
     ],
-    battle: { name: '小茂', team: [[133,5]] },
+    battle: { name: '小茂', team: [[133,5]], statModifier: { atk: 0.6, spa: 0.6 } },
     battleType: 'rival',
     onFinish: () => {
       G.storyFlags.rivalRoute22_1 = true

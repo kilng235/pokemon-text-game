@@ -148,19 +148,19 @@ const TRAINERS = {
 // 关都地图
 const LOCATIONS = {
   pallet:    ['真新镇','大木博士的研究所就在这里。','town',true,false, ['route1','route21']],
-  viridian:  ['常青市','通往联盟的关卡城市。','town',true,false, ['route1','route22','viridianForest','victoryRoad']],
-  pewter:    ['深灰市','化石研究室所在地。','town',true,'brock', ['route2','route3']],
+  viridian:  ['常青市','通往联盟的关卡城市。','town',true,false, ['route1','route2','route22','viridianForest']],
+  pewter:    ['深灰市','化石研究室所在地。','town',true,'brock', ['route2','route3','victoryRoad']],
   cerulean:    ['华蓝市','水边的美丽城市。','town',true,'misty', ['route4','route5','route9','route24','ceruleanCave']],
   vermilion: ['枯叶市','港口城市，圣安奴号在此。从这里可以乘船前往七之岛。','town',true,'ltSurge', ['route5','route6','route11','ssAnne','island1']],
-  lavender:  ['紫苑镇','安宁的墓园小镇。','town',true,false, ['route6','route7','route10','route12']],
+  lavender:  ['紫苑镇','安宁的墓园小镇。','town',true,false, ['route6','route7','route8','route10','route12']],
   celadon:   ['彩虹市','关都最大的商业城市。','town',true,'erika', ['route7','route8','route16','route17','rocketHideout']],
   saffron:   ['金黄市','交通枢纽大都市。','town',true,'sabrina', ['route8','route5','route6','route7']],
-  fuchsia:   ['浅红市','拥有野生原野区。','town',true,'koga', ['route9','route10','route11','route15','route17','safariZone']],
+  fuchsia:   ['浅红市','拥有野生原野区。','town',true,'koga', ['route15','route17','safariZone']],
   cinnabar:  ['红莲镇','火山岛上的研究城市。','town',true,'blaine', ['route21','route20','pokemonMansion']],
-  indigo:    ['宝可梦联盟','关都顶点！','town',false,false, ['victoryRoad','route23']],
-  route1:    ['1号道路','真新镇到常青市的平坦道路。','route',false,false, ['pallet','viridian'],
+  indigo:    ['宝可梦联盟','关都顶点！','town',false,false, ['route23']],
+  route1:    ['1号道路','真新镇到常青市的平坦道路。','route',false,false, ['pallet','viridian','route21'],
     { common:{ids:[16,19],lv:[2,5],w:60}, uncommon:{ids:[21],lv:[3,6],w:30}, rare:{ids:[56],lv:[4,7],w:10} }],
-  route2:    ['2号道路','常青市到深灰市的森林路。','route',false,false, ['viridian','pewter'],
+  route2:    ['2号道路','常青市到深灰市的森林路。','route',false,false, ['viridian','pewter','viridianForest'],
     { common:{ids:[10,13,16],lv:[3,7],w:60}, uncommon:{ids:[19,48],lv:[4,8],w:30}, rare:{ids:[25],lv:[5,9],w:10} }],
   route3:    ['3号道路','深灰市到月见山的山路。','route',false,false, ['pewter','mtMoon'],
     { common:{ids:[16,56,66],lv:[6,10],w:60}, uncommon:{ids:[23,27],lv:[7,11],w:30}, rare:{ids:[52,39],lv:[8,12],w:10} }],
@@ -168,35 +168,35 @@ const LOCATIONS = {
     { common:{ids:[41,74],lv:[7,12],w:55}, uncommon:{ids:[35,96],lv:[8,13],w:30}, rare:{ids:[104,46],lv:[10,15],w:15} }],
   route4:    ['4号道路','月见山到华蓝市的山道。','route',false,false, ['mtMoon','cerulean'],
     { common:{ids:[16,19,56],lv:[9,14],w:60}, uncommon:{ids:[37,54],lv:[10,15],w:30}, rare:{ids:[27,66],lv:[11,16],w:10} }],
-  route5:    ['5号道路','华蓝市到金黄市的近路。','route',false,false, ['cerulean','saffron'],
+  route5:    ['5号道路','华蓝市到金黄市的近路。','route',false,false, ['cerulean','saffron','vermilion'],
     { common:{ids:[19,56,52],lv:[10,15],w:60}, uncommon:{ids:[63,39],lv:[12,16],w:30}, rare:{ids:[35,133],lv:[13,17],w:10} }],
-  route6:    ['6号道路','枯叶市与紫苑镇间。','route',false,false, ['vermillion','saffron','lavender'],
+  route6:    ['6号道路','枯叶市与紫苑镇间。','route',false,false, ['vermilion','saffron','lavender'],
     { common:{ids:[19,52,48],lv:[11,16],w:60}, uncommon:{ids:[54,120],lv:[12,17],w:30}, rare:{ids:[84,128],lv:[14,18],w:10} }],
   route7:    ['7号道路','彩虹市到金黄市的短程。','route',false,false, ['celadon','saffron','lavender'],
     { common:{ids:[19,56,117],lv:[13,18],w:60}, uncommon:{ids:[84,37],lv:[14,19],w:30}, rare:{ids:[58,123],lv:[16,20],w:10} }],
-  route8:    ['8号道路','彩虹市到金黄市的另一条路。','route',false,false, ['celadon','saffron'],
+  route8:    ['8号道路','彩虹市到紫苑镇的另一条路。','route',false,false, ['celadon','lavender','saffron','powerPlant'],
     { common:{ids:[48,23,56],lv:[14,19],w:60}, uncommon:{ids:[81,96],lv:[15,20],w:30}, rare:{ids:[125,126],lv:[17,22],w:10} }],
-  route9:    ['9号道路','华蓝市到浅红市的岩石路。','route',false,false, ['cerulean','fuchsia'],
+  route9:    ['9号道路','华蓝市到浅红市的岩石路。','route',false,false, ['cerulean','route10','powerPlant'],
     { common:{ids:[19,84,98],lv:[15,20],w:60}, uncommon:{ids:[23,111],lv:[17,22],w:30}, rare:{ids:[61,22],lv:[19,24],w:10} }],
-  route10:   ['10号道路','紫苑镇到浅红市的电力之路。','route',false,false, ['lavender','fuchsia'],
+  route10:   ['10号道路','紫苑镇到浅红市的电力之路。','route',false,false, ['lavender','route9','route12','powerPlant'],
     { common:{ids:[100,81,41],lv:[16,22],w:55}, uncommon:{ids:[25,100],lv:[18,24],w:30}, rare:{ids:[125,135],lv:[20,26],w:15} }],
-  route11:   ['11号道路','枯叶市到浅红市。','route',false,false, ['vermillion','fuchsia'],
+  route11:   ['11号道路','枯叶市到浅红市。','route',false,false, ['vermilion','route12'],
     { common:{ids:[19,84,98],lv:[17,23],w:60}, uncommon:{ids:[21,100],lv:[19,25],w:30}, rare:{ids:[113,128],lv:[21,27],w:10} }],
   route15:   ['15号道路','浅红市向东。','route',false,false, ['fuchsia'],
     { common:{ids:[48,56,84],lv:[18,24],w:60}, uncommon:{ids:[43,64],lv:[20,26],w:30}, rare:{ids:[83,106],lv:[22,28],w:10} }],
-  route16:   ['16号道路','彩虹市向东南。','route',false,false, ['celadon'],
+  route16:   ['16号道路','彩虹市向东南。','route',false,false, ['celadon','route17','viridianForest'],
     { common:{ids:[19,21,84],lv:[19,25],w:60}, uncommon:{ids:[37,48],lv:[21,27],w:30}, rare:{ids:[52,123],lv:[23,29],w:10} }],
-  route20:   ['20号水道','红莲镇附近的水路。','water',false,false, ['cinnabar'],
+  route20:   ['20号水道','红莲镇附近的水路。','water',false,false, ['cinnabar','seafoamIslands'],
     { common:{ids:[72,118,98],lv:[22,28],w:55}, uncommon:{ids:[54,116],lv:[24,30],w:30}, rare:{ids:[129,131],lv:[26,35],w:15} }],
-  route21:   ['21号水道','真新镇到红莲镇的水路。','water',false,false, ['pallet','cinnabar'],
+  route21:   ['21号水道','真新镇到红莲镇的水路。','water',false,false, ['pallet','cinnabar','route1'],
     { common:{ids:[72,118,129],lv:[5,10],w:55}, uncommon:{ids:[98,54],lv:[8,14],w:30}, rare:{ids:[79,120],lv:[10,18],w:15} }],
-  route22:   ['22号道路','常青市向西的河道。','route',false,false, ['viridian'],
+  route22:   ['22号道路','常青市向西的山道。','route',false,false, ['viridian','route23'],
     { common:{ids:[19,21,56],lv:[2,6],w:60}, uncommon:{ids:[54,23],lv:[3,7],w:30}, rare:{ids:[25,133],lv:[5,9],w:10} }],
-  route23:   ['23号道路','联盟的最终考验之路。','route',false,false, ['indigo'],
+  route23:   ['23号道路','联盟的最终考验之路。','route',false,false, ['route22','victoryRoad','indigo'],
     { common:{ids:[75,42,34],lv:[35,42],w:50}, uncommon:{ids:[64,22],lv:[38,44],w:30}, rare:{ids:[65,149],lv:[40,48],w:20} }],
-  victoryRoad: ['冠军之路','通往联盟的险峻洞穴。','cave',false,false, ['viridian','indigo'],
+  victoryRoad: ['冠军之路','通往联盟的险峻洞穴。','cave',false,false, ['pewter','route23'],
     { common:{ids:[41,74,42],lv:[30,38],w:50}, uncommon:{ids:[95,111],lv:[33,40],w:30}, rare:{ids:[112,142],lv:[36,45],w:20} }],
-  viridianForest: ['常青森林','常青市旁的密林。','cave',false,false, ['viridian'],
+  viridianForest: ['常青森林','常青市旁的密林。','cave',false,false, ['viridian','route2','route16','route17'],
     { common:{ids:[10,13,16],lv:[3,6],w:60}, uncommon:{ids:[48,46],lv:[4,7],w:30}, rare:{ids:[25,69],lv:[5,8],w:10} }],
   route24: ['24号道路','华蓝市北侧的海滨道路。','route',false,false,['cerulean','billHouse'],
     { common:{ids:[10,13,16],lv:[7,12],w:60}, uncommon:{ids:[43,63,69],lv:[8,13],w:30}, rare:{ids:[48],lv:[10,14],w:10} }],
@@ -204,7 +204,7 @@ const LOCATIONS = {
   ssAnne: ['圣安奴号','枯叶港停靠的豪华客轮。','route',false,false,['vermilion']],
   rocketHideout: ['火箭队地下基地','彩虹市游戏厅下方。','cave',false,false,['celadon'],
     { common:{ids:[19,41,52],lv:[15,22],w:55}, uncommon:{ids:[23,109],lv:[18,24],w:30}, rare:{ids:[24,110],lv:[20,26],w:15} }],
-  powerPlant: ['无人发电站','废弃的发电厂深处。','cave',false,false,['route10'],
+  powerPlant: ['无人发电站','废弃的发电厂深处。','cave',false,false,['route8','route9','route10'],
     { common:{ids:[81,100],lv:[22,28],w:55}, uncommon:{ids:[25,82],lv:[26,32],w:30}, rare:{ids:[125,145],lv:[30,50],w:15} }],
   seafoamIslands: ['双子岛','冰冷洞穴深处传来神秘的声音……','cave',false,false,['route20'],
     { common:{ids:[41,86,98],lv:[25,32],w:55}, uncommon:{ids:[42,79,120],lv:[28,33],w:30}, rare:{ids:[124,144],lv:[30,50],w:15} }],
@@ -214,18 +214,18 @@ const LOCATIONS = {
     { common:{ids:[41,42,111],lv:[45,55],w:55}, uncommon:{ids:[113,115,132],lv:[48,55],w:30}, rare:{ids:[150],lv:[70,70],w:15} }],
   safariZone: ['狩猎地带','浅红市北部的野生原野保护区。','route',false,false,['fuchsia'],
     { common:{ids:[29,30,32,33,102,111],lv:[15,25],w:50}, uncommon:{ids:[113,115,123,127],lv:[20,30],w:35}, rare:{ids:[112,128,132],lv:[25,35],w:15} }],
-  route12: ['12号道路','紫苑镇通往南方的道路。','route',false,false,['lavender','fuchsia'],
+  route12: ['12号道路','紫苑镇通往南方的道路。','route',false,false,['lavender','route10','route11'],
     { common:{ids:[16,43,69],lv:[20,26],w:60}, uncommon:{ids:[44,70,83],lv:[22,28],w:30}, rare:{ids:[132,143],lv:[25,30],w:10} }],
-  route17: ['17号道路','彩虹市到浅红市的自行车道。','route',false,false,['celadon','fuchsia'],
+  route17: ['17号道路','彩虹市到浅红市的自行车道。','route',false,false,['celadon','route16','fuchsia','viridianForest'],
     { common:{ids:[16,19,77],lv:[22,28],w:60}, uncommon:{ids:[22,78,84],lv:[24,30],w:30}, rare:{ids:[128,132],lv:[27,32],w:10} }],
   // 七之岛（火红/叶绿新增地区）
-  island1: ['脐眼岛','七之岛的玄关口，有宝可梦中心和商店。','town',true,false,['vermilion','island1_route1','island1_route2'],
+  island1: ['脐眼岛','七之岛的玄关口，有宝可梦中心和商店。','town',true,false,['vermilion','island1_route1','island2'],
     { common:{ids:[16,278],lv:[25,30],w:55}, uncommon:{ids:[277,279],lv:[28,33],w:30}, rare:{ids:[25,176],lv:[30,35],w:15} }],
   island1_route1: ['脐眼森林','通往岛内深处的森林小径。','route',false,false,['island1','island1_mtember'],
     { common:{ids:[10,13,163],lv:[25,32],w:55}, uncommon:{ids:[46,41,48],lv:[28,35],w:30}, rare:{ids:[165,285],lv:[32,38],w:15} }],
   island1_mtember: ['ember山','脐眼岛的火山上散布着神秘化石。','cave',false,false,['island1_route1'],
     { common:{ids:[37,66,77],lv:[30,38],w:50}, uncommon:{ids:[58,126],lv:[33,40],w:30}, rare:{ids:[38,219],lv:[36,45],w:20} }],
-  island2: ['高岗岛','有游戏角的悠闲岛屿。','town',true,false,['island1','island2_route2','island2_cape'],
+  island2: ['高岗岛','有游戏角的悠闲岛屿。','town',true,false,['island1','island2_route2'],
     { common:{ids:[19,278],lv:[28,34],w:55}, uncommon:{ids:[274,277],lv:[30,36],w:30}, rare:{ids:[176,25],lv:[33,38],w:15} }],
   island2_route2: ['高岗林间路','连接高岗岛各处的林间小道。','route',false,false,['island2','island3'],
     { common:{ids:[16,43,69],lv:[28,35],w:55}, uncommon:{ids:[44,114,274],lv:[32,38],w:30}, rare:{ids:[189,103],lv:[35,42],w:15} }],
@@ -233,7 +233,7 @@ const LOCATIONS = {
     { common:{ids:[102,114,191],lv:[30,36],w:55}, uncommon:{ids:[44,192,315],lv:[33,39],w:30}, rare:{ids:[103,182,45],lv:[36,44],w:15} }],
   island3_forest: ['树果森林','果实累累的茂密森林。','route',false,false,['island3','island3_route3'],
     { common:{ids:[43,102,114],lv:[30,38],w:55}, uncommon:{ids:[44,114,315],lv:[34,42],w:30}, rare:{ids:[182,83],lv:[38,48],w:15} }],
-  island3_route3: ['绿色岛水路','通往四岛的碧蓝水道。','water',false,false,['island3','island4'],
+  island3_route3: ['绿色岛水路','通往四岛的碧蓝水道。','water',false,false,['island3','island3_forest','island4'],
     { common:{ids:[72,278,118],lv:[32,40],w:55}, uncommon:{ids:[73,279,119],lv:[35,42],w:30}, rare:{ids:[131,230],lv:[38,48],w:15} }],
   island4: ['冰霜岛','覆盖着厚厚冰层的岛屿。','route',true,false,['island3_route3','island4_cave'],
     { common:{ids:[86,220,278],lv:[34,42],w:50}, uncommon:{ids:[42,87,221],lv:[38,45],w:35}, rare:{ids:[124,131],lv:[40,50],w:15} }],
@@ -261,18 +261,30 @@ const LOCATIONS = {
 
 const LINK_LABELS = {
   pallet:    { route1:'1号道路', route21:'21号水道' },
-  viridian:  { route1:'1号道路', route22:'22号道路', viridianForest:'常青森林', victoryRoad:'冠军之路' },
-  pewter:    { route2:'2号道路', route3:'3号道路' },
+  viridian:  { route1:'1号道路', route2:'2号道路', route22:'22号道路', viridianForest:'常青森林' },
+  pewter:    { route2:'2号道路', route3:'3号道路', victoryRoad:'冠军之路' },
   cerulean:  { route4:'4号道路', route5:'5号道路', route9:'9号道路', route24:'24号道路', ceruleanCave:'华蓝洞穴' },
   vermilion: { route5:'5号道路', route6:'6号道路', route11:'11号道路', ssAnne:'圣安奴号', island1:'🚢七之岛' },
-  lavender:  { route6:'6号道路', route7:'7号道路', route10:'10号道路', route12:'12号道路' },
+  lavender:  { route6:'6号道路', route7:'7号道路', route8:'8号道路', route10:'10号道路', route12:'12号道路' },
   celadon:   { route7:'7号道路', route8:'8号道路', route16:'16号道路', route17:'17号道路', rocketHideout:'火箭队基地' },
   saffron:   { route5:'5号道路', route6:'6号道路', route7:'7号道路', route8:'8号道路' },
-  fuchsia:   { route9:'9号道路', route10:'10号道路', route11:'11号道路', route15:'15号道路', route17:'17号道路', safariZone:'狩猎地带' },
+  fuchsia:   { route15:'15号道路', route17:'17号道路', safariZone:'狩猎地带' },
   cinnabar:  { route20:'20号水道', route21:'21号水道', pokemonMansion:'宝可梦屋' },
-  indigo:    { victoryRoad:'冠军之路', route23:'23号道路' },
-  island1:  { vermilion:'枯叶市', island1_route1:'脐眼森林', island1_route2:'脐眼村' },
-  island2:  { island1:'脐眼岛', island2_route2:'高岗林间路', island2_cape:'高岗岬' },
+  route22:   { viridian:'常青市', route23:'23号道路' },
+  route23:   { route22:'22号道路', victoryRoad:'冠军之路', indigo:'宝可梦联盟' },
+  victoryRoad: { pewter:'深灰市', route23:'23号道路' },
+  indigo:    { route23:'23号道路' },
+  route9:    { cerulean:'华蓝市', route10:'10号道路', powerPlant:'无人发电站' },
+  route10:   { lavender:'紫苑镇', route9:'9号道路', route12:'12号道路', powerPlant:'无人发电站' },
+  powerPlant: { route8:'8号道路', route9:'9号道路', route10:'10号道路' },
+  route11:   { vermilion:'枯叶市', route12:'12号道路' },
+  route12:   { lavender:'紫苑镇', route10:'10号道路', route11:'11号道路' },
+  route16:   { celadon:'彩虹市', route17:'17号道路', viridianForest:'常青森林' },
+  route17:   { route16:'16号道路', fuchsia:'浅红市', viridianForest:'常青森林' },
+  route1:    { pallet:'真新镇', viridian:'常青市', route21:'21号水道' },
+  route2:    { viridian:'常青市', pewter:'深灰市', viridianForest:'常青森林' },
+  island1:  { vermilion:'枯叶市', island1_route1:'脐眼森林', island2:'高岗岛' },
+  island2:  { island1:'脐眼岛', island2_route2:'高岗林间路' },
   island3:  { island2_route2:'高岗林间路', island3_forest:'树果森林', island3_route3:'绿色岛水路' },
   island4:  { island3_route3:'绿色岛水路', island4_cave:'冰霜洞穴' },
   island5:  { island4_route4:'冰霜岛水路', island5_rocket:'火箭队仓库', island5_route5:'群兰岛水路' },
@@ -323,7 +335,7 @@ const MAP_COORDS = {
   billHouse:   { x:44, y:4,  icon:'🏠' },
   ssAnne:      { x:44, y:12, icon:'🚢' },
   rocketHideout:{x:10, y:12, icon:'💀' },
-  powerPlant:  { x:24, y:10, icon:'⚡' },
+  powerPlant:  { x:30, y:10, icon:'⚡' },
   seafoamIslands:{x:4, y:16, icon:'❄' },
   pokemonMansion:{x:6, y:16, icon:'🏚' },
   ceruleanCave:{ x:42, y:6,  icon:'🕳' },
@@ -351,6 +363,430 @@ const MAP_COORDS = {
 }
 
 // 侧边栏紧凑型地图（探索模式使用）
+const MAP_REGION_CONFIGS = {
+  kanto: {
+    title: '关都地区路线图',
+    subtitle: '主线、道馆与相邻区域一眼看清',
+    stageWidth: 1240,
+    stageHeight: 800,
+    paddingX: 76,
+    paddingY: 68,
+    nodeIds: Object.keys(MAP_COORDS).filter(id => !id.startsWith('island')),
+  },
+  sevii: {
+    title: '七之岛航线图',
+    subtitle: '岛屿航线、据点与目标区域总览',
+    stageWidth: 800,
+    stageHeight: 1040,
+    paddingX: 100,
+    paddingY: 60,
+    nodeIds: Object.keys(MAP_COORDS).filter(id => id.startsWith('island')),
+  },
+}
+
+for (const region of Object.values(MAP_REGION_CONFIGS)) {
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity
+  for (const id of region.nodeIds) {
+    const coord = MAP_COORDS[id]
+    if (!coord) continue
+    minX = Math.min(minX, coord.x)
+    maxX = Math.max(maxX, coord.x)
+    minY = Math.min(minY, coord.y)
+    maxY = Math.max(maxY, coord.y)
+  }
+  region.bounds = { minX, maxX, minY, maxY }
+}
+
+const QUEST_TARGET_LOCATIONS = {
+  choose_starter: 'pallet',
+  first_rival: 'pallet',
+  go_viridian: 'viridian',
+  get_package: 'cerulean',
+  deliver_package: 'pallet',
+  get_pokedex: 'pallet',
+  go_pewter: 'pewter',
+  beat_brock: 'pewter',
+  mt_moon: 'mtMoon',
+  beat_misty: 'cerulean',
+  bill_house: 'billHouse',
+  ss_anne: 'ssAnne',
+  beat_surge: 'vermilion',
+  rock_tunnel: 'lavender',
+  pokemon_tower: 'lavender',
+  beat_erika: 'celadon',
+  rocket_hideout: 'rocketHideout',
+  silph_co: 'saffron',
+  beat_sabrina: 'saffron',
+  beat_koga: 'fuchsia',
+  safari_zone: 'safariZone',
+  beat_blaine: 'cinnabar',
+  beat_giovanni: 'viridian',
+  final_rival: 'route22',
+  elite_four: 'indigo',
+  sevii_arrival: 'island1',
+  sevii_rocket: 'island5_rocket',
+  sevii_ruins: 'island6_ruins',
+  sevii_tower: 'island7_tower',
+}
+
+const MAP_LABEL_OVERRIDES = {
+  route1: '1号路',
+  route2: '2号路',
+  route3: '3号路',
+  route4: '4号路',
+  route5: '5号路',
+  route6: '6号路',
+  route7: '7号路',
+  route8: '8号路',
+  route9: '9号路',
+  route10: '10号路',
+  route11: '11号路',
+  route12: '12号路',
+  route15: '15号路',
+  route16: '16号路',
+  route17: '17号路',
+  route20: '20号水道',
+  route21: '21号水道',
+  route22: '22号路',
+  route23: '23号路',
+  billHouse: '比尔小屋',
+  ssAnne: '圣安奴号',
+  rocketHideout: '火箭基地',
+  powerPlant: '发电站',
+  seafoamIslands: '双子岛',
+  pokemonMansion: '宝可梦屋',
+  ceruleanCave: '华蓝洞穴',
+  safariZone: '狩猎地带',
+  victoryRoad: '冠军之路',
+  viridianForest: '常青森林',
+  island1_route1: '脐眼森林',
+  island1_mtember: 'Ember山',
+  island2_route2: '高岗林间路',
+  island3_forest: '树果森林',
+  island3_route3: '绿色岛水路',
+  island4_cave: '冰霜洞穴',
+  island4_route4: '冰霜岛水路',
+  island5_rocket: '火箭队仓库',
+  island5_route5: '群兰岛水路',
+  island6_ruins: '遗迹谷',
+  island6_route6: '战怪岛水路',
+  island7_tower: '训练家之塔',
+}
+
+const MAP_STAGE_LAYOUTS = {
+  kanto: {
+    pallet: { x: 15, y: 73 },
+    route1: { x: 15, y: 60 },
+    viridian: { x: 15, y: 46 },
+    route2: { x: 15, y: 31 },
+    viridianForest: { x: 24, y: 40 },
+    pewter: { x: 15, y: 16 },
+    route3: { x: 29, y: 16 },
+    mtMoon: { x: 41, y: 16 },
+    route4: { x: 53, y: 16 },
+    cerulean: { x: 67, y: 16 },
+    billHouse: { x: 82, y: 8 },
+    ceruleanCave: { x: 82, y: 23 },
+    route5: { x: 57, y: 28 },
+    saffron: { x: 46, y: 34 },
+    route6: { x: 60, y: 47 },
+    vermilion: { x: 79, y: 48 },
+    ssAnne: { x: 92, y: 53 },
+    route11: { x: 87, y: 64 },
+    route9: { x: 75, y: 30 },
+    powerPlant: { x: 91, y: 31 },
+    lavender: { x: 68, y: 34 },
+    route10: { x: 71, y: 48 },
+    route12: { x: 72, y: 65 },
+    route7: { x: 33, y: 36 },
+    route8: { x: 54, y: 23 },
+    celadon: { x: 19, y: 40 },
+    rocketHideout: { x: 7, y: 40 },
+    route16: { x: 15, y: 56 },
+    route17: { x: 28, y: 73 },
+    fuchsia: { x: 58, y: 81 },
+    route15: { x: 77, y: 73 },
+    safariZone: { x: 77, y: 89 },
+    route21: { x: 15, y: 89 },
+    cinnabar: { x: 15, y: 99 },
+    route20: { x: 4, y: 94 },
+    seafoamIslands: { x: 2, y: 84 },
+    pokemonMansion: { x: 26, y: 99 },
+    route22: { x: 3, y: 45 },
+    victoryRoad: { x: 89, y: 9 },
+    route23: { x: 97, y: 18 },
+    indigo: { x: 97, y: 5 },
+  },
+  sevii: {
+    island1: { x: 49, y: 9 },
+    island1_route1: { x: 49, y: 18 },
+    island1_mtember: { x: 68, y: 8 },
+    island2: { x: 49, y: 28 },
+    island2_route2: { x: 49, y: 38 },
+    island3: { x: 49, y: 48 },
+    island3_forest: { x: 68, y: 48 },
+    island3_route3: { x: 33, y: 57 },
+    island4: { x: 49, y: 66 },
+    island4_cave: { x: 68, y: 66 },
+    island4_route4: { x: 33, y: 75 },
+    island5: { x: 49, y: 83 },
+    island5_rocket: { x: 69, y: 83 },
+    island5_route5: { x: 33, y: 91 },
+    island6: { x: 49, y: 91 },
+    island6_ruins: { x: 69, y: 91 },
+    island6_route6: { x: 33, y: 97 },
+    island7: { x: 49, y: 99 },
+    island7_tower: { x: 69, y: 99 },
+  },
+}
+
+const MAP_STAGE_POINT_OFFSETS = {
+  kanto: {},
+  sevii: {},
+}
+
+const MAP_LABEL_DIRECTION_OVERRIDES = {
+  kanto: {
+    billHouse: 'label-below',
+    cerulean: 'label-below',
+    ceruleanCave: 'label-below',
+    indigo: 'label-below',
+    powerPlant: 'label-above',
+    route11: 'label-above',
+    route12: 'label-above',
+    route15: 'label-above',
+    route23: 'label-below',
+    safariZone: 'label-right',
+    ssAnne: 'label-below',
+    vermilion: 'label-below',
+    victoryRoad: 'label-below',
+    route5: 'label-above',
+    route6: 'label-right',
+    route7: 'label-below',
+    route8: 'label-left',
+    route9: 'label-below',
+    route10: 'label-below',
+    lavender: 'label-left',
+    celadon: 'label-below',
+    route16: 'label-below',
+    rocketHideout: 'label-right',
+    saffron: 'label-above',
+    fuchsia: 'label-right',
+  },
+}
+
+const MAP_LABEL_OFFSET_OVERRIDES = {
+  kanto: {
+    powerPlant: { x: 6, y: -8 },
+    route11: { x: 8, y: 0 },
+    route12: { x: 8, y: 2 },
+    route15: { x: 8, y: -6 },
+    rocketHideout: { x: 22, y: 0 },
+    ssAnne: { x: 10, y: 0 },
+    billHouse: { x: 6, y: -2 },
+  },
+  sevii: {},
+}
+
+function getMapRegionKey(locationId) {
+  return locationId && locationId.startsWith('island') ? 'sevii' : 'kanto'
+}
+
+function getMapRegionConfig(locationId) {
+  return MAP_REGION_CONFIGS[getMapRegionKey(locationId)]
+}
+
+function getQuestTargetLocationId() {
+  const quest = getCurrentQuest()
+  if (!quest) return null
+  return QUEST_TARGET_LOCATIONS[quest.id] || null
+}
+
+function getMapNodeLabel(id, loc) {
+  if (MAP_LABEL_OVERRIDES[id]) return MAP_LABEL_OVERRIDES[id]
+  if (!loc) return id
+  return loc[0]
+}
+
+function getMapNodeGlyph(id, loc) {
+  if (!loc) return '?'
+  if (id === 'ssAnne') return '船'
+  if (id === 'rocketHideout' || id === 'island5_rocket') return '火'
+  if (id === 'powerPlant') return '电'
+  if (id === 'safariZone') return '狩'
+  if (loc[2] === 'town') return '城'
+  if (loc[2] === 'route') return '路'
+  if (loc[2] === 'cave') return '洞'
+  if (loc[2] === 'water') return '水'
+  return '点'
+}
+
+function getMapLabelDirection(regionKey, id, loc) {
+  const override = MAP_LABEL_DIRECTION_OVERRIDES[regionKey] && MAP_LABEL_DIRECTION_OVERRIDES[regionKey][id]
+  if (override) return override
+  const layout = MAP_STAGE_LAYOUTS[regionKey] && MAP_STAGE_LAYOUTS[regionKey][id]
+  const coord = layout || MAP_COORDS[id]
+  const region = layout
+    ? { bounds: { minX: 0, maxX: 100, minY: 0, maxY: 100 } }
+    : MAP_REGION_CONFIGS[regionKey]
+  if (!coord || !region) return 'label-right'
+  const { minX, maxX, minY, maxY } = region.bounds
+  const centerX = (minX + maxX) / 2
+  if (coord.y <= minY + 1.4) return 'label-below'
+  if (coord.y >= maxY - 1.4) return 'label-above'
+  if (regionKey === 'sevii') {
+    if (coord.x >= maxX - 0.6) return 'label-left'
+    if (coord.x <= minX + 0.6) return 'label-right'
+  }
+  if (loc && loc[2] === 'route') {
+    return coord.x > centerX ? 'label-left' : 'label-right'
+  }
+  return coord.x >= centerX + 1 ? 'label-left' : 'label-right'
+}
+
+function getMapRegionConnections(regionKey) {
+  const region = MAP_REGION_CONFIGS[regionKey]
+  if (!region) return []
+  const nodeSet = new Set(region.nodeIds)
+  const seen = new Set()
+  const links = []
+  for (const id of region.nodeIds) {
+    const loc = LOCATIONS[id]
+    if (!loc) continue
+    for (const targetId of loc[5] || []) {
+      if (!nodeSet.has(targetId)) continue
+      const key = [id, targetId].sort().join('::')
+      if (seen.has(key)) continue
+      seen.add(key)
+      links.push([id, targetId])
+    }
+  }
+  return links
+}
+
+function getMapStagePoint(regionKey, id) {
+  const region = MAP_REGION_CONFIGS[regionKey]
+  if (!region) return null
+  const layout = MAP_STAGE_LAYOUTS[regionKey] && MAP_STAGE_LAYOUTS[regionKey][id]
+  if (layout) {
+    const innerW = region.stageWidth - region.paddingX * 2
+    const innerH = region.stageHeight - region.paddingY * 2
+    return {
+      x: region.paddingX + (layout.x / 100) * innerW,
+      y: region.paddingY + (layout.y / 100) * innerH,
+    }
+  }
+  const coord = MAP_COORDS[id]
+  if (!coord) return null
+  const spanX = Math.max(1, region.bounds.maxX - region.bounds.minX)
+  const spanY = Math.max(1, region.bounds.maxY - region.bounds.minY)
+  const innerW = region.stageWidth - region.paddingX * 2
+  const innerH = region.stageHeight - region.paddingY * 2
+  const offset = (MAP_STAGE_POINT_OFFSETS[regionKey] && MAP_STAGE_POINT_OFFSETS[regionKey][id]) || { x: 0, y: 0 }
+  return {
+    x: region.paddingX + ((coord.x - region.bounds.minX) / spanX) * innerW + offset.x,
+    y: region.paddingY + ((coord.y - region.bounds.minY) / spanY) * innerH + offset.y,
+  }
+}
+
+function getMapLabelOffset(regionKey, id) {
+  return (MAP_LABEL_OFFSET_OVERRIDES[regionKey] && MAP_LABEL_OFFSET_OVERRIDES[regionKey][id]) || { x: 0, y: 0 }
+}
+
+function renderExpandedMapLegend() {
+  return `
+    <div class="map-legend map-legend-expanded">
+      <span class="legend-item"><span class="legend-swatch current"></span> 当前位置</span>
+      <span class="legend-item"><span class="legend-swatch target"></span> 主线目标</span>
+      <span class="legend-item"><span class="legend-swatch neighbor"></span> 可直接前往</span>
+      <span class="legend-item"><span class="legend-swatch gym-open"></span> 未通关道馆</span>
+      <span class="legend-item"><span class="legend-swatch gym-cleared"></span> 已通关道馆</span>
+    </div>
+  `
+}
+
+function renderExpandedMapStage(regionKey, currentId, targetId) {
+  const region = MAP_REGION_CONFIGS[regionKey]
+  if (!region) return ''
+
+  const currentLoc = LOCATIONS[currentId]
+  const neighbors = new Set(((currentLoc && currentLoc[5]) || []).filter(id => region.nodeIds.includes(id)))
+  const targetNeighbors = targetId && LOCATIONS[targetId]
+    ? new Set(((LOCATIONS[targetId][5]) || []).filter(id => region.nodeIds.includes(id)))
+    : new Set()
+
+  let linesHtml = ''
+  for (const [fromId, toId] of getMapRegionConnections(regionKey)) {
+    const from = getMapStagePoint(regionKey, fromId)
+    const to = getMapStagePoint(regionKey, toId)
+    if (!from || !to) continue
+    const dx = to.x - from.x
+    const dy = to.y - from.y
+    const length = Math.sqrt(dx * dx + dy * dy)
+    const angle = Math.atan2(dy, dx) * 180 / Math.PI
+    const classes = ['map-link']
+    if (fromId === currentId || toId === currentId) classes.push('is-current-path')
+    if (targetId && (fromId === targetId || toId === targetId)) classes.push('is-target-path')
+    linesHtml += `<div class="${classes.join(' ')}" style="left:${from.x}px;top:${from.y}px;width:${length}px;transform:rotate(${angle}deg);"></div>`
+  }
+
+  let nodesHtml = ''
+  for (const id of region.nodeIds) {
+    const loc = LOCATIONS[id]
+    const point = getMapStagePoint(regionKey, id)
+    if (!loc || !point) continue
+
+    const classes = ['map-node', `node-${loc[2]}`, getMapLabelDirection(regionKey, id, loc)]
+    if (id === currentId) classes.push('is-current')
+    if (id === targetId) classes.push('is-target')
+    if (neighbors.has(id)) classes.push('is-neighbor')
+    if (targetNeighbors.has(id)) classes.push('is-target-neighbor')
+
+    let gymBadge = ''
+    if (loc[4]) {
+      const gymData = GYM_LEADERS[loc[4]]
+      const cleared = gymData && gymData[4] <= G.player.badge
+      classes.push(cleared ? 'gym-cleared' : 'gym-open')
+      gymBadge = `<span class="map-node-badge ${cleared ? 'cleared' : 'open'}">${cleared ? 'OK' : 'GYM'}</span>`
+    }
+
+    const label = getMapNodeLabel(id, loc)
+    const glyph = getMapNodeGlyph(id, loc)
+    const labelOffset = getMapLabelOffset(regionKey, id)
+    nodesHtml += `
+      <div class="${classes.join(' ')}" style="left:${point.x}px;top:${point.y}px;--label-nudge-x:${labelOffset.x}px;--label-nudge-y:${labelOffset.y}px;">
+        <div class="map-node-core">
+          <span class="map-node-glyph">${glyph}</span>
+          ${gymBadge}
+        </div>
+        <div class="map-node-label">${label}</div>
+      </div>
+    `
+  }
+
+  return `
+    <div class="world-map-shell">
+      <div class="world-map-topbar">
+        <div>
+          <div class="world-map-heading">${region.title}</div>
+          <div class="world-map-subtitle">${region.subtitle}</div>
+        </div>
+        <div class="world-map-summary">
+          <span class="info-badge">${LOCATIONS[currentId] ? LOCATIONS[currentId][0] : '???'}</span>
+          ${targetId && LOCATIONS[targetId] ? `<span class="info-badge target-badge">目标 ${LOCATIONS[targetId][0]}</span>` : ''}
+        </div>
+      </div>
+      <div class="world-map-stage-wrap">
+        <div class="world-map-stage ${regionKey === 'sevii' ? 'is-sevii' : 'is-kanto'}" style="width:${region.stageWidth}px;height:${region.stageHeight}px;">
+          <div class="world-map-grid"></div>
+          ${linesHtml}
+          ${nodesHtml}
+        </div>
+      </div>
+    </div>
+  `
+}
+
 function renderSidebarMap() {
   const pos = G.player.position
   const loc = LOCATIONS[pos]
@@ -444,159 +880,28 @@ function renderSidebarMap() {
 // ASCII地图渲染（完整版，用于展开的侧边栏）
 function renderWorldMap() {
   const pos = G.player.position
-  const badge = G.player.badge
+  const regionKey = getMapRegionKey(pos)
+  const region = getMapRegionConfig(pos)
+  const rawTargetId = getQuestTargetLocationId()
+  const targetId = rawTargetId && region && region.nodeIds.includes(rawTargetId) ? rawTargetId : null
+  const main = $('main')
+  if (!main) return
 
-  // 检测是否在七之岛区域，动态扩展地图
-  const isSevii = pos && pos.startsWith('island')
-  const W = isSevii ? 74 : 54, H = isSevii ? 36 : 24
-  const grid = Array.from({length:H}, () => Array(W).fill(' '))
-
-  // 绘制边框
-  for (let x = 0; x < W; x++) { grid[0][x] = '═'; grid[H-1][x] = '═' }
-  for (let y = 0; y < H; y++) { grid[y][0] = '║'; grid[y][W-1] = '║' }
-  grid[0][0] = '╔'; grid[0][W-1] = '╗'; grid[H-1][0] = '╚'; grid[H-1][W-1] = '╝'
-
-  // 绘制标题
-  const title = isSevii ? '◆ 七之岛地区全图 ◆' : '◆ 关都地区全图 ◆'
-  const titleX = Math.floor((W - title.length) / 2)
-  for (let i = 0; i < title.length; i++) grid[1][titleX + i] = title[i]
-  
-  // 绘制连接线
-  const connections = [
-    [28,14, 28,12], // pallet -> route1
-    [28,12, 28,10], // route1 -> viridian
-    [28,10, 22,10], // viridian -> route22
-    [28,10, 24,10], // viridian -> viridianForest
-    [28,10, 46,6],  // viridian -> victoryRoad
-    [22,8, 18,6],   // route2 -> pewter
-    [18,6, 14,6],   // pewter -> route3
-    [14,6, 22,6],   // route3 -> mtMoon
-    [22,6, 30,6],   // mtMoon -> route4
-    [30,6, 38,6],   // route4 -> cerulean
-    [38,6, 44,4],   // cerulean -> billHouse
-    [38,6, 42,6],   // cerulean -> ceruleanCave
-    [38,6, 32,8],   // cerulean -> route5
-    [38,6, 34,12],  // cerulean -> route9
-    [32,8, 28,8],   // route5 -> saffron
-    [28,8, 20,8],   // saffron -> route8
-    [28,8, 16,12],  // saffron -> route7
-    [28,8, 36,12],  // saffron -> route6
-    [20,8, 12,12],  // route8 -> celadon
-    [16,12, 12,12], // route7 -> celadon
-    [12,12, 10,12], // celadon -> rocketHideout
-    [12,12, 12,14], // celadon -> route16
-    [36,12, 42,12], // route6 -> vermilion
-    [36,12, 20,12], // route6 -> lavender
-    [42,12, 44,12], // vermilion -> ssAnne
-    [42,12, 40,14], // vermilion -> route11
-    [20,12, 24,12], // lavender -> route10
-    [20,12, 30,16], // lavender -> route12
-    [24,12, 38,16], // route10 -> fuchsia
-    [40,14, 38,16], // route11 -> fuchsia
-    [30,16, 38,16], // route12 -> fuchsia
-    [36,16, 38,16], // route15 -> fuchsia
-    [12,14, 24,16], // route16 -> route17
-    [24,16, 38,16], // route17 -> fuchsia
-    [6,18, 4,18],   // cinnabar -> route20
-    [18,18, 6,18],  // route21 -> cinnabar
-    [28,14, 18,18], // pallet -> route21
-    [46,6, 50,6],   // victoryRoad -> route23
-    [50,6, 50,4],   // route23 -> indigo
-    [38,18, 38,16], // safariZone -> fuchsia
-    // 七之岛连接线（坐标x偏移+54，y偏移+0）
-    [42,12, 58,8],  // vermilion -> island1 (跨越地图)
-    [58,8, 58,6],   // island1 -> island1_route1
-    [58,6, 60,4],   // island1_route1 -> mtEmber
-    [58,8, 58,12],  // island1 -> island2
-    [58,12, 58,14], // island2 -> island2_route2
-    [58,14, 58,16], // island2_route2 -> island3
-    [58,16, 60,16], // island3 -> island3_forest
-    [58,16, 56,18], // island3 -> island3_route3
-    [56,18, 58,20], // island3_route3 -> island4
-    [58,20, 60,20], // island4 -> island4_cave
-    [58,20, 56,22], // island4 -> island4_route4
-    [56,22, 58,24], // island4_route4 -> island5
-    [58,24, 60,24], // island5 -> island5_rocket
-    [58,24, 56,26], // island5 -> island5_route5
-    [56,26, 58,28], // island5_route5 -> island6
-    [58,28, 60,28], // island6 -> island6_ruins
-    [58,28, 56,30], // island6 -> island6_route6
-    [56,30, 58,32], // island6_route6 -> island7
-    [58,32, 60,32], // island7 -> island7_tower
-  ]
-  
-  // 绘制连接线
-  for (const [x1,y1,x2,y2] of connections) {
-    if (x1 >= W || x2 >= W || y1 >= H || y2 >= H) continue
-    if (y1 === y2) {
-      for (let x = Math.min(x1,x2); x <= Math.max(x1,x2); x++) {
-        if (grid[y1][x] === ' ') grid[y1][x] = '─'
-      }
-    } else if (x1 === x2) {
-      for (let y = Math.min(y1,y2); y <= Math.max(y1,y2); y++) {
-        if (grid[y][x1] === ' ') grid[y][x1] = '│'
-      }
-    }
-  }
-  
-  // 绘制地点
-  for (const [id, coord] of Object.entries(MAP_COORDS)) {
-    const loc = LOCATIONS[id]
-    if (!loc) continue
-    const {x, y, icon} = coord
-    const isTown = loc[2] === 'town'
-    const hasGym = loc[4]
-    const isCurrent = id === pos
-    
-    // 确定显示字符
-    let display = icon
-    if (isCurrent) display = '★'
-    else if (isTown && hasGym) {
-      const gymData = GYM_LEADERS[loc[4]]
-      display = gymData && gymData[4] <= badge ? '✔' : '!'
-    } else if (isTown) display = 'T'
-    else if (loc[2] === 'cave') display = 'C'
-    else if (loc[2] === 'water') display = '~'
-    
-    // 绘制地点名（简短版）
-    const shortName = loc[0].substring(0, 2)
-    if (x >= 0 && x < W && y >= 0 && y < H) {
-      grid[y][x] = display
-      // 在旁边写名字（如果有空间）
-      if (x + 2 < W - 1) {
-        grid[y][x+1] = shortName[0] || ''
-        grid[y][x+2] = shortName[1] || ''
-      }
-    }
-  }
-  
-  // 转换为HTML
-  let html = '<pre class="world-map">'
-  for (let y = 0; y < H; y++) {
-    html += grid[y].join('') + '\n'
-  }
-  html += '</pre>'
-
-  // 图例
-  html += `
-    <div class="map-legend">
-      <span class="legend-item"><span class="legend-icon">★</span> 当前位置</span>
-      <span class="legend-item"><span class="legend-icon">T</span> 城镇</span>
-      <span class="legend-item"><span class="legend-icon">!</span> 未通过道馆</span>
-      <span class="legend-item"><span class="legend-icon">✔</span> 已通过道馆</span>
-      <span class="legend-item"><span class="legend-icon">·</span> 道路</span>
-    </div>
-  `
-
-  // 详细信息面板
+  let html = '<p class="section-title">🗺 世界地图</p>'
+  html += renderExpandedMapStage(regionKey, pos, targetId)
+  html += renderExpandedMapLegend()
   html += renderMapInfo()
+  main.innerHTML = html
 
-  // 渲染到侧边栏
   const panel = $('map-panel')
-  if (panel) panel.innerHTML = html
+  if (panel) panel.innerHTML = ''
+
+  const actions = $('actions')
+  if (actions) {
+    actions.innerHTML = '<button class="btn" onclick="G.view=\'explore\';render()">← 返回探索</button>'
+  }
 }
 
-// 地图详细信息
 function renderMapInfo() {
   const pos = G.player.position
   const loc = LOCATIONS[pos]

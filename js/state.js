@@ -36,6 +36,7 @@ function createInitialState() {
     quests: { current: 'choose_starter', completed: [] },
     showBigMap: false,
     pendingMoveLearn: null,
+    pokemonManager: null,
     logs: ['欢迎来到宝可梦世界！'],
   }
 }
@@ -58,6 +59,7 @@ function loadGame() {
       if (!G.quests) G.quests = { current: 'choose_starter', completed: [] }
       if (G.showBigMap === undefined) G.showBigMap = false
       if (G.pendingMoveLearn === undefined) G.pendingMoveLearn = null
+      if (G.pokemonManager === undefined) G.pokemonManager = null
       for (const p of [...G.player.pokemon, ...(G.player.pc||[])]) {
         if (!p.ivs) p.ivs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
         if (!p.evs) p.evs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
@@ -68,10 +70,14 @@ function loadGame() {
         if (p.status === undefined) p.status = null
         if (p.accuracy === undefined) p.accuracy = 100
         if (p.evasion === undefined) p.evasion = 100
-        if (!p.tempDebuffs) p.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0 }
+        if (!p.relearnMoves) p.relearnMoves = []
+        if (!p.tempDebuffs) p.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0, atk: 0, def: 0, spd: 0, spa: 0 }
         if (p.moves) for (const m of p.moves) {
-          if (m.effect === undefined) { const md = getMoveData(m.id); m.effect = md ? (md[6] || null) : null }
-          if (m.desc === undefined) { const md = getMoveData(m.id); m.desc = md ? (md[5] || '') : '' }
+          const md = getMoveData(m.id)
+          if (md) {
+            m.desc = md[5] || ''
+            if (m.effect === undefined || m.effect === null) m.effect = md[6] || null
+          }
         }
       }
       return true
@@ -171,10 +177,11 @@ function createPokemon(id, level, movesOverride) {
       const m = getMoveData(mid)
       return m ? { id:mid, name:m[1], type:m[2], power:m[3], pp:m[4], currentPp:m[4], desc:m[5]||'', effect:m[6]||null } : null
     }).filter(Boolean),
+    relearnMoves: [],
     moveList: base[12] || null, // 保存完整的技能学习表（含等级信息）
     exp: 0, nextLevel: Math.floor(level ** 3 * 0.8 + 10),
     ivs, evs, nature, gender, ability, status: null, fainted: false,
-    accuracy: 100, evasion: 100, tempDebuffs: { accuracy: 0, evasion: 0, spe: 0 },
+    accuracy: 100, evasion: 100, tempDebuffs: { accuracy: 0, evasion: 0, spe: 0, atk: 0, def: 0, spd: 0, spa: 0 },
   }
 }
 
@@ -278,7 +285,7 @@ function healAll() {
     p.hp = p.maxHp; p.fainted = false; p.status = null
     // Natural Cure: 交换/治疗后自动恢复
     if (p.ability && p.ability.key === 'naturalCure') p.status = null
-    if (p.tempDebuffs) p.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0 }
+    if (p.tempDebuffs) p.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0, atk: 0, def: 0, spd: 0, spa: 0 }
     for (const m of p.moves) m.currentPp = m.pp
   }
 }

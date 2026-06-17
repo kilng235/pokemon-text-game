@@ -35,7 +35,19 @@ function startStoryBattle(eventId) {
   const ev = STORY_EVENTS[eventId]
   if (!ev || !ev.battle) return false
   const bType = ev.battleType || 'story'
-  return startBattle(bType, ev, ev.battle.team.map(p => createPokemon(p[0], p[1])))
+  const team = ev.battle.team.map(p => createPokemon(p[0], p[1]))
+  if (ev.battle.statModifier) {
+    team.forEach(p => {
+      for (const [k, v] of Object.entries(ev.battle.statModifier)) {
+        if (p[k] !== undefined) p[k] = Math.floor(p[k] * v)
+      }
+    })
+  }
+  return startBattle(bType, {
+    eventId,
+    name: ev.battle.name,
+    onFinish: ev.onFinish || null,
+  }, team)
 }
 
 function startRivalBattle(team, name, onFinish) {
@@ -126,31 +138,96 @@ function startBattle(type, extra, enemyTeam) {
 }
 
 function handleStatusEffect(target, effect) {
-  if (target.status) { addLog(`但${target.name}已经有异常状态了。`); return false }
   if (effect === 'sleep') {
+    if (target.status) { addLog(`但${target.name}已经有异常状态了。`); return false }
     target.status = { type: 'sleep', turns: 1 + Math.floor(Math.random() * 3) }
     addLog(`${target.name} 睡着了！`); return true
   } else if (effect === 'paralyze') {
+    if (target.status) { addLog(`但${target.name}已经有异常状态了。`); return false }
     target.status = { type: 'paralyze' }
     addLog(`${target.name} 麻痹了！`); return true
+  } else if (effect === 'poison') {
+    if (target.status) { addLog(`但${target.name}已经有异常状态了。`); return false }
+    target.status = { type: 'poison', turns: 0 }
+    addLog(`${target.name} 中毒了！`); return true
+  } else if (effect === 'burn') {
+    if (target.status) { addLog(`但${target.name}已经有异常状态了。`); return false }
+    target.status = { type: 'burn', turns: 0 }
+    addLog(`${target.name} 被灼伤了！`); return true
+  } else if (effect === 'confuse') {
+    target.confused = true
+    addLog(`${target.name} 混乱了！`); return true
   } else if (effect === 'accuracyDown') {
     target.tempDebuffs.accuracy = Math.max(-50, target.tempDebuffs.accuracy - 20)
     addLog(`${target.name} 的命中率降低了！`); return true
   } else if (effect === 'speedDown') {
     target.tempDebuffs.spe = Math.max(-50, target.tempDebuffs.spe - 20)
     addLog(`${target.name} 的速度降低了！`); return true
+  } else if (effect === 'atkDown') {
+    target.tempDebuffs.atk = Math.max(-50, (target.tempDebuffs.atk || 0) - 20)
+    addLog(`${target.name} 的攻击降低了！`); return true
+  } else if (effect === 'defDown') {
+    target.tempDebuffs.def = Math.max(-50, (target.tempDebuffs.def || 0) - 20)
+    addLog(`${target.name} 的防御降低了！`); return true
+  } else if (effect === 'spDefDown') {
+    target.tempDebuffs.spd = Math.max(-50, (target.tempDebuffs.spd || 0) - 20)
+    addLog(`${target.name} 的特防降低了！`); return true
+  } else if (effect === 'spAtkDown') {
+    target.tempDebuffs.spa = Math.max(-50, (target.tempDebuffs.spa || 0) - 20)
+    addLog(`${target.name} 的特攻降低了！`); return true
+  } else if (effect === 'poisonSpeedDown') {
+    if (target.status) { addLog(`但${target.name}已经有异常状态了。`); return false }
+    target.status = { type: 'poison', turns: 0 }
+    target.tempDebuffs.spe = Math.max(-50, (target.tempDebuffs.spe || 0) - 20)
+    addLog(`${target.name} 中毒了！速度降低了！`); return true
+  } else if (effect === 'clearAll') {
+    target.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0, atk: 0, def: 0, spd: 0, spa: 0 }
+    addLog(`${target.name} 的能力变化被清除了！`); return true
+  } else if (effect === 'confuse') {
+    target.confused = true
+    addLog(`${target.name} 混乱了！`); return true
+  } else if (effect === 'disable') {
+    target.disabled = true
+    addLog(`${target.name} 被定身了，无法行动！`); return true
   }
   return false
 }
 
 function checkStatusSkip(pkm) {
-  if (!pkm.status) return false
+  // Check disable
+  if (pkm.disabled) {
+    pkm.disabled = false
+    addLog(`${pkm.name} 从定身中恢复了！`)
+  }
+  if (!pkm.status) {
+    // Check leechSeed damage even without status
+    if (pkm.leechSeed) {
+      const dmg = Math.max(1, Math.floor(pkm.maxHp / 8))
+      pkm.hp = Math.max(0, pkm.hp - dmg)
+      addLog(`${pkm.name} 被寄生种子吸取了 ${dmg} HP！`)
+    }
+    return false
+  }
   if (pkm.status.type === 'sleep') {
     if (pkm.status.turns <= 0) { pkm.status = null; addLog(`${pkm.name} 醒来了！`); return false }
     pkm.status.turns--
     addLog(`${pkm.name} 在沉睡……`); return true
   } else if (pkm.status.type === 'paralyze') {
     if (Math.random() < 0.25) { addLog(`${pkm.name} 因为麻痹而无法行动！`); return true }
+  } else if (pkm.status.type === 'poison') {
+    const dmg = Math.max(1, Math.floor(pkm.maxHp / 8))
+    pkm.hp = Math.max(0, pkm.hp - dmg)
+    addLog(`${pkm.name} 因中毒损失了 ${dmg} HP！`)
+  } else if (pkm.status.type === 'burn') {
+    const dmg = Math.max(1, Math.floor(pkm.maxHp / 16))
+    pkm.hp = Math.max(0, pkm.hp - dmg)
+    addLog(`${pkm.name} 因灼伤损失了 ${dmg} HP！`)
+  }
+  // Leech seed damage
+  if (pkm.leechSeed) {
+    const dmg = Math.max(1, Math.floor(pkm.maxHp / 8))
+    pkm.hp = Math.max(0, pkm.hp - dmg)
+    addLog(`${pkm.name} 被寄生种子吸取了 ${dmg} HP！`)
   }
   return false
 }
@@ -191,9 +268,14 @@ function calcDamage(atkPkm, defPkm, move) {
     addLog(`${atkPkm.name} 的 ${move.name} 没有命中！`)
     return { damage: 0, effectiveness: 0, missed: true }
   }
+  // 0威力技能只触发效果，不造成伤害
+  if (move.power === 0) {
+    addLog(`${atkPkm.name} 使用了 ${move.name}！`)
+    return { damage: 0, effectiveness: 1, missed: false }
+  }
   const isSp = ['火','水','草','电','冰','超能','幽灵','龙','恶'].includes(move.type)
-  const atkStat = isSp ? atkPkm.spa : atkPkm.atk
-  const defStat = isSp ? defPkm.spd : defPkm.def
+  const atkStat = Math.max(1, (isSp ? atkPkm.spa + (atkPkm.tempDebuffs?.spa || 0) : atkPkm.atk + (atkPkm.tempDebuffs?.atk || 0)))
+  const defStat = Math.max(1, (isSp ? defPkm.spd + (defPkm.tempDebuffs?.spd || 0) : defPkm.def + (defPkm.tempDebuffs?.def || 0)))
   const lvF = Math.floor((2 * atkPkm.level) / 5 + 2)
   let damage = Math.floor(Math.floor((lvF * atkStat * move.power) / defStat) / 50 + 2)
   const eff = getEffectiveness(move.type, defPkm.types)
@@ -248,14 +330,75 @@ function playerAttack(moveIndex, skipTurnCheck) {
     b.turn = 'enemy'; setTimeout(enemyTurn, 500); return
   }
 
-  // Apply status effects (sleep/paralyze)
-  if (result.effectiveness > 0 && move.effect && ['sleep','paralyze'].includes(move.effect)) {
+  // Apply status effects (sleep/paralyze/poison/burn)
+  if (result.effectiveness > 0 && move.effect && ['sleep','paralyze','poison','burn','confuse','disable'].includes(move.effect)) {
     handleStatusEffect(b.enemy, move.effect)
   }
 
   // Apply debuff effects
-  if (result.effectiveness > 0 && move.effect && ['accuracyDown','speedDown'].includes(move.effect)) {
+  if (result.effectiveness > 0 && move.effect && ['accuracyDown','speedDown','atkDown','defDown','spDefDown','spAtkDown','poisonSpeedDown','clearAll'].includes(move.effect)) {
     handleStatusEffect(b.enemy, move.effect)
+  }
+
+  // Apply self-buff effects
+  if (move.effect === 'atkUp') {
+    pkm.tempDebuffs.atk = Math.min(50, (pkm.tempDebuffs.atk || 0) + 20)
+    addLog(`${pkm.name} 的攻击提升了！`)
+  } else if (move.effect === 'defUp') {
+    pkm.tempDebuffs.def = Math.min(50, (pkm.tempDebuffs.def || 0) + 20)
+    addLog(`${pkm.name} 的防御提升了！`)
+  } else if (move.effect === 'spAtkUp') {
+    pkm.tempDebuffs.spa = Math.min(50, (pkm.tempDebuffs.spa || 0) + 20)
+    addLog(`${pkm.name} 的特攻提升了！`)
+  } else if (move.effect === 'spDefUp') {
+    pkm.tempDebuffs.spd = Math.min(50, (pkm.tempDebuffs.spd || 0) + 20)
+    addLog(`${pkm.name} 的特防提升了！`)
+  } else if (move.effect === 'speedUp') {
+    pkm.tempDebuffs.spe = Math.min(50, (pkm.tempDebuffs.spe || 0) + 20)
+    addLog(`${pkm.name} 的速度提升了！`)
+  } else if (move.effect === 'evasionUp') {
+    pkm.tempDebuffs.evasion = Math.min(50, (pkm.tempDebuffs.evasion || 0) + 20)
+    addLog(`${pkm.name} 的回避率提升了！`)
+  } else if (move.effect === 'atkUpDefUp') {
+    pkm.tempDebuffs.atk = Math.min(50, (pkm.tempDebuffs.atk || 0) + 20)
+    pkm.tempDebuffs.def = Math.min(50, (pkm.tempDebuffs.def || 0) + 20)
+    addLog(`${pkm.name} 的攻击和防御都提升了！`)
+  } else if (move.effect === 'atkUpSpeedUp') {
+    pkm.tempDebuffs.atk = Math.min(50, (pkm.tempDebuffs.atk || 0) + 20)
+    pkm.tempDebuffs.spe = Math.min(50, (pkm.tempDebuffs.spe || 0) + 20)
+    addLog(`${pkm.name} 的攻击和速度都提升了！`)
+  } else if (move.effect === 'atkUpSpAtkUp') {
+    pkm.tempDebuffs.atk = Math.min(50, (pkm.tempDebuffs.atk || 0) + 20)
+    pkm.tempDebuffs.spa = Math.min(50, (pkm.tempDebuffs.spa || 0) + 20)
+    addLog(`${pkm.name} 的攻击和特攻都提升了！`)
+  } else if (move.effect === 'defUpSpDefUp') {
+    pkm.tempDebuffs.def = Math.min(50, (pkm.tempDebuffs.def || 0) + 20)
+    pkm.tempDebuffs.spd = Math.min(50, (pkm.tempDebuffs.spd || 0) + 20)
+    addLog(`${pkm.name} 的防御和特防都提升了！`)
+  } else if (move.effect === 'spAtkUpSpDefUpSpeedUp') {
+    pkm.tempDebuffs.spa = Math.min(50, (pkm.tempDebuffs.spa || 0) + 20)
+    pkm.tempDebuffs.spd = Math.min(50, (pkm.tempDebuffs.spd || 0) + 20)
+    pkm.tempDebuffs.spe = Math.min(50, (pkm.tempDebuffs.spe || 0) + 20)
+    addLog(`${pkm.name} 的特攻、特防和速度都提升了！`)
+  } else if (move.effect === 'recover') {
+    const heal = Math.floor(pkm.maxHp / 2)
+    pkm.hp = Math.min(pkm.maxHp, pkm.hp + heal)
+    addLog(`${pkm.name} 回复了 ${heal} HP！`)
+  } else if (move.effect === 'recoverAll') {
+    pkm.hp = pkm.maxHp
+    pkm.status = null
+    addLog(`${pkm.name} 的HP完全回复了！异常状态也治愈了！`)
+  } else if (move.effect === 'leechSeed') {
+    b.enemy.leechSeed = true
+    addLog(`${b.enemy.name} 被寄生种子寄生了！`)
+  }
+
+  // 0威力状态技能：立即渲染显示效果，然后进入敌方回合
+  if (move.power === 0) {
+    b.battleMsg = `使用了 ${move.name}！`
+    render()
+    if (skipTurnCheck) { b.turn = 'player'; return }
+    b.turn = 'enemy'; setTimeout(enemyTurn, 800); return
   }
 
   // Apply drain effect
@@ -365,18 +508,16 @@ function battleVictory() {
   }
   G.battle = null; saveGame(); render()
 }
-
 function syncEnemyAttack() {
   const b = G.battle; if (!b || !b.enemy || b.enemy.fainted) return false
   const pkm = getActivePokemon(); if (!pkm) {
-    addLog('你没有能战斗的宝可梦了！')
-    if (b.type === 'wild') { addLog('你飞回了宝可梦中心…'); healAll(); G.player.position = findNearestCenter() }
-    else { addLog(`你输给了 ${b.type === 'trainer' ? b.extra.trainer.name : b.type === 'gym' ? b.extra.data[1] : b.extra ? b.extra.name : '对手'}……`) }
+    addLog('????????????')
+    handlePlayerDefeat(b)
     G.battle = null; saveGame(); return false
   }
 
   if (b.enemy.status && checkStatusSkip(b.enemy)) {
-    b.battleMsg = `${b.enemy.name} 无法行动……`; return false
+    b.battleMsg = `${b.enemy.name} ??????`; return false
   }
 
   const usable = b.enemy.moves.filter(m => m.currentPp > 0)
@@ -384,42 +525,110 @@ function syncEnemyAttack() {
   const move = usable[Math.floor(Math.random() * usable.length)]
   move.currentPp--
 
-  if (move.effect && ['sleep','paralyze'].includes(move.effect)) {
+  if (move.effect && ['sleep','paralyze','poison','burn','confuse','disable'].includes(move.effect)) {
     const eff = getEffectiveness(move.type, pkm.types)
     if (eff > 0) handleStatusEffect(pkm, move.effect)
-    b.battleMsg = `对方使用了 ${move.name}！`; return true
+    b.battleMsg = `使用了 ${move.name}！`
+    render(); return true
   }
 
-  if (move.effect && ['accuracyDown','speedDown'].includes(move.effect)) {
+  if (move.effect && ['accuracyDown','speedDown','atkDown','defDown','spDefDown','spAtkDown','poisonSpeedDown','clearAll'].includes(move.effect)) {
     const eff = getEffectiveness(move.type, pkm.types)
     if (eff > 0) handleStatusEffect(pkm, move.effect)
-    b.battleMsg = `对方使用了 ${move.name}！`; return true
+    b.battleMsg = `使用了 ${move.name}！`
+    render(); return true
+  }
+
+  // Enemy self-buff effects
+  if (move.effect === 'atkUp') {
+    b.enemy.tempDebuffs.atk = Math.min(50, (b.enemy.tempDebuffs.atk || 0) + 20)
+    b.battleMsg = `使用了 ${move.name}！`
+    render(); return true
+  } else if (move.effect === 'defUp') {
+    b.enemy.tempDebuffs.def = Math.min(50, (b.enemy.tempDebuffs.def || 0) + 20)
+    b.battleMsg = `使用了 ${move.name}！`
+    render(); return true
+  } else if (move.effect === 'spAtkUp') {
+    b.enemy.tempDebuffs.spa = Math.min(50, (b.enemy.tempDebuffs.spa || 0) + 20)
+    b.battleMsg = `使用了 ${move.name}！`
+    render(); return true
+  } else if (move.effect === 'spDefUp') {
+    b.enemy.tempDebuffs.spd = Math.min(50, (b.enemy.tempDebuffs.spd || 0) + 20)
+    b.battleMsg = `使用了 ${move.name}！`
+    render(); return true
+  } else if (move.effect === 'speedUp') {
+    b.enemy.tempDebuffs.spe = Math.min(50, (b.enemy.tempDebuffs.spe || 0) + 20)
+    b.battleMsg = `使用了 ${move.name}！`
+    render(); return true
+  } else if (move.effect === 'evasionUp') {
+    b.enemy.tempDebuffs.evasion = Math.min(50, (b.enemy.tempDebuffs.evasion || 0) + 20)
+    b.battleMsg = `使用了 ${move.name}！`
+    render(); return true
+  } else if (move.effect === 'atkUpDefUp') {
+    b.enemy.tempDebuffs.atk = Math.min(50, (b.enemy.tempDebuffs.atk || 0) + 20)
+    b.enemy.tempDebuffs.def = Math.min(50, (b.enemy.tempDebuffs.def || 0) + 20)
+    b.battleMsg = `使用了 ${move.name}！`
+    render(); return true
+  } else if (move.effect === 'atkUpSpeedUp') {
+    b.enemy.tempDebuffs.atk = Math.min(50, (b.enemy.tempDebuffs.atk || 0) + 20)
+    b.enemy.tempDebuffs.spe = Math.min(50, (b.enemy.tempDebuffs.spe || 0) + 20)
+    b.battleMsg = `使用了 ${move.name}！`
+    render(); return true
+  } else if (move.effect === 'atkUpSpAtkUp') {
+    b.enemy.tempDebuffs.atk = Math.min(50, (b.enemy.tempDebuffs.atk || 0) + 20)
+    b.enemy.tempDebuffs.spa = Math.min(50, (b.enemy.tempDebuffs.spa || 0) + 20)
+    b.battleMsg = `使用了 ${move.name}！`
+    render(); return true
+  } else if (move.effect === 'defUpSpDefUp') {
+    b.enemy.tempDebuffs.def = Math.min(50, (b.enemy.tempDebuffs.def || 0) + 20)
+    b.enemy.tempDebuffs.spd = Math.min(50, (b.enemy.tempDebuffs.spd || 0) + 20)
+    b.battleMsg = `使用了 ${move.name}！`
+    render(); return true
+  } else if (move.effect === 'spAtkUpSpDefUpSpeedUp') {
+    b.enemy.tempDebuffs.spa = Math.min(50, (b.enemy.tempDebuffs.spa || 0) + 20)
+    b.enemy.tempDebuffs.spd = Math.min(50, (b.enemy.tempDebuffs.spd || 0) + 20)
+    b.enemy.tempDebuffs.spe = Math.min(50, (b.enemy.tempDebuffs.spe || 0) + 20)
+    b.battleMsg = `使用了 ${move.name}！`
+    render(); return true
+  } else if (move.effect === 'recover') {
+    const heal = Math.floor(b.enemy.maxHp / 2)
+    b.enemy.hp = Math.min(b.enemy.maxHp, b.enemy.hp + heal)
+    b.battleMsg = `使用了 ${move.name}！`
+    render(); return true
+  } else if (move.effect === 'recoverAll') {
+    b.enemy.hp = b.enemy.maxHp
+    b.enemy.status = null
+    b.battleMsg = `使用了 ${move.name}！`
+    render(); return true
+  } else if (move.effect === 'leechSeed') {
+    pkm.leechSeed = true
+    b.battleMsg = `使用了 ${move.name}！`
+    render(); return true
   }
 
   const result = calcDamage(b.enemy, pkm, move)
-  if (result.missed) { b.battleMsg = '没有命中！'; return true }
+  if (result.missed) { b.battleMsg = '?????'; return true }
 
   if (move.effect === 'drain' && result.damage > 0) {
     const heal = Math.max(1, result.damage)
     b.enemy.hp = Math.min(b.enemy.maxHp, b.enemy.hp + heal)
-    addLog(`${b.enemy.name} 回复了 ${heal} HP！`)
+    addLog(`${b.enemy.name} ??? ${heal} HP?`)
   }
 
-  if (result.effectiveness >= 2) b.battleMsg = '效果拔群！'
-  else if (result.effectiveness === 0) b.battleMsg = '没有效果…'
-  else if (result.effectiveness < 1) b.battleMsg = '效果不太好…'
-  else b.battleMsg = `对方使用了 ${move.name}！`
+  if (result.effectiveness >= 2) b.battleMsg = '?????'
+  else if (result.effectiveness === 0) b.battleMsg = '??????'
+  else if (result.effectiveness < 1) b.battleMsg = '???????'
+  else b.battleMsg = `????? ${move.name}?`
 
   pkm.hp -= result.damage
   if (pkm.hp <= 0) {
     pkm.hp = 0; pkm.fainted = true
-    addLog(`${pkm.name} 倒下了！`)
+    addLog(`${pkm.name} ????`)
     const next = getActivePokemon()
-    if (next) { addLog(`上吧！${next.name}！`); b.subState = 'main' }
+    if (next) { addLog(`???${next.name}?`); b.subState = 'main' }
     else {
-      addLog('所有宝可梦都失去了战斗能力……')
-      if (b.type === 'wild') { addLog('你飞回了宝可梦中心…'); healAll(); G.player.position = findNearestCenter() }
-      else { addLog(`你输给了 ${b.type === 'trainer' ? b.extra.trainer.name : b.type === 'gym' ? b.extra.data[1] : b.extra ? b.extra.name : '对手'}……`) }
+      addLog('???????????????')
+      handlePlayerDefeat(b)
       G.battle = null; saveGame(); return false
     }
   }
@@ -429,19 +638,13 @@ function syncEnemyAttack() {
 function enemyTurn() {
   const b = G.battle; if (!b || !b.enemy || b.enemy.fainted) return
   const pkm = getActivePokemon(); if (!pkm) {
-    addLog('你没有能战斗的宝可梦了！')
-    if (b.type === 'wild') {
-      addLog('你飞回了宝可梦中心…'); healAll()
-      G.player.position = findNearestCenter()
-    } else {
-      addLog(`你输给了 ${b.type === 'trainer' ? b.extra.trainer.name : b.type === 'gym' ? b.extra.data[1] : b.extra ? b.extra.name : '对手'}……`)
-    }
+    addLog('????????????')
+    handlePlayerDefeat(b)
     G.battle = null; saveGame(); render(); return
   }
 
-  // Check enemy status
   if (b.enemy.status && checkStatusSkip(b.enemy)) {
-    b.battleMsg = `${b.enemy.name} 无法行动……`
+    b.battleMsg = `${b.enemy.name} ??????`
     b.turn = 'player'; render(); return
   }
 
@@ -450,54 +653,62 @@ function enemyTurn() {
   const move = usable[Math.floor(Math.random() * usable.length)]
   move.currentPp--
 
-  // Handle enemy status moves
   if (move.effect && ['sleep','paralyze'].includes(move.effect)) {
     const eff = getEffectiveness(move.type, pkm.types)
     if (eff > 0) handleStatusEffect(pkm, move.effect)
-    b.battleMsg = `对方使用了 ${move.name}！`
+    b.battleMsg = `????? ${move.name}?`
     b.turn = 'player'; render(); return
   }
 
-  // Handle enemy debuff moves
   if (move.effect && ['accuracyDown','speedDown'].includes(move.effect)) {
     const eff = getEffectiveness(move.type, pkm.types)
     if (eff > 0) handleStatusEffect(pkm, move.effect)
-    b.battleMsg = `对方使用了 ${move.name}！`
+    b.battleMsg = `????? ${move.name}?`
     b.turn = 'player'; render(); return
   }
 
   const result = calcDamage(b.enemy, pkm, move)
-  if (result.missed) { b.battleMsg = '没有命中！'; b.turn = 'player'; render(); return }
+  if (result.missed) { b.battleMsg = '?????'; b.turn = 'player'; render(); return }
 
-  // Handle enemy drain moves
   if (move.effect === 'drain' && result.damage > 0) {
     const heal = Math.max(1, result.damage)
     b.enemy.hp = Math.min(b.enemy.maxHp, b.enemy.hp + heal)
-    addLog(`${b.enemy.name} 回复了 ${heal} HP！`)
+    addLog(`${b.enemy.name} ??? ${heal} HP?`)
   }
 
-  if (result.effectiveness >= 2) b.battleMsg = '效果拔群！'
-  else if (result.effectiveness === 0) b.battleMsg = '没有效果…'
-  else if (result.effectiveness < 1) b.battleMsg = '效果不太好…'
-  else b.battleMsg = `对方使用了 ${move.name}！`
+  if (result.effectiveness >= 2) b.battleMsg = '?????'
+  else if (result.effectiveness === 0) b.battleMsg = '??????'
+  else if (result.effectiveness < 1) b.battleMsg = '???????'
+  else b.battleMsg = `????? ${move.name}?`
   pkm.hp -= result.damage
   if (pkm.hp <= 0) {
     pkm.hp = 0; pkm.fainted = true
-    addLog(`${pkm.name} 倒下了！`)
+    addLog(`${pkm.name} ????`)
     const next = getActivePokemon()
-    if (next) { addLog(`上吧！${next.name}！`); b.subState = 'main' }
+    if (next) { addLog(`???${next.name}?`); b.subState = 'main' }
     else {
-      addLog('所有宝可梦都失去了战斗能力……')
-      if (b.type === 'wild') {
-        addLog('你飞回了宝可梦中心…'); healAll()
-        G.player.position = findNearestCenter()
-      } else {
-      addLog(`你输给了 ${b.type === 'trainer' ? b.extra.trainer.name : b.type === 'gym' ? b.extra.data[1] : b.extra ? b.extra.name : '对手'}……`)
-      }
+      addLog('???????????????')
+      handlePlayerDefeat(b)
       G.battle = null; saveGame(); render(); return
     }
   }
   b.turn = 'player'; render()
+}
+
+function handlePlayerDefeat(b) {
+  if (b.type === 'wild') {
+    addLog('??????????')
+    healAll()
+    G.player.position = findNearestCenter()
+    return
+  }
+  if (G.player.position === 'mtMoon') {
+    addLog('????????????????????')
+    healAll()
+    G.player.position = 'route3'
+    return
+  }
+  addLog(`???? ${b.type === 'trainer' ? b.extra.trainer.name : b.type === 'gym' ? b.extra.data[1] : b.extra ? b.extra.name : '??'}??`)
 }
 
 function findNearestCenter() {
