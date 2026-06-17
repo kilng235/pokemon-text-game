@@ -519,13 +519,13 @@ function battleVictory() {
 function syncEnemyAttack() {
   const b = G.battle; if (!b || !b.enemy || b.enemy.fainted) return false
   const pkm = getActivePokemon(); if (!pkm) {
-    addLog('????????????')
+    addLog('你没有能战斗的宝可梦了！')
     handlePlayerDefeat(b)
     G.battle = null; saveGame(); return false
   }
 
   if (b.enemy.status && checkStatusSkip(b.enemy)) {
-    b.battleMsg = `${b.enemy.name} ??????`; return false
+    b.battleMsg = `${b.enemy.name} 无法行动……`; return false
   }
 
   const usable = b.enemy.moves.filter(m => m.currentPp > 0)
@@ -536,106 +536,106 @@ function syncEnemyAttack() {
   if (move.effect && ['sleep','paralyze','poison','burn','confuse','disable'].includes(move.effect)) {
     const eff = getEffectiveness(move.type, pkm.types)
     if (eff > 0) handleStatusEffect(pkm, move.effect)
-    b.battleMsg = `使用了 ${move.name}！`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   }
 
   if (move.effect && ['accuracyDown','speedDown','atkDown','defDown','spDefDown','spAtkDown','poisonSpeedDown','clearAll'].includes(move.effect)) {
     const eff = getEffectiveness(move.type, pkm.types)
     if (eff > 0) handleStatusEffect(pkm, move.effect)
-    b.battleMsg = `使用了 ${move.name}！`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   }
 
   // Enemy self-buff effects
   if (move.effect === 'atkUp') {
     b.enemy.tempDebuffs.atk = Math.min(50, (b.enemy.tempDebuffs.atk || 0) + 20)
-    b.battleMsg = `使用了 ${move.name}！`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   } else if (move.effect === 'defUp') {
     b.enemy.tempDebuffs.def = Math.min(50, (b.enemy.tempDebuffs.def || 0) + 20)
-    b.battleMsg = `使用了 ${move.name}！`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   } else if (move.effect === 'spAtkUp') {
     b.enemy.tempDebuffs.spa = Math.min(50, (b.enemy.tempDebuffs.spa || 0) + 20)
-    b.battleMsg = `使用了 ${move.name}！`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   } else if (move.effect === 'spDefUp') {
     b.enemy.tempDebuffs.spd = Math.min(50, (b.enemy.tempDebuffs.spd || 0) + 20)
-    b.battleMsg = `使用了 ${move.name}！`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   } else if (move.effect === 'speedUp') {
     b.enemy.tempDebuffs.spe = Math.min(50, (b.enemy.tempDebuffs.spe || 0) + 20)
-    b.battleMsg = `使用了 ${move.name}！`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   } else if (move.effect === 'evasionUp') {
     b.enemy.tempDebuffs.evasion = Math.min(50, (b.enemy.tempDebuffs.evasion || 0) + 20)
-    b.battleMsg = `使用了 ${move.name}！`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   } else if (move.effect === 'atkUpDefUp') {
     b.enemy.tempDebuffs.atk = Math.min(50, (b.enemy.tempDebuffs.atk || 0) + 20)
     b.enemy.tempDebuffs.def = Math.min(50, (b.enemy.tempDebuffs.def || 0) + 20)
-    b.battleMsg = `使用了 ${move.name}！`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   } else if (move.effect === 'atkUpSpeedUp') {
     b.enemy.tempDebuffs.atk = Math.min(50, (b.enemy.tempDebuffs.atk || 0) + 20)
     b.enemy.tempDebuffs.spe = Math.min(50, (b.enemy.tempDebuffs.spe || 0) + 20)
-    b.battleMsg = `使用了 ${move.name}！`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   } else if (move.effect === 'atkUpSpAtkUp') {
     b.enemy.tempDebuffs.atk = Math.min(50, (b.enemy.tempDebuffs.atk || 0) + 20)
     b.enemy.tempDebuffs.spa = Math.min(50, (b.enemy.tempDebuffs.spa || 0) + 20)
-    b.battleMsg = `使用了 ${move.name}！`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   } else if (move.effect === 'defUpSpDefUp') {
     b.enemy.tempDebuffs.def = Math.min(50, (b.enemy.tempDebuffs.def || 0) + 20)
     b.enemy.tempDebuffs.spd = Math.min(50, (b.enemy.tempDebuffs.spd || 0) + 20)
-    b.battleMsg = `使用了 ${move.name}！`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   } else if (move.effect === 'spAtkUpSpDefUpSpeedUp') {
     b.enemy.tempDebuffs.spa = Math.min(50, (b.enemy.tempDebuffs.spa || 0) + 20)
     b.enemy.tempDebuffs.spd = Math.min(50, (b.enemy.tempDebuffs.spd || 0) + 20)
     b.enemy.tempDebuffs.spe = Math.min(50, (b.enemy.tempDebuffs.spe || 0) + 20)
-    b.battleMsg = `使用了 ${move.name}！`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   } else if (move.effect === 'recover') {
     const heal = Math.floor(b.enemy.maxHp / 2)
     b.enemy.hp = Math.min(b.enemy.maxHp, b.enemy.hp + heal)
-    b.battleMsg = `使用了 ${move.name}！`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   } else if (move.effect === 'recoverAll') {
     b.enemy.hp = b.enemy.maxHp
     b.enemy.status = null
-    b.battleMsg = `使用了 ${move.name}！`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   } else if (move.effect === 'leechSeed') {
     pkm.leechSeed = true
-    b.battleMsg = `使用了 ${move.name}！`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   }
 
   const result = calcDamage(b.enemy, pkm, move)
-  if (result.missed) { b.battleMsg = '?????'; return true }
+  if (result.missed) { b.battleMsg = `${b.enemy.name} 的 ${move.name} 没有命中！`; return true }
 
   if (move.effect === 'drain' && result.damage > 0) {
     const heal = Math.max(1, result.damage)
     b.enemy.hp = Math.min(b.enemy.maxHp, b.enemy.hp + heal)
-    addLog(`${b.enemy.name} ??? ${heal} HP?`)
+    addLog(`${b.enemy.name} 吸取了 ${heal} HP！`)
   }
 
-  if (result.effectiveness >= 2) b.battleMsg = '?????'
-  else if (result.effectiveness === 0) b.battleMsg = '??????'
-  else if (result.effectiveness < 1) b.battleMsg = '???????'
-  else b.battleMsg = `????? ${move.name}?`
+  if (result.effectiveness >= 2) b.battleMsg = '效果拔群！'
+  else if (result.effectiveness === 0) b.battleMsg = '没有效果…'
+  else if (result.effectiveness < 1) b.battleMsg = '效果不太好…'
+  else b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
 
   pkm.hp -= result.damage
   if (pkm.hp <= 0) {
     pkm.hp = 0; pkm.fainted = true
-    addLog(`${pkm.name} ????`)
+    addLog(`${pkm.name} 倒下了！`)
     const next = getActivePokemon()
-    if (next) { addLog(`???${next.name}?`); b.subState = 'main' }
+    if (next) { addLog(`派出 ${next.name}！`); b.subState = 'main' }
     else {
-      addLog('???????????????')
+      addLog('你已经没有能战斗的宝可梦了……')
       handlePlayerDefeat(b)
       G.battle = null; saveGame(); return false
     }
@@ -646,13 +646,13 @@ function syncEnemyAttack() {
 function enemyTurn() {
   const b = G.battle; if (!b || !b.enemy || b.enemy.fainted) return
   const pkm = getActivePokemon(); if (!pkm) {
-    addLog('????????????')
+    addLog('你没有能战斗的宝可梦了！')
     handlePlayerDefeat(b)
     G.battle = null; saveGame(); render(); return
   }
 
   if (b.enemy.status && checkStatusSkip(b.enemy)) {
-    b.battleMsg = `${b.enemy.name} ??????`
+    b.battleMsg = `${b.enemy.name} 无法行动……`
     b.turn = 'player'; render(); return
   }
 
@@ -664,38 +664,38 @@ function enemyTurn() {
   if (move.effect && ['sleep','paralyze'].includes(move.effect)) {
     const eff = getEffectiveness(move.type, pkm.types)
     if (eff > 0) handleStatusEffect(pkm, move.effect)
-    b.battleMsg = `????? ${move.name}?`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     b.turn = 'player'; render(); return
   }
 
   if (move.effect && ['accuracyDown','speedDown'].includes(move.effect)) {
     const eff = getEffectiveness(move.type, pkm.types)
     if (eff > 0) handleStatusEffect(pkm, move.effect)
-    b.battleMsg = `????? ${move.name}?`
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     b.turn = 'player'; render(); return
   }
 
   const result = calcDamage(b.enemy, pkm, move)
-  if (result.missed) { b.battleMsg = '?????'; b.turn = 'player'; render(); return }
+  if (result.missed) { b.battleMsg = `${b.enemy.name} 的 ${move.name} 没有命中！`; b.turn = 'player'; render(); return }
 
   if (move.effect === 'drain' && result.damage > 0) {
     const heal = Math.max(1, result.damage)
     b.enemy.hp = Math.min(b.enemy.maxHp, b.enemy.hp + heal)
-    addLog(`${b.enemy.name} ??? ${heal} HP?`)
+    addLog(`${b.enemy.name} 吸取了 ${heal} HP！`)
   }
 
-  if (result.effectiveness >= 2) b.battleMsg = '?????'
-  else if (result.effectiveness === 0) b.battleMsg = '??????'
-  else if (result.effectiveness < 1) b.battleMsg = '???????'
-  else b.battleMsg = `????? ${move.name}?`
+  if (result.effectiveness >= 2) b.battleMsg = '效果拔群！'
+  else if (result.effectiveness === 0) b.battleMsg = '没有效果…'
+  else if (result.effectiveness < 1) b.battleMsg = '效果不太好…'
+  else b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
   pkm.hp -= result.damage
   if (pkm.hp <= 0) {
     pkm.hp = 0; pkm.fainted = true
-    addLog(`${pkm.name} ????`)
+    addLog(`${pkm.name} 倒下了！`)
     const next = getActivePokemon()
-    if (next) { addLog(`???${next.name}?`); b.subState = 'main' }
+    if (next) { addLog(`派出 ${next.name}！`); b.subState = 'main' }
     else {
-      addLog('???????????????')
+      addLog('你已经没有能战斗的宝可梦了……')
       handlePlayerDefeat(b)
       G.battle = null; saveGame(); render(); return
     }
@@ -705,18 +705,19 @@ function enemyTurn() {
 
 function handlePlayerDefeat(b) {
   if (b.type === 'wild') {
-    addLog('??????????')
+    addLog('你被野生宝可梦击败了……')
     healAll()
     G.player.position = findNearestCenter()
     return
   }
   if (G.player.position === 'mtMoon') {
-    addLog('????????????????????')
+    addLog('你被击败了……在月见山失去了意识，被送回了路边。')
     healAll()
     G.player.position = 'route3'
     return
   }
-  addLog(`???? ${b.type === 'trainer' ? b.extra.trainer.name : b.type === 'gym' ? b.extra.data[1] : b.extra ? b.extra.name : '??'}??`)
+  const name = b.type === 'trainer' ? b.extra.trainer.name : b.type === 'gym' ? b.extra.data[1] : b.extra ? b.extra.name : '对手'
+  addLog(`你被 ${name} 击败了……`)
 }
 
 function findNearestCenter() {
