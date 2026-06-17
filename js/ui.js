@@ -178,24 +178,51 @@ function renderBattle() {
   const b = G.battle
   if (!b || !b.enemy) { G.view = 'explore'; render(); return }
   const pkm = getActivePokemon()
-  const hpBar = (hp, max) => {
-    const pct = Math.max(0, hp / max)
-    return '█'.repeat(Math.floor(pct*10)) + '░'.repeat(10-Math.floor(pct*10))
+  
+  // HP条渲染函数
+  const renderHpBar = (pokemon, isEnemy = false) => {
+    if (!pokemon) return '<div class="hp-bar-container"><div class="hp-text">倒下了</div></div>'
+    const pct = Math.max(0, pokemon.hp / pokemon.maxHp) * 100
+    let hpClass = 'hp-bar-fill'
+    let textClass = 'hp-text'
+    if (pct <= 20) {
+      hpClass += ' hp-low'
+      textClass += ' hp-low'
+    } else if (pct <= 50) {
+      hpClass += ' hp-medium'
+      textClass += ' hp-medium'
+    }
+    
+    // 检测HP变化并添加波动动画
+    const lastHpKey = isEnemy ? 'lastEnemyHp' : 'lastPlayerHp'
+    if (!b[lastHpKey] && b[lastHpKey] !== 0) b[lastHpKey] = pokemon.hp
+    if (pokemon.hp < b[lastHpKey]) {
+      hpClass += ' hp-damaged'
+    }
+    b[lastHpKey] = pokemon.hp
+    
+    return `<div class="hp-bar-container">
+      <div class="hp-bar-wrapper">
+        <div class="${hpClass}" style="width:${pct}%"></div>
+      </div>
+      <div class="${textClass}">${pokemon.hp}/${pokemon.maxHp}</div>
+    </div>`
   }
+  
   const main = $('main')
   main.innerHTML = `
     <div class="battle-enemy">
       <span class="pkm-name">${b.enemy.name}${b.enemy.isElite ? ' <span class="elite-badge">精英</span>' : ''}</span>
       <span class="pkm-level">Lv.${b.enemy.level}</span>
       <span class="pkm-types">${b.enemy.types.join('/')}</span>
-      <div class="hp-row">HP: ${hpBar(b.enemy.hp,b.enemy.maxHp)} ${b.enemy.hp}/${b.enemy.maxHp}</div>
+      ${renderHpBar(b.enemy, true)}
     </div>
     ${b.battleMsg ? `<div class="battle-msg">${b.battleMsg}</div>` : `<div class="battle-divider">━━ V.S. ━━</div>`}
     <div class="battle-player">
       <span class="pkm-name">${pkm ? pkm.name : '---'}</span>
       <span class="pkm-level">${pkm ? 'Lv.'+pkm.level : ''}</span>
       <span class="pkm-types">${pkm ? pkm.types.join('/') : ''}</span>
-      <div class="hp-row">HP: ${pkm ? hpBar(pkm.hp,pkm.maxHp)+' '+pkm.hp+'/'+pkm.maxHp : '倒下了'}</div>
+      ${renderHpBar(pkm, false)}
       ${pkm ? `<div class="exp-row">EXP: ${pkm.exp}/${pkm.nextLevel}</div>` : ''}
     </div>
     <div class="battle-status">#${b.enemyIndex+1}/${b.enemyTeam.length} ${b.type==='gym'?'🏛'+b.extra.data[1]:b.type==='elite'?'👑四天王':b.type==='story'?'💀'+b.extra.name:b.type==='rival'?'💢'+b.extra.name:'🌿野生'}</div>
@@ -223,19 +250,50 @@ function renderBattle() {
     const m = pkm && pkm.moves[moveIndex]
     if (!m) { b.subState = 'attack'; return }
     G.view = 'battle'
+    
+    // HP条渲染函数
+    const renderHpBar = (pokemon, isEnemy = false) => {
+      if (!pokemon) return '<div class="hp-bar-container"><div class="hp-text">倒下了</div></div>'
+      const pct = Math.max(0, pokemon.hp / pokemon.maxHp) * 100
+      let hpClass = 'hp-bar-fill'
+      let textClass = 'hp-text'
+      if (pct <= 20) {
+        hpClass += ' hp-low'
+        textClass += ' hp-low'
+      } else if (pct <= 50) {
+        hpClass += ' hp-medium'
+        textClass += ' hp-medium'
+      }
+      
+      // 检测HP变化并添加波动动画
+      const lastHpKey = isEnemy ? 'lastEnemyHp' : 'lastPlayerHp'
+      if (!b[lastHpKey] && b[lastHpKey] !== 0) b[lastHpKey] = pokemon.hp
+      if (pokemon.hp < b[lastHpKey]) {
+        hpClass += ' hp-damaged'
+      }
+      b[lastHpKey] = pokemon.hp
+      
+      return `<div class="hp-bar-container">
+        <div class="hp-bar-wrapper">
+          <div class="${hpClass}" style="width:${pct}%"></div>
+        </div>
+        <div class="${textClass}">${pokemon.hp}/${pokemon.maxHp}</div>
+      </div>`
+    }
+    
     main.innerHTML = `
       <div class="battle-enemy">
         <span class="pkm-name">${b.enemy.name}</span>
         <span class="pkm-level">Lv.${b.enemy.level}</span>
         <span class="pkm-types">${b.enemy.types.join('/')}</span>
-        <div class="hp-row">HP: ${hpBar(b.enemy.hp,b.enemy.maxHp)} ${b.enemy.hp}/${b.enemy.maxHp}</div>
+        ${renderHpBar(b.enemy, true)}
       </div>
       ${b.battleMsg ? `<div class="battle-msg">${b.battleMsg}</div>` : `<div class="battle-divider">━━ V.S. ━━</div>`}
       <div class="battle-player">
         <span class="pkm-name">${pkm ? pkm.name : '---'}</span>
         <span class="pkm-level">${pkm ? 'Lv.'+pkm.level : ''}</span>
         <span class="pkm-types">${pkm ? pkm.types.join('/') : ''}</span>
-        <div class="hp-row">HP: ${pkm ? hpBar(pkm.hp,pkm.maxHp)+' '+pkm.hp+'/'+pkm.maxHp : '倒下了'}</div>
+        ${renderHpBar(pkm, false)}
         ${pkm ? `<div class="exp-row">EXP: ${pkm.exp}/${pkm.nextLevel}</div>` : ''}
       </div>
       <div class="battle-status">#${b.enemyIndex+1}/${b.enemyTeam.length} ${b.type==='gym'?'🏛'+b.extra.data[1]:b.type==='elite'?'👑四天王':b.type==='story'?'💀'+b.extra.name:b.type==='rival'?'💢'+b.extra.name:'🌿野生'}</div>

@@ -550,3 +550,70 @@ body {
   margin-left: 8px;
   font-weight: bold;
 }
+
+/* HP条波动效果 */
+.hp-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.hp-bar-wrapper {
+  flex: 1;
+  height: 12px;
+  background: #1a2a1a;
+  border: 1px solid #003a10;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.hp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff41, #33ff77);
+  transition: width 0.3s ease, background 0.3s ease;
+  position: relative;
+}
+
+.hp-bar-fill.hp-medium {
+  background: linear-gradient(90deg, #ffaa00, #ffcc44);
+}
+
+.hp-bar-fill.hp-low {
+  background: linear-gradient(90deg, #ff3366, #ff6688);
+  animation: hpPulse 0.8s ease-in-out infinite;
+}
+
+.hp-bar-fill.hp-damaged {
+  animation: hpShake 0.4s ease-in-out;
+}
+
+@keyframes hpShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-3px); }
+  40% { transform: translateX(3px); }
+  60% { transform: translateX(-2px); }
+  80% { transform: translateX(2px); }
+}
+
+@keyframes hpPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.hp-text {
+  font-size: 11px;
+  color: #00cc33;
+  min-width: 60px;
+  text-align: right;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.hp-text.hp-medium {
+  color: #ffaa00;
+}
+
+.hp-text.hp-low {
+  color: #ff3366;
+}
