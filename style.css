@@ -203,11 +203,73 @@ body {
   margin-bottom: 2px;
 }
 
+/* 地图展开模式：侧边栏变宽 */
+.map-expanded #map-panel {
+  width: 540px;
+  min-width: 540px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+.map-expanded #main {
+  flex: 0 0 280px;
+}
+
+/* 侧边栏小地图 */
+.sidebar-map {
+  font-size: 8px;
+  line-height: 1.1;
+  color: #00ff41;
+  background: #060a06;
+  border: 1px solid #003a10;
+  padding: 4px;
+  margin-bottom: 6px;
+  white-space: pre;
+  overflow: hidden;
+}
+
+.info-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 4px;
+  background: #0a1a0a;
+  border: 1px solid #003a10;
+  font-size: 9px;
+  color: #00aa33;
+  margin-right: 3px;
+}
+
 @media (max-width:750px) {
   #app { padding:8px; font-size:12px; }
   #main-wrap { flex-direction:column; }
   #map-panel { width:100%; min-width:unset; max-height:140px; }
+  .map-expanded #map-panel { width:100%; min-width:unset; max-height:60vh; }
+  .map-expanded #main { flex:1; }
   .btn { padding:5px 8px; font-size:11px; }
   .choose-grid { flex-direction:column; align-items:center; }
   .title-art { font-size:8px; }
+}
+
+.choice-box {
+  text-align: center;
+  padding: 20px;
+}
+
+.choice-btn {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin: 10px auto;
+  padding: 12px 20px;
+  font-size: 14px;
+  background: #1a2a1a;
+  border: 2px solid #00ff41;
+  color: #00ff41;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.choice-btn:hover {
+  background: #00ff41;
+  color: #0a0a0a;
 }

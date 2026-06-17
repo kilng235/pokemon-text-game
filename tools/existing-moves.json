@@ -1,0 +1,1172 @@
+[
+  {
+    "id": 1,
+    "name": "撞击",
+    "type": "普通",
+    "power": 40,
+    "pp": 35,
+    "desc": "用身体撞击对手",
+    "effect": null
+  },
+  {
+    "id": 2,
+    "name": "电光一闪",
+    "type": "普通",
+    "power": 40,
+    "pp": 30,
+    "desc": "快速攻击对手",
+    "effect": null
+  },
+  {
+    "id": 3,
+    "name": "百万吨重拳",
+    "type": "普通",
+    "power": 80,
+    "pp": 20,
+    "desc": "用巨力拳击攻击",
+    "effect": null
+  },
+  {
+    "id": 4,
+    "name": "劈开",
+    "type": "普通",
+    "power": 70,
+    "pp": 20,
+    "desc": "用利刃劈击对手",
+    "effect": null
+  },
+  {
+    "id": 5,
+    "name": "舍身冲撞",
+    "type": "普通",
+    "power": 120,
+    "pp": 15,
+    "desc": "舍身冲撞，自身也受伤",
+    "effect": null
+  },
+  {
+    "id": 6,
+    "name": "破坏光线",
+    "type": "普通",
+    "power": 150,
+    "pp": 5,
+    "desc": "发射强光能量攻击",
+    "effect": null
+  },
+  {
+    "id": 7,
+    "name": "压制",
+    "type": "普通",
+    "power": 85,
+    "pp": 20,
+    "desc": "压制对手",
+    "effect": null
+  },
+  {
+    "id": 8,
+    "name": "大闹一番",
+    "type": "普通",
+    "power": 90,
+    "pp": 10,
+    "desc": "连续攻击2-3回合后混乱",
+    "effect": null
+  },
+  {
+    "id": 9,
+    "name": "头锤",
+    "type": "普通",
+    "power": 70,
+    "pp": 15,
+    "desc": "用头撞击对手",
+    "effect": null
+  },
+  {
+    "id": 10,
+    "name": "角撞",
+    "type": "普通",
+    "power": 65,
+    "pp": 25,
+    "desc": "用角撞击对手",
+    "effect": null
+  },
+  {
+    "id": 11,
+    "name": "火花",
+    "type": "火",
+    "power": 40,
+    "pp": 25,
+    "desc": "用火焰灼伤对手",
+    "effect": null
+  },
+  {
+    "id": 12,
+    "name": "火焰喷射",
+    "type": "火",
+    "power": 90,
+    "pp": 15,
+    "desc": "喷射火焰攻击",
+    "effect": null
+  },
+  {
+    "id": 13,
+    "name": "大字爆炎",
+    "type": "火",
+    "power": 110,
+    "pp": 5,
+    "desc": "以大字形状喷火",
+    "effect": null
+  },
+  {
+    "id": 14,
+    "name": "火焰旋涡",
+    "type": "火",
+    "power": 15,
+    "pp": 15,
+    "desc": "用火焰困住对手",
+    "effect": null
+  },
+  {
+    "id": 15,
+    "name": "闪焰冲锋",
+    "type": "火",
+    "power": 120,
+    "pp": 15,
+    "desc": "火焰冲锋，自身也受伤",
+    "effect": null
+  },
+  {
+    "id": 16,
+    "name": "水枪",
+    "type": "水",
+    "power": 40,
+    "pp": 25,
+    "desc": "喷射水流攻击",
+    "effect": null
+  },
+  {
+    "id": 17,
+    "name": "水炮",
+    "type": "水",
+    "power": 110,
+    "pp": 5,
+    "desc": "喷射高压水柱",
+    "effect": null
+  },
+  {
+    "id": 18,
+    "name": "泡沫光线",
+    "type": "水",
+    "power": 65,
+    "pp": 20,
+    "desc": "喷射泡沫光束",
+    "effect": null
+  },
+  {
+    "id": 19,
+    "name": "冲浪",
+    "type": "水",
+    "power": 90,
+    "pp": 15,
+    "desc": "召唤巨浪攻击",
+    "effect": null
+  },
+  {
+    "id": 20,
+    "name": "水之波动",
+    "type": "水",
+    "power": 60,
+    "pp": 20,
+    "desc": "用水之波动攻击",
+    "effect": null
+  },
+  {
+    "id": 21,
+    "name": "藤鞭",
+    "type": "草",
+    "power": 45,
+    "pp": 25,
+    "desc": "用藤鞭抽打对手",
+    "effect": null
+  },
+  {
+    "id": 22,
+    "name": "飞叶快刀",
+    "type": "草",
+    "power": 55,
+    "pp": 25,
+    "desc": "抛射锋利的叶片",
+    "effect": null
+  },
+  {
+    "id": 23,
+    "name": "阳光烈焰",
+    "type": "草",
+    "power": 120,
+    "pp": 10,
+    "desc": "吸收阳光攻击，需蓄力",
+    "effect": null
+  },
+  {
+    "id": 24,
+    "name": "催眠粉",
+    "type": "草",
+    "power": 0,
+    "pp": 15,
+    "desc": "撒出催眠粉末使对手入睡",
+    "effect": "sleep"
+  },
+  {
+    "id": 25,
+    "name": "麻痹粉",
+    "type": "草",
+    "power": 0,
+    "pp": 15,
+    "desc": "撒出麻痹粉末使对手麻痹",
+    "effect": "paralyze"
+  },
+  {
+    "id": 26,
+    "name": "种子炸弹",
+    "type": "草",
+    "power": 80,
+    "pp": 15,
+    "desc": "投掷种子炸弹",
+    "effect": null
+  },
+  {
+    "id": 27,
+    "name": "吸取",
+    "type": "草",
+    "power": 20,
+    "pp": 25,
+    "desc": "吸取对手HP回复自身",
+    "effect": "drain"
+  },
+  {
+    "id": 28,
+    "name": "电击",
+    "type": "电",
+    "power": 40,
+    "pp": 30,
+    "desc": "电击对手",
+    "effect": null
+  },
+  {
+    "id": 29,
+    "name": "十万伏特",
+    "type": "电",
+    "power": 90,
+    "pp": 15,
+    "desc": "释放高压电流",
+    "effect": null
+  },
+  {
+    "id": 30,
+    "name": "打雷",
+    "type": "电",
+    "power": 110,
+    "pp": 10,
+    "desc": "召唤雷电攻击",
+    "effect": null
+  },
+  {
+    "id": 31,
+    "name": "电磁波",
+    "type": "电",
+    "power": 0,
+    "pp": 20,
+    "desc": "电击使对手麻痹",
+    "effect": "paralyze"
+  },
+  {
+    "id": 32,
+    "name": "电球",
+    "type": "电",
+    "power": 60,
+    "pp": 20,
+    "desc": "投掷电球攻击",
+    "effect": null
+  },
+  {
+    "id": 33,
+    "name": "冰冻拳",
+    "type": "冰",
+    "power": 75,
+    "pp": 15,
+    "desc": "用冰冻之拳攻击",
+    "effect": null
+  },
+  {
+    "id": 34,
+    "name": "急冻光线",
+    "type": "冰",
+    "power": 90,
+    "pp": 10,
+    "desc": "发射冻结光束",
+    "effect": null
+  },
+  {
+    "id": 35,
+    "name": "暴风雪",
+    "type": "冰",
+    "power": 110,
+    "pp": 5,
+    "desc": "召唤暴风雪攻击",
+    "effect": null
+  },
+  {
+    "id": 36,
+    "name": "冰冻之风",
+    "type": "冰",
+    "power": 55,
+    "pp": 15,
+    "desc": "吹起寒风攻击",
+    "effect": null
+  },
+  {
+    "id": 37,
+    "name": "空手劈",
+    "type": "格斗",
+    "power": 50,
+    "pp": 25,
+    "desc": "用手刀劈击对手",
+    "effect": null
+  },
+  {
+    "id": 38,
+    "name": "劈瓦",
+    "type": "格斗",
+    "power": 75,
+    "pp": 15,
+    "desc": "劈开障碍攻击",
+    "effect": null
+  },
+  {
+    "id": 39,
+    "name": "飞踢",
+    "type": "格斗",
+    "power": 85,
+    "pp": 10,
+    "desc": "跳跃飞踢对手",
+    "effect": null
+  },
+  {
+    "id": 40,
+    "name": "地球上投",
+    "type": "格斗",
+    "power": 0,
+    "pp": 20,
+    "desc": "投掷对手造成伤害",
+    "effect": null
+  },
+  {
+    "id": 41,
+    "name": "怪力",
+    "type": "格斗",
+    "power": 80,
+    "pp": 15,
+    "desc": "发挥怪力攻击",
+    "effect": null
+  },
+  {
+    "id": 42,
+    "name": "回旋踢",
+    "type": "格斗",
+    "power": 60,
+    "pp": 15,
+    "desc": "回旋踢击对手",
+    "effect": null
+  },
+  {
+    "id": 43,
+    "name": "溶解液",
+    "type": "毒",
+    "power": 40,
+    "pp": 30,
+    "desc": "喷射溶解液攻击",
+    "effect": null
+  },
+  {
+    "id": 44,
+    "name": "污泥攻击",
+    "type": "毒",
+    "power": 65,
+    "pp": 20,
+    "desc": "投掷污泥攻击",
+    "effect": null
+  },
+  {
+    "id": 45,
+    "name": "毒击",
+    "type": "毒",
+    "power": 80,
+    "pp": 15,
+    "desc": "用剧毒攻击对手",
+    "effect": null
+  },
+  {
+    "id": 46,
+    "name": "毒针",
+    "type": "毒",
+    "power": 15,
+    "pp": 35,
+    "desc": "发射毒针攻击",
+    "effect": null
+  },
+  {
+    "id": 47,
+    "name": "地震",
+    "type": "地面",
+    "power": 100,
+    "pp": 10,
+    "desc": "引发地震攻击全场",
+    "effect": null
+  },
+  {
+    "id": 48,
+    "name": "挖洞",
+    "type": "地面",
+    "power": 80,
+    "pp": 10,
+    "desc": "挖洞后攻击对手",
+    "effect": null
+  },
+  {
+    "id": 49,
+    "name": "骨头回力镖",
+    "type": "地面",
+    "power": 50,
+    "pp": 10,
+    "desc": "回旋骨镖攻击两次",
+    "effect": null
+  },
+  {
+    "id": 50,
+    "name": "飞沙脚",
+    "type": "地面",
+    "power": 0,
+    "pp": 15,
+    "desc": "扬沙降低对手命中率",
+    "effect": "accuracyDown"
+  },
+  {
+    "id": 51,
+    "name": "泥巴射击",
+    "type": "地面",
+    "power": 55,
+    "pp": 15,
+    "desc": "喷射泥浆攻击",
+    "effect": null
+  },
+  {
+    "id": 52,
+    "name": "翅膀攻击",
+    "type": "飞行",
+    "power": 60,
+    "pp": 35,
+    "desc": "用翅膀攻击对手",
+    "effect": null
+  },
+  {
+    "id": 53,
+    "name": "飞翔",
+    "type": "飞行",
+    "power": 90,
+    "pp": 15,
+    "desc": "飞上天空后攻击",
+    "effect": null
+  },
+  {
+    "id": 54,
+    "name": "啄",
+    "type": "飞行",
+    "power": 35,
+    "pp": 35,
+    "desc": "用喙啄击对手",
+    "effect": null
+  },
+  {
+    "id": 55,
+    "name": "燕返",
+    "type": "飞行",
+    "power": 60,
+    "pp": 20,
+    "desc": "快速回旋攻击",
+    "effect": null
+  },
+  {
+    "id": 56,
+    "name": "念力",
+    "type": "超能",
+    "power": 50,
+    "pp": 25,
+    "desc": "用念力攻击对手",
+    "effect": null
+  },
+  {
+    "id": 57,
+    "name": "精神强念",
+    "type": "超能",
+    "power": 90,
+    "pp": 10,
+    "desc": "用强念力攻击",
+    "effect": null
+  },
+  {
+    "id": 58,
+    "name": "催眠术",
+    "type": "超能",
+    "power": 0,
+    "pp": 20,
+    "desc": "催眠对手入睡",
+    "effect": "sleep"
+  },
+  {
+    "id": 59,
+    "name": "幻象光线",
+    "type": "超能",
+    "power": 65,
+    "pp": 20,
+    "desc": "发射幻象光束",
+    "effect": null
+  },
+  {
+    "id": 60,
+    "name": "连续切",
+    "type": "虫",
+    "power": 20,
+    "pp": 30,
+    "desc": "连续切斩对手",
+    "effect": null
+  },
+  {
+    "id": 61,
+    "name": "双针",
+    "type": "虫",
+    "power": 25,
+    "pp": 20,
+    "desc": "用双针刺击两次",
+    "effect": null
+  },
+  {
+    "id": 62,
+    "name": "吐丝",
+    "type": "虫",
+    "power": 0,
+    "pp": 40,
+    "desc": "吐丝降低对手速度",
+    "effect": "speedDown"
+  },
+  {
+    "id": 63,
+    "name": "吸血",
+    "type": "虫",
+    "power": 20,
+    "pp": 15,
+    "desc": "吸取对手HP回复自身",
+    "effect": "drain"
+  },
+  {
+    "id": 64,
+    "name": "落石",
+    "type": "岩石",
+    "power": 50,
+    "pp": 20,
+    "desc": "投掷岩石攻击",
+    "effect": null
+  },
+  {
+    "id": 65,
+    "name": "岩崩",
+    "type": "岩石",
+    "power": 75,
+    "pp": 10,
+    "desc": "推落岩石攻击",
+    "effect": null
+  },
+  {
+    "id": 66,
+    "name": "岩石封锁",
+    "type": "岩石",
+    "power": 60,
+    "pp": 15,
+    "desc": "投掷岩石封锁对手",
+    "effect": null
+  },
+  {
+    "id": 67,
+    "name": "舔舌头",
+    "type": "幽灵",
+    "power": 30,
+    "pp": 30,
+    "desc": "用舌头舔击对手",
+    "effect": null
+  },
+  {
+    "id": 68,
+    "name": "暗影球",
+    "type": "幽灵",
+    "power": 80,
+    "pp": 15,
+    "desc": "发射暗影球攻击",
+    "effect": null
+  },
+  {
+    "id": 69,
+    "name": "暗影爪",
+    "type": "幽灵",
+    "power": 70,
+    "pp": 15,
+    "desc": "用暗影之爪攻击",
+    "effect": null
+  },
+  {
+    "id": 70,
+    "name": "龙之怒",
+    "type": "龙",
+    "power": 85,
+    "pp": 10,
+    "desc": "用龙之怒火攻击",
+    "effect": null
+  },
+  {
+    "id": 71,
+    "name": "逆鳞",
+    "type": "龙",
+    "power": 120,
+    "pp": 10,
+    "desc": "失控攻击2-3回合后混乱",
+    "effect": null
+  },
+  {
+    "id": 72,
+    "name": "龙息",
+    "type": "龙",
+    "power": 60,
+    "pp": 20,
+    "desc": "喷射龙息攻击",
+    "effect": null
+  },
+  {
+    "id": 73,
+    "name": "泡沫",
+    "type": "水",
+    "power": 20,
+    "pp": 30,
+    "desc": "喷射泡沫攻击",
+    "effect": null
+  },
+  {
+    "id": 74,
+    "name": "怪力",
+    "type": "普通",
+    "power": 80,
+    "pp": 15,
+    "desc": "发挥怪力攻击",
+    "effect": null
+  },
+  {
+    "id": 75,
+    "name": "生长",
+    "type": "普通",
+    "power": 0,
+    "pp": 40,
+    "desc": "让自身生长提高攻击",
+    "effect": null
+  },
+  {
+    "id": 76,
+    "name": "火焰拳",
+    "type": "火",
+    "power": 75,
+    "pp": 15,
+    "desc": "用火焰之拳攻击",
+    "effect": null
+  },
+  {
+    "id": 77,
+    "name": "抓",
+    "type": "普通",
+    "power": 25,
+    "pp": 35,
+    "desc": "用爪子抓对手",
+    "effect": null
+  },
+  {
+    "id": 78,
+    "name": "钢之翼",
+    "type": "钢",
+    "power": 70,
+    "pp": 25,
+    "desc": "用钢铁翅膀攻击对手",
+    "effect": null
+  },
+  {
+    "id": 79,
+    "name": "睡觉",
+    "type": "超能",
+    "power": 0,
+    "pp": 10,
+    "desc": "睡一觉回复全部HP并治愈异常状态",
+    "effect": "sleep"
+  },
+  {
+    "id": 80,
+    "name": "梦话",
+    "type": "普通",
+    "power": 0,
+    "pp": 10,
+    "desc": "睡眠时随机使用已知技能",
+    "effect": null
+  },
+  {
+    "id": 81,
+    "name": "打鼾",
+    "type": "普通",
+    "power": 40,
+    "pp": 15,
+    "desc": "睡眠时用鼾声攻击对手",
+    "effect": "sleep"
+  },
+  {
+    "id": 82,
+    "name": "高速星星",
+    "type": "普通",
+    "power": 60,
+    "pp": 20,
+    "desc": "发射星形光弹攻击（必中）",
+    "effect": null
+  },
+  {
+    "id": 83,
+    "name": "诅咒",
+    "type": "幽灵",
+    "power": 0,
+    "pp": 10,
+    "desc": "幽灵系消耗HP诅咒对手；其他系提升攻击防御降低速度",
+    "effect": null
+  },
+  {
+    "id": 84,
+    "name": "报恩",
+    "type": "普通",
+    "power": 0,
+    "pp": 20,
+    "desc": "亲密度越高威力越大",
+    "effect": null
+  },
+  {
+    "id": 85,
+    "name": "撒气",
+    "type": "普通",
+    "power": 0,
+    "pp": 20,
+    "desc": "亲密度越低威力越大",
+    "effect": null
+  },
+  {
+    "id": 86,
+    "name": "戏法",
+    "type": "超能",
+    "power": 0,
+    "pp": 10,
+    "desc": "与对手交换道具",
+    "effect": null
+  },
+  {
+    "id": 87,
+    "name": "预知未来",
+    "type": "超能",
+    "power": 120,
+    "pp": 10,
+    "desc": "释放未来攻击，2回合后攻击对手",
+    "effect": null
+  },
+  {
+    "id": 88,
+    "name": "神通力",
+    "type": "超能",
+    "power": 80,
+    "pp": 20,
+    "desc": "用神秘力量攻击对手",
+    "effect": null
+  },
+  {
+    "id": 89,
+    "name": "精神波",
+    "type": "超能",
+    "power": 0,
+    "pp": 15,
+    "desc": "发射不可思议的精神波攻击",
+    "effect": null
+  },
+  {
+    "id": 90,
+    "name": "精神回复",
+    "type": "普通",
+    "power": 0,
+    "pp": 10,
+    "desc": "回复自身一半HP",
+    "effect": "recover"
+  },
+  {
+    "id": 91,
+    "name": "觉醒力量",
+    "type": "普通",
+    "power": 60,
+    "pp": 15,
+    "desc": "根据自身属性改变力量属性",
+    "effect": null
+  },
+  {
+    "id": 92,
+    "name": "忍耐",
+    "type": "普通",
+    "power": 0,
+    "pp": 10,
+    "desc": "忍受攻击，下回合必定反击",
+    "effect": null
+  },
+  {
+    "id": 93,
+    "name": "起死回生",
+    "type": "格斗",
+    "power": 0,
+    "pp": 15,
+    "desc": "自身HP越少威力越大",
+    "effect": null
+  },
+  {
+    "id": 94,
+    "name": "泥巴炸弹",
+    "type": "地面",
+    "power": 65,
+    "pp": 20,
+    "desc": "投掷泥块攻击对手",
+    "effect": null
+  },
+  {
+    "id": 95,
+    "name": "钢尾巴",
+    "type": "钢",
+    "power": 100,
+    "pp": 15,
+    "desc": "用钢铁尾巴攻击对手",
+    "effect": null
+  },
+  {
+    "id": 96,
+    "name": "滚动",
+    "type": "岩石",
+    "power": 30,
+    "pp": 20,
+    "desc": "连续滚动5回合，每回合威力翻倍",
+    "effect": null
+  },
+  {
+    "id": 97,
+    "name": "冰球",
+    "type": "冰",
+    "power": 30,
+    "pp": 20,
+    "desc": "连续滚动5回合，每回合威力翻倍",
+    "effect": null
+  },
+  {
+    "id": 98,
+    "name": "高速旋转",
+    "type": "普通",
+    "power": 20,
+    "pp": 40,
+    "desc": "高速旋转攻击，摆脱寄生种子和绑紧状态",
+    "effect": null
+  },
+  {
+    "id": 99,
+    "name": "棉孢子",
+    "type": "草",
+    "power": 0,
+    "pp": 40,
+    "desc": "撒出孢子大幅降低对手速度",
+    "effect": "speedDown"
+  },
+  {
+    "id": 100,
+    "name": "浊流",
+    "type": "水",
+    "power": 90,
+    "pp": 10,
+    "desc": "用浑浊水流攻击对手",
+    "effect": null
+  },
+  {
+    "id": 101,
+    "name": "冰柱针",
+    "type": "冰",
+    "power": 25,
+    "pp": 30,
+    "desc": "发射冰柱攻击2-5次",
+    "effect": null
+  },
+  {
+    "id": 102,
+    "name": "导弹针",
+    "type": "虫",
+    "power": 25,
+    "pp": 20,
+    "desc": "发射尖刺攻击2-5次",
+    "effect": null
+  },
+  {
+    "id": 103,
+    "name": "翅膀拍击",
+    "type": "飞行",
+    "power": 60,
+    "pp": 35,
+    "desc": "用翅膀拍击对手",
+    "effect": null
+  },
+  {
+    "id": 104,
+    "name": "裂劈",
+    "type": "格斗",
+    "power": 50,
+    "pp": 30,
+    "desc": "用手刀劈击对手",
+    "effect": null
+  },
+  {
+    "id": 105,
+    "name": "同命",
+    "type": "幽灵",
+    "power": 0,
+    "pp": 5,
+    "desc": "受到致命攻击时对手同归于尽",
+    "effect": null
+  },
+  {
+    "id": 106,
+    "name": "模仿",
+    "type": "普通",
+    "power": 0,
+    "pp": 20,
+    "desc": "复制对手最后使用的技能",
+    "effect": null
+  },
+  {
+    "id": 107,
+    "name": "臂锤",
+    "type": "格斗",
+    "power": 100,
+    "pp": 10,
+    "desc": "用强力臂锤攻击对手",
+    "effect": null
+  },
+  {
+    "id": 108,
+    "name": "意念头锤",
+    "type": "超能",
+    "power": 80,
+    "pp": 15,
+    "desc": "用意念之力头锤攻击对手",
+    "effect": null
+  },
+  {
+    "id": 109,
+    "name": "影子偷袭",
+    "type": "幽灵",
+    "power": 40,
+    "pp": 30,
+    "desc": "暗中出手攻击对手（先制+1）",
+    "effect": null
+  },
+  {
+    "id": 110,
+    "name": "气象球",
+    "type": "普通",
+    "power": 50,
+    "pp": 10,
+    "desc": "根据天气改变属性并提升威力",
+    "effect": null
+  },
+  {
+    "id": 111,
+    "name": "空气利刃",
+    "type": "飞行",
+    "power": 60,
+    "pp": 25,
+    "desc": "用空气利刃切割对手",
+    "effect": null
+  },
+  {
+    "id": 112,
+    "name": "喷水",
+    "type": "水",
+    "power": 150,
+    "pp": 5,
+    "desc": "HP越多威力越大的水柱喷射",
+    "effect": null
+  },
+  {
+    "id": 113,
+    "name": "喷火",
+    "type": "火",
+    "power": 150,
+    "pp": 5,
+    "desc": "HP越多威力越大的火焰喷射",
+    "effect": null
+  },
+  {
+    "id": 114,
+    "name": "根源波动",
+    "type": "水",
+    "power": 110,
+    "pp": 5,
+    "desc": "用大海的波动攻击全场",
+    "effect": null
+  },
+  {
+    "id": 115,
+    "name": "断崖之剑",
+    "type": "地面",
+    "power": 120,
+    "pp": 5,
+    "desc": "用大地的力量击碎对手",
+    "effect": null
+  },
+  {
+    "id": 116,
+    "name": "创造领域",
+    "type": "超能",
+    "power": 90,
+    "pp": 5,
+    "desc": "用创造之力重写规则攻击",
+    "effect": null
+  },
+  {
+    "id": 117,
+    "name": "龙爪",
+    "type": "龙",
+    "power": 80,
+    "pp": 15,
+    "desc": "用利爪撕裂对手",
+    "effect": null
+  },
+  {
+    "id": 118,
+    "name": "龙之舞",
+    "type": "龙",
+    "power": 0,
+    "pp": 20,
+    "desc": "跳起龙之舞提升攻击和速度",
+    "effect": null
+  },
+  {
+    "id": 119,
+    "name": "暗影拳",
+    "type": "幽灵",
+    "power": 60,
+    "pp": 20,
+    "desc": "出拳攻击（必中）",
+    "effect": null
+  },
+  {
+    "id": 120,
+    "name": "信号光束",
+    "type": "虫",
+    "power": 75,
+    "pp": 15,
+    "desc": "发射信号光束攻击",
+    "effect": null
+  },
+  {
+    "id": 121,
+    "name": "金属爪",
+    "type": "钢",
+    "power": 50,
+    "pp": 35,
+    "desc": "用金属利爪攻击对手",
+    "effect": null
+  },
+  {
+    "id": 122,
+    "name": "彗星拳",
+    "type": "钢",
+    "power": 90,
+    "pp": 10,
+    "desc": "用彗星般拳头连续攻击",
+    "effect": null
+  },
+  {
+    "id": 123,
+    "name": "流星拳",
+    "type": "钢",
+    "power": 100,
+    "pp": 10,
+    "desc": "以流星之势攻击对手",
+    "effect": null
+  },
+  {
+    "id": 124,
+    "name": "神秘守护",
+    "type": "普通",
+    "power": 0,
+    "pp": 25,
+    "desc": "5回合内防止异常状态",
+    "effect": null
+  },
+  {
+    "id": 125,
+    "name": "祈求",
+    "type": "普通",
+    "power": 0,
+    "pp": 10,
+    "desc": "回复队友部分HP",
+    "effect": "recover"
+  },
+  {
+    "id": 126,
+    "name": "扎根",
+    "type": "草",
+    "power": 0,
+    "pp": 20,
+    "desc": "扎根地面每回合回复HP",
+    "effect": "recover"
+  },
+  {
+    "id": 127,
+    "name": "破壳",
+    "type": "普通",
+    "power": 0,
+    "pp": 15,
+    "desc": "突破外壳大幅提升攻击特攻，降低防御特防",
+    "effect": null
+  },
+  {
+    "id": 128,
+    "name": "蒸气弹",
+    "type": "水",
+    "power": 80,
+    "pp": 15,
+    "desc": "喷射高温蒸气攻击",
+    "effect": null
+  },
+  {
+    "id": 129,
+    "name": "健美",
+    "type": "格斗",
+    "power": 0,
+    "pp": 20,
+    "desc": "锻炼肌肉提升攻击和防御",
+    "effect": null
+  },
+  {
+    "id": 130,
+    "name": "气场提升",
+    "type": "恶",
+    "power": 0,
+    "pp": 20,
+    "desc": "恶龙咆哮提升自身攻击",
+    "effect": null
+  }
+]

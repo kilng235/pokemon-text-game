@@ -1,9 +1,23 @@
+function toggleMap() {
+  G.showBigMap = !G.showBigMap
+  if (!G.showBigMap) {
+    const app = document.getElementById('app')
+    if (app) app.className = ''
+  }
+  render()
+}
+
 function startNewGame() {
   resetGame()
   initQuests()
   G.dialogue = {
     lines: [
-      { speaker: '', text: '你走进了大木博士的研究所……' },
+      { speaker: '📺 电视新闻', text: '「各位观众，晚上好！欢迎收看宝可梦新闻。」' },
+      { speaker: '📺 电视新闻', text: '「最近，关都地区掀起了训练家热潮！」' },
+      { speaker: '📺 电视新闻', text: '「大木博士的研究所前挤满了前来领取初始宝可梦的年轻人。」' },
+      { speaker: '📺 电视新闻', text: '「同时，一个被称为"火箭队"的可疑组织活动日益频繁。」' },
+      { speaker: '📺 电视新闻', text: '「我们的冒险，就从这里开始——」' },
+      { speaker: '', text: '你关掉了电视，走出家门，向大木博士的研究所走去……' },
       { speaker: '大木博士', text: '哦！你来了！我等你好久了！' },
       { speaker: '大木博士', text: '我叫大木，是研究宝可梦的专家。' },
       { speaker: '大木博士', text: '这个世界生活着各种各样的宝可梦，人们和它们一起生活、对战。' },
@@ -56,6 +70,26 @@ function travelTo(key) {
     addLog('洞穴入口被强大的封印挡住了……需要集齐所有徽章才能进入。')
     render(); return
   }
+  if (key === 'seafoamIslands' && !G.player.items.surfHM) {
+    addLog('双子岛需要冲浪术才能到达。')
+    render(); return
+  }
+  // 七之岛乘船条件
+  if (key === 'island1') {
+    if (G.player.position !== 'vermilion') {
+      addLog('从当前位置无法直接前往七之岛，需要从枯叶市乘船。')
+      render(); return
+    }
+    if (!G.storyFlags.championDefeated) {
+      addLog('港口工作人员：\"去七之岛的海域很危险，等你成为联盟冠军再来吧！\"')
+      render(); return
+    }
+    addLog('🛳 登上了前往七之岛的渡轮……海浪拍打着船舷……')
+  }
+  if (G.player.position === 'vermilion' && key.startsWith('island') && key !== 'island1') {
+    addLog('需要先到脐眼岛，再转往其他岛屿。')
+    render(); return
+  }
   G.player.position = key
   updateQuest()
   // 城镇剧情触发
@@ -63,7 +97,7 @@ function travelTo(key) {
     const storyKey = checkStoryTrigger(key)
     if (storyKey) {
       const ev = STORY_EVENTS[storyKey]
-      G.dialogue = { eventKey: storyKey, lines: ev.dialogue, index: 0, battle: ev.battle !== null, canSkip: false }
+      G.dialogue = { eventKey: storyKey, lines: ev.dialogue, index: 0, battle: ev.battle !== null, choices: ev.choices, canSkip: false }
       G.view = 'dialogue'; render(); return
     }
   }
@@ -101,7 +135,7 @@ function tryWildEncounter(fromTravel) {
   const storyKey = checkStoryTrigger(G.player.position)
   if (storyKey) {
     const ev = STORY_EVENTS[storyKey]
-    G.dialogue = { eventKey: storyKey, lines: ev.dialogue, index: 0, battle: ev.battle !== null, canSkip: false }
+    G.dialogue = { eventKey: storyKey, lines: ev.dialogue, index: 0, battle: ev.battle !== null, choices: ev.choices, canSkip: false }
     G.view = 'dialogue'; render(); return
   }
   // 检查是否有未击败的训练家
@@ -165,11 +199,30 @@ function finishDialogue() {
   if (d && d.battle) {
     startDialogueBattle(); return
   }
+  // 处理选择分支（如月见山化石选择）
+  if (d && d.choices && d.eventKey) {
+    G.view = 'choice'; render(); return
+  }
   const onComplete = d ? d.onComplete : null
   G.dialogue = null
   if (onComplete === 'starter') {
     G.view = 'choose'; saveGame(); render(); return
   }
+  saveGame()
+  G.view = 'explore'; render()
+}
+
+function makeChoice(choiceIndex) {
+  const d = G.dialogue
+  if (!d || !d.choices || !d.eventKey) return
+  const choice = d.choices[choiceIndex]
+  if (!choice) return
+  const ev = STORY_EVENTS[d.eventKey]
+  if (ev && ev.onFinish) {
+    const msg = ev.onFinish(choice)
+    if (msg) addLog(msg)
+  }
+  G.dialogue = null
   saveGame()
   G.view = 'explore'; render()
 }
@@ -254,12 +307,54 @@ function restartGame() {
   }
 }
 
+// 学习新技能：直接学会（不足4个时）
+function learnMoveDirect(pokemonIndex) {
+  const pending = G.pendingMoveLearn
+  if (!pending || pending.length === 0) return
+  const info = pending[0]
+  const pkm = G.player.pokemon[pokemonIndex]
+  if (!pkm) return
+  const mData = getMoveData(info.moveId)
+  if (!mData) return
+  pkm.moves.push({ id:mData[0], name:mData[1], type:mData[2], power:mData[3], pp:mData[4], currentPp:mData[4], desc:mData[5]||'', effect:mData[6]||null })
+  addLog(`★ ${pkm.name} 学会了「${mData[1]}」！`)
+  G.pendingMoveLearn.shift()
+  saveGame(); render()
+}
+
+// 学习新技能：遗忘旧技能
+function forgetMove(pokemonIndex, moveIndex) {
+  const pending = G.pendingMoveLearn
+  if (!pending || pending.length === 0) return
+  const info = pending[0]
+  const pkm = G.player.pokemon[pokemonIndex]
+  if (!pkm) return
+  const forgotten = pkm.moves[moveIndex]
+  const mData = getMoveData(info.moveId)
+  if (!mData) return
+  pkm.moves.splice(moveIndex, 1)
+  pkm.moves.push({ id:mData[0], name:mData[1], type:mData[2], power:mData[3], pp:mData[4], currentPp:mData[4], desc:mData[5]||'', effect:mData[6]||null })
+  addLog(`★ ${pkm.name} 遗忘了「${forgotten.name}」,\n   学会了「${mData[1]}」！`)
+  G.pendingMoveLearn.shift()
+  saveGame(); render()
+}
+
+// 跳过学习
+function skipMove() {
+  if (G.pendingMoveLearn && G.pendingMoveLearn.length > 0) {
+    const info = G.pendingMoveLearn[0]
+    addLog(`${G.player.pokemon[info.pokemonIndex]?.name} 没有学习「${info.moveName}」。`)
+    G.pendingMoveLearn.shift()
+    saveGame(); render()
+  }
+}
+
 // 暴露到全局（用于内联 onclick）
 const globalFns = [startNewGame, continueGame, selectStarter, travelTo, challengeGym,
   tryWildEncounter, battleSub, playerAttack, tryFlee, enemyTurn,
   useItemInBattle, useItemFromBag, switchPokemon, closeBag, healAtCenter, buyItem,
-  advanceDialogue, skipDialogue, finishDialogue, startDialogueBattle, restartGame,
-  confirmMove, cancelMove]
+  advanceDialogue, skipDialogue, finishDialogue, startDialogueBattle, restartGame, makeChoice,
+  confirmMove, cancelMove, toggleMap, learnMoveDirect, forgetMove, skipMove]
 for (const fn of globalFns) window[fn.name] = fn
 
 document.addEventListener('DOMContentLoaded', () => {

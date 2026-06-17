@@ -1,0 +1,3954 @@
+{
+  "1": {
+    "id": 1,
+    "zh": "拍击",
+    "type": "normal",
+    "typeZh": null,
+    "power": 40,
+    "pp": 35
+  },
+  "2": {
+    "id": 2,
+    "zh": "空手劈",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 50,
+    "pp": 25
+  },
+  "3": {
+    "id": 3,
+    "zh": "连环巴掌",
+    "type": "normal",
+    "typeZh": null,
+    "power": 15,
+    "pp": 10
+  },
+  "4": {
+    "id": 4,
+    "zh": "连续拳",
+    "type": "normal",
+    "typeZh": null,
+    "power": 18,
+    "pp": 15
+  },
+  "5": {
+    "id": 5,
+    "zh": "百万吨重拳",
+    "type": "normal",
+    "typeZh": null,
+    "power": 80,
+    "pp": 20
+  },
+  "6": {
+    "id": 6,
+    "zh": "聚宝功",
+    "type": "normal",
+    "typeZh": null,
+    "power": 40,
+    "pp": 20
+  },
+  "7": {
+    "id": 7,
+    "zh": "火焰拳",
+    "type": "fire",
+    "typeZh": null,
+    "power": 75,
+    "pp": 15
+  },
+  "8": {
+    "id": 8,
+    "zh": "冰冻拳",
+    "type": "ice",
+    "typeZh": null,
+    "power": 75,
+    "pp": 15
+  },
+  "9": {
+    "id": 9,
+    "zh": "雷电拳",
+    "type": "electric",
+    "typeZh": null,
+    "power": 75,
+    "pp": 15
+  },
+  "10": {
+    "id": 10,
+    "zh": "抓",
+    "type": "normal",
+    "typeZh": null,
+    "power": 40,
+    "pp": 35
+  },
+  "11": {
+    "id": 11,
+    "zh": "夹住",
+    "type": "normal",
+    "typeZh": null,
+    "power": 55,
+    "pp": 30
+  },
+  "12": {
+    "id": 12,
+    "zh": "断头钳",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "13": {
+    "id": 13,
+    "zh": "旋风刀",
+    "type": "normal",
+    "typeZh": null,
+    "power": 80,
+    "pp": 10
+  },
+  "14": {
+    "id": 14,
+    "zh": "剑舞",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "15": {
+    "id": 15,
+    "zh": "居合斩",
+    "type": "normal",
+    "typeZh": null,
+    "power": 50,
+    "pp": 30
+  },
+  "16": {
+    "id": 16,
+    "zh": "起风",
+    "type": "flying",
+    "typeZh": null,
+    "power": 40,
+    "pp": 35
+  },
+  "17": {
+    "id": 17,
+    "zh": "翅膀攻击",
+    "type": "flying",
+    "typeZh": null,
+    "power": 60,
+    "pp": 35
+  },
+  "18": {
+    "id": 18,
+    "zh": "吹飞",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "19": {
+    "id": 19,
+    "zh": "飞翔",
+    "type": "flying",
+    "typeZh": null,
+    "power": 90,
+    "pp": 15
+  },
+  "20": {
+    "id": 20,
+    "zh": "绑紧",
+    "type": "normal",
+    "typeZh": null,
+    "power": 15,
+    "pp": 20
+  },
+  "21": {
+    "id": 21,
+    "zh": "摔打",
+    "type": "normal",
+    "typeZh": null,
+    "power": 80,
+    "pp": 20
+  },
+  "22": {
+    "id": 22,
+    "zh": "藤鞭",
+    "type": "grass",
+    "typeZh": null,
+    "power": 45,
+    "pp": 25
+  },
+  "23": {
+    "id": 23,
+    "zh": "踩踏",
+    "type": "normal",
+    "typeZh": null,
+    "power": 65,
+    "pp": 20
+  },
+  "24": {
+    "id": 24,
+    "zh": "二连踢",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 30,
+    "pp": 30
+  },
+  "25": {
+    "id": 25,
+    "zh": "百万吨重踢",
+    "type": "normal",
+    "typeZh": null,
+    "power": 120,
+    "pp": 5
+  },
+  "26": {
+    "id": 26,
+    "zh": "飞踢",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 100,
+    "pp": 10
+  },
+  "27": {
+    "id": 27,
+    "zh": "回旋踢",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 60,
+    "pp": 15
+  },
+  "28": {
+    "id": 28,
+    "zh": "泼沙",
+    "type": "ground",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "29": {
+    "id": 29,
+    "zh": "头锤",
+    "type": "normal",
+    "typeZh": null,
+    "power": 70,
+    "pp": 15
+  },
+  "30": {
+    "id": 30,
+    "zh": "角撞",
+    "type": "normal",
+    "typeZh": null,
+    "power": 65,
+    "pp": 25
+  },
+  "31": {
+    "id": 31,
+    "zh": "乱击",
+    "type": "normal",
+    "typeZh": null,
+    "power": 15,
+    "pp": 20
+  },
+  "32": {
+    "id": 32,
+    "zh": "角钻",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "33": {
+    "id": 33,
+    "zh": "撞击",
+    "type": "normal",
+    "typeZh": null,
+    "power": 40,
+    "pp": 35
+  },
+  "34": {
+    "id": 34,
+    "zh": "泰山压顶",
+    "type": "normal",
+    "typeZh": null,
+    "power": 85,
+    "pp": 15
+  },
+  "35": {
+    "id": 35,
+    "zh": "紧束",
+    "type": "normal",
+    "typeZh": null,
+    "power": 15,
+    "pp": 20
+  },
+  "36": {
+    "id": 36,
+    "zh": "猛撞",
+    "type": "normal",
+    "typeZh": null,
+    "power": 90,
+    "pp": 20
+  },
+  "37": {
+    "id": 37,
+    "zh": "大闹一番",
+    "type": "normal",
+    "typeZh": null,
+    "power": 120,
+    "pp": 10
+  },
+  "38": {
+    "id": 38,
+    "zh": "舍身冲撞",
+    "type": "normal",
+    "typeZh": null,
+    "power": 120,
+    "pp": 15
+  },
+  "39": {
+    "id": 39,
+    "zh": "摇尾巴",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "40": {
+    "id": 40,
+    "zh": "毒针",
+    "type": "poison",
+    "typeZh": null,
+    "power": 15,
+    "pp": 35
+  },
+  "41": {
+    "id": 41,
+    "zh": "双针",
+    "type": "bug",
+    "typeZh": null,
+    "power": 25,
+    "pp": 20
+  },
+  "42": {
+    "id": 42,
+    "zh": "飞弹针",
+    "type": "bug",
+    "typeZh": null,
+    "power": 25,
+    "pp": 20
+  },
+  "43": {
+    "id": 43,
+    "zh": "瞪眼",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "44": {
+    "id": 44,
+    "zh": "咬住",
+    "type": "dark",
+    "typeZh": null,
+    "power": 60,
+    "pp": 25
+  },
+  "45": {
+    "id": 45,
+    "zh": "叫声",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 40
+  },
+  "46": {
+    "id": 46,
+    "zh": "吼叫",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "47": {
+    "id": 47,
+    "zh": "唱歌",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "48": {
+    "id": 48,
+    "zh": "超音波",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "49": {
+    "id": 49,
+    "zh": "音爆",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "50": {
+    "id": 50,
+    "zh": "定身法",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "51": {
+    "id": 51,
+    "zh": "溶解液",
+    "type": "poison",
+    "typeZh": null,
+    "power": 40,
+    "pp": 30
+  },
+  "52": {
+    "id": 52,
+    "zh": "火花",
+    "type": "fire",
+    "typeZh": null,
+    "power": 40,
+    "pp": 25
+  },
+  "53": {
+    "id": 53,
+    "zh": "喷射火焰",
+    "type": "fire",
+    "typeZh": null,
+    "power": 90,
+    "pp": 15
+  },
+  "54": {
+    "id": 54,
+    "zh": "白雾",
+    "type": "ice",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "55": {
+    "id": 55,
+    "zh": "水枪",
+    "type": "water",
+    "typeZh": null,
+    "power": 40,
+    "pp": 25
+  },
+  "56": {
+    "id": 56,
+    "zh": "水炮",
+    "type": "water",
+    "typeZh": null,
+    "power": 110,
+    "pp": 5
+  },
+  "57": {
+    "id": 57,
+    "zh": "冲浪",
+    "type": "water",
+    "typeZh": null,
+    "power": 90,
+    "pp": 15
+  },
+  "58": {
+    "id": 58,
+    "zh": "冰冻光束",
+    "type": "ice",
+    "typeZh": null,
+    "power": 90,
+    "pp": 10
+  },
+  "59": {
+    "id": 59,
+    "zh": "暴风雪",
+    "type": "ice",
+    "typeZh": null,
+    "power": 110,
+    "pp": 5
+  },
+  "60": {
+    "id": 60,
+    "zh": "幻象光线",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 65,
+    "pp": 20
+  },
+  "61": {
+    "id": 61,
+    "zh": "泡沫光线",
+    "type": "water",
+    "typeZh": null,
+    "power": 65,
+    "pp": 20
+  },
+  "62": {
+    "id": 62,
+    "zh": "极光束",
+    "type": "ice",
+    "typeZh": null,
+    "power": 65,
+    "pp": 20
+  },
+  "63": {
+    "id": 63,
+    "zh": "破坏光线",
+    "type": "normal",
+    "typeZh": null,
+    "power": 150,
+    "pp": 5
+  },
+  "64": {
+    "id": 64,
+    "zh": "啄",
+    "type": "flying",
+    "typeZh": null,
+    "power": 35,
+    "pp": 35
+  },
+  "65": {
+    "id": 65,
+    "zh": "啄钻",
+    "type": "flying",
+    "typeZh": null,
+    "power": 80,
+    "pp": 20
+  },
+  "66": {
+    "id": 66,
+    "zh": "地狱翻滚",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 80,
+    "pp": 20
+  },
+  "67": {
+    "id": 67,
+    "zh": "踢倒",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "68": {
+    "id": 68,
+    "zh": "双倍奉还",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "69": {
+    "id": 69,
+    "zh": "地球上投",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "70": {
+    "id": 70,
+    "zh": "怪力",
+    "type": "normal",
+    "typeZh": null,
+    "power": 80,
+    "pp": 15
+  },
+  "71": {
+    "id": 71,
+    "zh": "吸取",
+    "type": "grass",
+    "typeZh": null,
+    "power": 20,
+    "pp": 25
+  },
+  "72": {
+    "id": 72,
+    "zh": "超级吸取",
+    "type": "grass",
+    "typeZh": null,
+    "power": 40,
+    "pp": 15
+  },
+  "73": {
+    "id": 73,
+    "zh": "寄生种子",
+    "type": "grass",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "74": {
+    "id": 74,
+    "zh": "生长",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "75": {
+    "id": 75,
+    "zh": "飞叶快刀",
+    "type": "grass",
+    "typeZh": null,
+    "power": 55,
+    "pp": 25
+  },
+  "76": {
+    "id": 76,
+    "zh": "日光束",
+    "type": "grass",
+    "typeZh": null,
+    "power": 120,
+    "pp": 10
+  },
+  "77": {
+    "id": 77,
+    "zh": "毒粉",
+    "type": "poison",
+    "typeZh": null,
+    "power": 0,
+    "pp": 35
+  },
+  "78": {
+    "id": 78,
+    "zh": "麻痹粉",
+    "type": "grass",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "79": {
+    "id": 79,
+    "zh": "催眠粉",
+    "type": "grass",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "80": {
+    "id": 80,
+    "zh": "花瓣舞",
+    "type": "grass",
+    "typeZh": null,
+    "power": 120,
+    "pp": 10
+  },
+  "81": {
+    "id": 81,
+    "zh": "吐丝",
+    "type": "bug",
+    "typeZh": null,
+    "power": 0,
+    "pp": 40
+  },
+  "82": {
+    "id": 82,
+    "zh": "龙之怒",
+    "type": "dragon",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "83": {
+    "id": 83,
+    "zh": "火焰旋涡",
+    "type": "fire",
+    "typeZh": null,
+    "power": 35,
+    "pp": 15
+  },
+  "84": {
+    "id": 84,
+    "zh": "电击",
+    "type": "electric",
+    "typeZh": null,
+    "power": 40,
+    "pp": 30
+  },
+  "85": {
+    "id": 85,
+    "zh": "十万伏特",
+    "type": "electric",
+    "typeZh": null,
+    "power": 90,
+    "pp": 15
+  },
+  "86": {
+    "id": 86,
+    "zh": "电磁波",
+    "type": "electric",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "87": {
+    "id": 87,
+    "zh": "打雷",
+    "type": "electric",
+    "typeZh": null,
+    "power": 110,
+    "pp": 10
+  },
+  "88": {
+    "id": 88,
+    "zh": "落石",
+    "type": "rock",
+    "typeZh": null,
+    "power": 50,
+    "pp": 15
+  },
+  "89": {
+    "id": 89,
+    "zh": "地震",
+    "type": "ground",
+    "typeZh": null,
+    "power": 100,
+    "pp": 10
+  },
+  "90": {
+    "id": 90,
+    "zh": "地裂",
+    "type": "ground",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "91": {
+    "id": 91,
+    "zh": "挖洞",
+    "type": "ground",
+    "typeZh": null,
+    "power": 80,
+    "pp": 10
+  },
+  "92": {
+    "id": 92,
+    "zh": "剧毒",
+    "type": "poison",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "93": {
+    "id": 93,
+    "zh": "念力",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 50,
+    "pp": 25
+  },
+  "94": {
+    "id": 94,
+    "zh": "精神强念",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 90,
+    "pp": 10
+  },
+  "95": {
+    "id": 95,
+    "zh": "催眠术",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "96": {
+    "id": 96,
+    "zh": "瑜伽姿势",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 40
+  },
+  "97": {
+    "id": 97,
+    "zh": "高速移动",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "98": {
+    "id": 98,
+    "zh": "电光一闪",
+    "type": "normal",
+    "typeZh": null,
+    "power": 40,
+    "pp": 30
+  },
+  "99": {
+    "id": 99,
+    "zh": "愤怒",
+    "type": "normal",
+    "typeZh": null,
+    "power": 20,
+    "pp": 20
+  },
+  "100": {
+    "id": 100,
+    "zh": "瞬间移动",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "101": {
+    "id": 101,
+    "zh": "黑夜魔影",
+    "type": "ghost",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "102": {
+    "id": 102,
+    "zh": "模仿",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "103": {
+    "id": 103,
+    "zh": "刺耳声",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 40
+  },
+  "104": {
+    "id": 104,
+    "zh": "影子分身",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "105": {
+    "id": 105,
+    "zh": "自我再生",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "106": {
+    "id": 106,
+    "zh": "变硬",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "107": {
+    "id": 107,
+    "zh": "变小",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "108": {
+    "id": 108,
+    "zh": "烟幕",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "109": {
+    "id": 109,
+    "zh": "奇异之光",
+    "type": "ghost",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "110": {
+    "id": 110,
+    "zh": "缩入壳中",
+    "type": "water",
+    "typeZh": null,
+    "power": 0,
+    "pp": 40
+  },
+  "111": {
+    "id": 111,
+    "zh": "变圆",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 40
+  },
+  "112": {
+    "id": 112,
+    "zh": "屏障",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "113": {
+    "id": 113,
+    "zh": "光墙",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "114": {
+    "id": 114,
+    "zh": "黑雾",
+    "type": "ice",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "115": {
+    "id": 115,
+    "zh": "反射壁",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "116": {
+    "id": 116,
+    "zh": "聚气",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "117": {
+    "id": 117,
+    "zh": "忍耐",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "118": {
+    "id": 118,
+    "zh": "挥指",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "119": {
+    "id": 119,
+    "zh": "鹦鹉学舌",
+    "type": "flying",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "120": {
+    "id": 120,
+    "zh": "自爆",
+    "type": "normal",
+    "typeZh": null,
+    "power": 200,
+    "pp": 5
+  },
+  "121": {
+    "id": 121,
+    "zh": "炸蛋",
+    "type": "normal",
+    "typeZh": null,
+    "power": 100,
+    "pp": 10
+  },
+  "122": {
+    "id": 122,
+    "zh": "舌舔",
+    "type": "ghost",
+    "typeZh": null,
+    "power": 30,
+    "pp": 30
+  },
+  "123": {
+    "id": 123,
+    "zh": "浊雾",
+    "type": "poison",
+    "typeZh": null,
+    "power": 30,
+    "pp": 20
+  },
+  "124": {
+    "id": 124,
+    "zh": "污泥攻击",
+    "type": "poison",
+    "typeZh": null,
+    "power": 65,
+    "pp": 20
+  },
+  "125": {
+    "id": 125,
+    "zh": "骨棒",
+    "type": "ground",
+    "typeZh": null,
+    "power": 65,
+    "pp": 20
+  },
+  "126": {
+    "id": 126,
+    "zh": "大字爆炎",
+    "type": "fire",
+    "typeZh": null,
+    "power": 110,
+    "pp": 5
+  },
+  "127": {
+    "id": 127,
+    "zh": "攀瀑",
+    "type": "water",
+    "typeZh": null,
+    "power": 80,
+    "pp": 15
+  },
+  "128": {
+    "id": 128,
+    "zh": "贝壳夹击",
+    "type": "water",
+    "typeZh": null,
+    "power": 35,
+    "pp": 15
+  },
+  "129": {
+    "id": 129,
+    "zh": "高速星星",
+    "type": "normal",
+    "typeZh": null,
+    "power": 60,
+    "pp": 20
+  },
+  "130": {
+    "id": 130,
+    "zh": "火箭头锤",
+    "type": "normal",
+    "typeZh": null,
+    "power": 130,
+    "pp": 10
+  },
+  "131": {
+    "id": 131,
+    "zh": "尖刺加农炮",
+    "type": "normal",
+    "typeZh": null,
+    "power": 20,
+    "pp": 15
+  },
+  "132": {
+    "id": 132,
+    "zh": "缠绕",
+    "type": "normal",
+    "typeZh": null,
+    "power": 10,
+    "pp": 35
+  },
+  "133": {
+    "id": 133,
+    "zh": "瞬间失忆",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "134": {
+    "id": 134,
+    "zh": "折弯汤匙",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "135": {
+    "id": 135,
+    "zh": "生蛋",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "136": {
+    "id": 136,
+    "zh": "飞膝踢",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 130,
+    "pp": 10
+  },
+  "137": {
+    "id": 137,
+    "zh": "大蛇瞪眼",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "138": {
+    "id": 138,
+    "zh": "食梦",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 100,
+    "pp": 15
+  },
+  "139": {
+    "id": 139,
+    "zh": "毒瓦斯",
+    "type": "poison",
+    "typeZh": null,
+    "power": 0,
+    "pp": 40
+  },
+  "140": {
+    "id": 140,
+    "zh": "投球",
+    "type": "normal",
+    "typeZh": null,
+    "power": 15,
+    "pp": 20
+  },
+  "141": {
+    "id": 141,
+    "zh": "吸血",
+    "type": "bug",
+    "typeZh": null,
+    "power": 80,
+    "pp": 10
+  },
+  "142": {
+    "id": 142,
+    "zh": "恶魔之吻",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "143": {
+    "id": 143,
+    "zh": "神鸟猛击",
+    "type": "flying",
+    "typeZh": null,
+    "power": 140,
+    "pp": 5
+  },
+  "144": {
+    "id": 144,
+    "zh": "变身",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "145": {
+    "id": 145,
+    "zh": "泡沫",
+    "type": "water",
+    "typeZh": null,
+    "power": 40,
+    "pp": 30
+  },
+  "146": {
+    "id": 146,
+    "zh": "迷昏拳",
+    "type": "normal",
+    "typeZh": null,
+    "power": 70,
+    "pp": 10
+  },
+  "147": {
+    "id": 147,
+    "zh": "蘑菇孢子",
+    "type": "grass",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "148": {
+    "id": 148,
+    "zh": "闪光",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "149": {
+    "id": 149,
+    "zh": "精神波",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "150": {
+    "id": 150,
+    "zh": "跃起",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 40
+  },
+  "151": {
+    "id": 151,
+    "zh": "溶化",
+    "type": "poison",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "152": {
+    "id": 152,
+    "zh": "蟹钳锤",
+    "type": "water",
+    "typeZh": null,
+    "power": 100,
+    "pp": 10
+  },
+  "153": {
+    "id": 153,
+    "zh": "大爆炸",
+    "type": "normal",
+    "typeZh": null,
+    "power": 250,
+    "pp": 5
+  },
+  "154": {
+    "id": 154,
+    "zh": "乱抓",
+    "type": "normal",
+    "typeZh": null,
+    "power": 18,
+    "pp": 15
+  },
+  "155": {
+    "id": 155,
+    "zh": "骨头回力镖",
+    "type": "ground",
+    "typeZh": null,
+    "power": 50,
+    "pp": 10
+  },
+  "156": {
+    "id": 156,
+    "zh": "睡觉",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "157": {
+    "id": 157,
+    "zh": "岩崩",
+    "type": "rock",
+    "typeZh": null,
+    "power": 75,
+    "pp": 10
+  },
+  "158": {
+    "id": 158,
+    "zh": "必杀门牙",
+    "type": "normal",
+    "typeZh": null,
+    "power": 80,
+    "pp": 15
+  },
+  "159": {
+    "id": 159,
+    "zh": "棱角化",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "160": {
+    "id": 160,
+    "zh": "纹理",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "161": {
+    "id": 161,
+    "zh": "三重攻击",
+    "type": "normal",
+    "typeZh": null,
+    "power": 80,
+    "pp": 10
+  },
+  "162": {
+    "id": 162,
+    "zh": "愤怒门牙",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "163": {
+    "id": 163,
+    "zh": "劈开",
+    "type": "normal",
+    "typeZh": null,
+    "power": 70,
+    "pp": 20
+  },
+  "164": {
+    "id": 164,
+    "zh": "替身",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "169": {
+    "id": 169,
+    "zh": "蛛网",
+    "type": "bug",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "170": {
+    "id": 170,
+    "zh": "心之眼",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "171": {
+    "id": 171,
+    "zh": "恶梦",
+    "type": "ghost",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "172": {
+    "id": 172,
+    "zh": "火焰轮",
+    "type": "fire",
+    "typeZh": null,
+    "power": 60,
+    "pp": 25
+  },
+  "173": {
+    "id": 173,
+    "zh": "打鼾",
+    "type": "normal",
+    "typeZh": null,
+    "power": 50,
+    "pp": 15
+  },
+  "174": {
+    "id": 174,
+    "zh": "诅咒",
+    "type": "ghost",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "175": {
+    "id": 175,
+    "zh": "抓狂",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "176": {
+    "id": 176,
+    "zh": "纹理２",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "178": {
+    "id": 178,
+    "zh": "棉孢子",
+    "type": "grass",
+    "typeZh": null,
+    "power": 0,
+    "pp": 40
+  },
+  "179": {
+    "id": 179,
+    "zh": "起死回生",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "180": {
+    "id": 180,
+    "zh": "怨恨",
+    "type": "ghost",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "181": {
+    "id": 181,
+    "zh": "细雪",
+    "type": "ice",
+    "typeZh": null,
+    "power": 40,
+    "pp": 25
+  },
+  "182": {
+    "id": 182,
+    "zh": "守住",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "183": {
+    "id": 183,
+    "zh": "音速拳",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 40,
+    "pp": 30
+  },
+  "184": {
+    "id": 184,
+    "zh": "鬼面",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "185": {
+    "id": 185,
+    "zh": "出奇一击",
+    "type": "dark",
+    "typeZh": null,
+    "power": 60,
+    "pp": 20
+  },
+  "186": {
+    "id": 186,
+    "zh": "天使之吻",
+    "type": "fairy",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "187": {
+    "id": 187,
+    "zh": "腹鼓",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "188": {
+    "id": 188,
+    "zh": "污泥炸弹",
+    "type": "poison",
+    "typeZh": null,
+    "power": 90,
+    "pp": 10
+  },
+  "189": {
+    "id": 189,
+    "zh": "掷泥",
+    "type": "ground",
+    "typeZh": null,
+    "power": 20,
+    "pp": 10
+  },
+  "191": {
+    "id": 191,
+    "zh": "撒菱",
+    "type": "ground",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "192": {
+    "id": 192,
+    "zh": "电磁炮",
+    "type": "electric",
+    "typeZh": null,
+    "power": 120,
+    "pp": 5
+  },
+  "193": {
+    "id": 193,
+    "zh": "识破",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 40
+  },
+  "194": {
+    "id": 194,
+    "zh": "同命",
+    "type": "ghost",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "195": {
+    "id": 195,
+    "zh": "灭亡之歌",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "196": {
+    "id": 196,
+    "zh": "冰冻之风",
+    "type": "ice",
+    "typeZh": null,
+    "power": 55,
+    "pp": 15
+  },
+  "197": {
+    "id": 197,
+    "zh": "看穿",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "198": {
+    "id": 198,
+    "zh": "骨棒乱打",
+    "type": "ground",
+    "typeZh": null,
+    "power": 25,
+    "pp": 10
+  },
+  "199": {
+    "id": 199,
+    "zh": "锁定",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "200": {
+    "id": 200,
+    "zh": "逆鳞",
+    "type": "dragon",
+    "typeZh": null,
+    "power": 120,
+    "pp": 10
+  },
+  "201": {
+    "id": 201,
+    "zh": "沙暴",
+    "type": "rock",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "202": {
+    "id": 202,
+    "zh": "终极吸取",
+    "type": "grass",
+    "typeZh": null,
+    "power": 75,
+    "pp": 10
+  },
+  "203": {
+    "id": 203,
+    "zh": "挺住",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "204": {
+    "id": 204,
+    "zh": "撒娇",
+    "type": "fairy",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "205": {
+    "id": 205,
+    "zh": "滚动",
+    "type": "rock",
+    "typeZh": null,
+    "power": 30,
+    "pp": 20
+  },
+  "206": {
+    "id": 206,
+    "zh": "点到为止",
+    "type": "normal",
+    "typeZh": null,
+    "power": 40,
+    "pp": 40
+  },
+  "207": {
+    "id": 207,
+    "zh": "虚张声势",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "209": {
+    "id": 209,
+    "zh": "电光",
+    "type": "electric",
+    "typeZh": null,
+    "power": 65,
+    "pp": 20
+  },
+  "210": {
+    "id": 210,
+    "zh": "连斩",
+    "type": "bug",
+    "typeZh": null,
+    "power": 40,
+    "pp": 20
+  },
+  "212": {
+    "id": 212,
+    "zh": "黑色目光",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "214": {
+    "id": 214,
+    "zh": "梦话",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "219": {
+    "id": 219,
+    "zh": "神秘守护",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 25
+  },
+  "222": {
+    "id": 222,
+    "zh": "震级",
+    "type": "ground",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "223": {
+    "id": 223,
+    "zh": "爆裂拳",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 100,
+    "pp": 5
+  },
+  "224": {
+    "id": 224,
+    "zh": "超级角击",
+    "type": "bug",
+    "typeZh": null,
+    "power": 120,
+    "pp": 10
+  },
+  "225": {
+    "id": 225,
+    "zh": "龙息",
+    "type": "dragon",
+    "typeZh": null,
+    "power": 60,
+    "pp": 20
+  },
+  "226": {
+    "id": 226,
+    "zh": "接棒",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 40
+  },
+  "227": {
+    "id": 227,
+    "zh": "再来一次",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "228": {
+    "id": 228,
+    "zh": "追打",
+    "type": "dark",
+    "typeZh": null,
+    "power": 40,
+    "pp": 20
+  },
+  "229": {
+    "id": 229,
+    "zh": "高速旋转",
+    "type": "normal",
+    "typeZh": null,
+    "power": 50,
+    "pp": 40
+  },
+  "230": {
+    "id": 230,
+    "zh": "甜甜香气",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "231": {
+    "id": 231,
+    "zh": "铁尾",
+    "type": "steel",
+    "typeZh": null,
+    "power": 100,
+    "pp": 15
+  },
+  "232": {
+    "id": 232,
+    "zh": "金属爪",
+    "type": "steel",
+    "typeZh": null,
+    "power": 50,
+    "pp": 35
+  },
+  "233": {
+    "id": 233,
+    "zh": "借力摔",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 70,
+    "pp": 10
+  },
+  "235": {
+    "id": 235,
+    "zh": "光合作用",
+    "type": "grass",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "236": {
+    "id": 236,
+    "zh": "月光",
+    "type": "fairy",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "238": {
+    "id": 238,
+    "zh": "十字劈",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 100,
+    "pp": 5
+  },
+  "239": {
+    "id": 239,
+    "zh": "龙卷风",
+    "type": "dragon",
+    "typeZh": null,
+    "power": 40,
+    "pp": 20
+  },
+  "240": {
+    "id": 240,
+    "zh": "求雨",
+    "type": "water",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "241": {
+    "id": 241,
+    "zh": "大晴天",
+    "type": "fire",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "242": {
+    "id": 242,
+    "zh": "咬碎",
+    "type": "dark",
+    "typeZh": null,
+    "power": 80,
+    "pp": 15
+  },
+  "243": {
+    "id": 243,
+    "zh": "镜面反射",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "244": {
+    "id": 244,
+    "zh": "自我暗示",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "245": {
+    "id": 245,
+    "zh": "神速",
+    "type": "normal",
+    "typeZh": null,
+    "power": 80,
+    "pp": 5
+  },
+  "246": {
+    "id": 246,
+    "zh": "原始之力",
+    "type": "rock",
+    "typeZh": null,
+    "power": 60,
+    "pp": 5
+  },
+  "247": {
+    "id": 247,
+    "zh": "暗影球",
+    "type": "ghost",
+    "typeZh": null,
+    "power": 80,
+    "pp": 15
+  },
+  "248": {
+    "id": 248,
+    "zh": "预知未来",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 120,
+    "pp": 10
+  },
+  "249": {
+    "id": 249,
+    "zh": "碎岩",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 40,
+    "pp": 15
+  },
+  "250": {
+    "id": 250,
+    "zh": "潮旋",
+    "type": "water",
+    "typeZh": null,
+    "power": 35,
+    "pp": 15
+  },
+  "252": {
+    "id": 252,
+    "zh": "击掌奇袭",
+    "type": "normal",
+    "typeZh": null,
+    "power": 40,
+    "pp": 10
+  },
+  "253": {
+    "id": 253,
+    "zh": "吵闹",
+    "type": "normal",
+    "typeZh": null,
+    "power": 90,
+    "pp": 10
+  },
+  "254": {
+    "id": 254,
+    "zh": "蓄力",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "255": {
+    "id": 255,
+    "zh": "喷出",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "256": {
+    "id": 256,
+    "zh": "吞下",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "257": {
+    "id": 257,
+    "zh": "热风",
+    "type": "fire",
+    "typeZh": null,
+    "power": 95,
+    "pp": 10
+  },
+  "258": {
+    "id": 258,
+    "zh": "冰雹",
+    "type": "ice",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "260": {
+    "id": 260,
+    "zh": "吹捧",
+    "type": "dark",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "261": {
+    "id": 261,
+    "zh": "鬼火",
+    "type": "fire",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "262": {
+    "id": 262,
+    "zh": "临别礼物",
+    "type": "dark",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "263": {
+    "id": 263,
+    "zh": "硬撑",
+    "type": "normal",
+    "typeZh": null,
+    "power": 70,
+    "pp": 20
+  },
+  "264": {
+    "id": 264,
+    "zh": "真气拳",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 150,
+    "pp": 20
+  },
+  "266": {
+    "id": 266,
+    "zh": "看我嘛",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "267": {
+    "id": 267,
+    "zh": "自然之力",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "268": {
+    "id": 268,
+    "zh": "充电",
+    "type": "electric",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "269": {
+    "id": 269,
+    "zh": "挑衅",
+    "type": "dark",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "270": {
+    "id": 270,
+    "zh": "帮助",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "271": {
+    "id": 271,
+    "zh": "戏法",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "272": {
+    "id": 272,
+    "zh": "扮演",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "273": {
+    "id": 273,
+    "zh": "祈愿",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "275": {
+    "id": 275,
+    "zh": "扎根",
+    "type": "grass",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "276": {
+    "id": 276,
+    "zh": "蛮力",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 120,
+    "pp": 5
+  },
+  "277": {
+    "id": 277,
+    "zh": "魔法反射",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "278": {
+    "id": 278,
+    "zh": "回收利用",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "279": {
+    "id": 279,
+    "zh": "报复",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 60,
+    "pp": 10
+  },
+  "280": {
+    "id": 280,
+    "zh": "劈瓦",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 75,
+    "pp": 15
+  },
+  "281": {
+    "id": 281,
+    "zh": "哈欠",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "282": {
+    "id": 282,
+    "zh": "拍落",
+    "type": "dark",
+    "typeZh": null,
+    "power": 65,
+    "pp": 20
+  },
+  "283": {
+    "id": 283,
+    "zh": "蛮干",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "284": {
+    "id": 284,
+    "zh": "喷火",
+    "type": "fire",
+    "typeZh": null,
+    "power": 150,
+    "pp": 5
+  },
+  "286": {
+    "id": 286,
+    "zh": "封印",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "287": {
+    "id": 287,
+    "zh": "焕然一新",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "288": {
+    "id": 288,
+    "zh": "怨念",
+    "type": "ghost",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "291": {
+    "id": 291,
+    "zh": "潜水",
+    "type": "water",
+    "typeZh": null,
+    "power": 80,
+    "pp": 10
+  },
+  "293": {
+    "id": 293,
+    "zh": "保护色",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "297": {
+    "id": 297,
+    "zh": "羽毛舞",
+    "type": "flying",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "298": {
+    "id": 298,
+    "zh": "摇晃舞",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "299": {
+    "id": 299,
+    "zh": "火焰踢",
+    "type": "fire",
+    "typeZh": null,
+    "power": 85,
+    "pp": 10
+  },
+  "300": {
+    "id": 300,
+    "zh": "玩泥巴",
+    "type": "ground",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "303": {
+    "id": 303,
+    "zh": "偷懒",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "304": {
+    "id": 304,
+    "zh": "巨声",
+    "type": "normal",
+    "typeZh": null,
+    "power": 90,
+    "pp": 10
+  },
+  "305": {
+    "id": 305,
+    "zh": "剧毒牙",
+    "type": "poison",
+    "typeZh": null,
+    "power": 50,
+    "pp": 15
+  },
+  "306": {
+    "id": 306,
+    "zh": "撕裂爪",
+    "type": "normal",
+    "typeZh": null,
+    "power": 75,
+    "pp": 10
+  },
+  "309": {
+    "id": 309,
+    "zh": "彗星拳",
+    "type": "steel",
+    "typeZh": null,
+    "power": 90,
+    "pp": 10
+  },
+  "310": {
+    "id": 310,
+    "zh": "惊吓",
+    "type": "ghost",
+    "typeZh": null,
+    "power": 30,
+    "pp": 15
+  },
+  "312": {
+    "id": 312,
+    "zh": "芳香治疗",
+    "type": "grass",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "313": {
+    "id": 313,
+    "zh": "假哭",
+    "type": "dark",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "314": {
+    "id": 314,
+    "zh": "空气利刃",
+    "type": "flying",
+    "typeZh": null,
+    "power": 60,
+    "pp": 25
+  },
+  "315": {
+    "id": 315,
+    "zh": "过热",
+    "type": "fire",
+    "typeZh": null,
+    "power": 130,
+    "pp": 5
+  },
+  "316": {
+    "id": 316,
+    "zh": "气味侦测",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 40
+  },
+  "317": {
+    "id": 317,
+    "zh": "岩石封锁",
+    "type": "rock",
+    "typeZh": null,
+    "power": 60,
+    "pp": 15
+  },
+  "318": {
+    "id": 318,
+    "zh": "银色旋风",
+    "type": "bug",
+    "typeZh": null,
+    "power": 60,
+    "pp": 5
+  },
+  "319": {
+    "id": 319,
+    "zh": "金属音",
+    "type": "steel",
+    "typeZh": null,
+    "power": 0,
+    "pp": 40
+  },
+  "321": {
+    "id": 321,
+    "zh": "挠痒",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "322": {
+    "id": 322,
+    "zh": "宇宙力量",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "324": {
+    "id": 324,
+    "zh": "信号光束",
+    "type": "bug",
+    "typeZh": null,
+    "power": 75,
+    "pp": 15
+  },
+  "325": {
+    "id": 325,
+    "zh": "暗影拳",
+    "type": "ghost",
+    "typeZh": null,
+    "power": 60,
+    "pp": 20
+  },
+  "326": {
+    "id": 326,
+    "zh": "神通力",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 80,
+    "pp": 20
+  },
+  "327": {
+    "id": 327,
+    "zh": "冲天拳",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 85,
+    "pp": 15
+  },
+  "328": {
+    "id": 328,
+    "zh": "流沙地狱",
+    "type": "ground",
+    "typeZh": null,
+    "power": 35,
+    "pp": 15
+  },
+  "329": {
+    "id": 329,
+    "zh": "绝对零度",
+    "type": "ice",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "330": {
+    "id": 330,
+    "zh": "浊流",
+    "type": "water",
+    "typeZh": null,
+    "power": 90,
+    "pp": 10
+  },
+  "331": {
+    "id": 331,
+    "zh": "种子机关枪",
+    "type": "grass",
+    "typeZh": null,
+    "power": 25,
+    "pp": 30
+  },
+  "332": {
+    "id": 332,
+    "zh": "燕返",
+    "type": "flying",
+    "typeZh": null,
+    "power": 60,
+    "pp": 20
+  },
+  "333": {
+    "id": 333,
+    "zh": "冰锥",
+    "type": "ice",
+    "typeZh": null,
+    "power": 25,
+    "pp": 30
+  },
+  "334": {
+    "id": 334,
+    "zh": "铁壁",
+    "type": "steel",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "335": {
+    "id": 335,
+    "zh": "挡路",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "336": {
+    "id": 336,
+    "zh": "长嚎",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 40
+  },
+  "337": {
+    "id": 337,
+    "zh": "龙爪",
+    "type": "dragon",
+    "typeZh": null,
+    "power": 80,
+    "pp": 15
+  },
+  "339": {
+    "id": 339,
+    "zh": "健美",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "340": {
+    "id": 340,
+    "zh": "弹跳",
+    "type": "flying",
+    "typeZh": null,
+    "power": 85,
+    "pp": 5
+  },
+  "341": {
+    "id": 341,
+    "zh": "泥巴射击",
+    "type": "ground",
+    "typeZh": null,
+    "power": 55,
+    "pp": 15
+  },
+  "343": {
+    "id": 343,
+    "zh": "渴望",
+    "type": "normal",
+    "typeZh": null,
+    "power": 60,
+    "pp": 25
+  },
+  "345": {
+    "id": 345,
+    "zh": "魔法叶",
+    "type": "grass",
+    "typeZh": null,
+    "power": 60,
+    "pp": 20
+  },
+  "346": {
+    "id": 346,
+    "zh": "玩水",
+    "type": "water",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "347": {
+    "id": 347,
+    "zh": "冥想",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "348": {
+    "id": 348,
+    "zh": "叶刃",
+    "type": "grass",
+    "typeZh": null,
+    "power": 90,
+    "pp": 15
+  },
+  "349": {
+    "id": 349,
+    "zh": "龙之舞",
+    "type": "dragon",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "350": {
+    "id": 350,
+    "zh": "岩石爆击",
+    "type": "rock",
+    "typeZh": null,
+    "power": 25,
+    "pp": 10
+  },
+  "351": {
+    "id": 351,
+    "zh": "电击波",
+    "type": "electric",
+    "typeZh": null,
+    "power": 60,
+    "pp": 20
+  },
+  "352": {
+    "id": 352,
+    "zh": "水之波动",
+    "type": "water",
+    "typeZh": null,
+    "power": 60,
+    "pp": 20
+  },
+  "355": {
+    "id": 355,
+    "zh": "羽栖",
+    "type": "flying",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "356": {
+    "id": 356,
+    "zh": "重力",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "357": {
+    "id": 357,
+    "zh": "奇迹之眼",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 40
+  },
+  "358": {
+    "id": 358,
+    "zh": "唤醒巴掌",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 70,
+    "pp": 10
+  },
+  "359": {
+    "id": 359,
+    "zh": "臂锤",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 100,
+    "pp": 10
+  },
+  "360": {
+    "id": 360,
+    "zh": "陀螺球",
+    "type": "steel",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "361": {
+    "id": 361,
+    "zh": "治愈之愿",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "362": {
+    "id": 362,
+    "zh": "盐水",
+    "type": "water",
+    "typeZh": null,
+    "power": 65,
+    "pp": 10
+  },
+  "363": {
+    "id": 363,
+    "zh": "自然之恩",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "364": {
+    "id": 364,
+    "zh": "佯攻",
+    "type": "normal",
+    "typeZh": null,
+    "power": 30,
+    "pp": 10
+  },
+  "365": {
+    "id": 365,
+    "zh": "啄食",
+    "type": "flying",
+    "typeZh": null,
+    "power": 60,
+    "pp": 20
+  },
+  "366": {
+    "id": 366,
+    "zh": "顺风",
+    "type": "flying",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "367": {
+    "id": 367,
+    "zh": "点穴",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "369": {
+    "id": 369,
+    "zh": "急速折返",
+    "type": "bug",
+    "typeZh": null,
+    "power": 70,
+    "pp": 20
+  },
+  "370": {
+    "id": 370,
+    "zh": "近身战",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 120,
+    "pp": 5
+  },
+  "371": {
+    "id": 371,
+    "zh": "以牙还牙",
+    "type": "dark",
+    "typeZh": null,
+    "power": 50,
+    "pp": 10
+  },
+  "372": {
+    "id": 372,
+    "zh": "恶意追击",
+    "type": "dark",
+    "typeZh": null,
+    "power": 60,
+    "pp": 10
+  },
+  "374": {
+    "id": 374,
+    "zh": "投掷",
+    "type": "dark",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "375": {
+    "id": 375,
+    "zh": "精神转移",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "376": {
+    "id": 376,
+    "zh": "王牌",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "378": {
+    "id": 378,
+    "zh": "绞紧",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "380": {
+    "id": 380,
+    "zh": "胃液",
+    "type": "poison",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "381": {
+    "id": 381,
+    "zh": "幸运咒语",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "382": {
+    "id": 382,
+    "zh": "抢先一步",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "383": {
+    "id": 383,
+    "zh": "仿效",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "384": {
+    "id": 384,
+    "zh": "力量互换",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "385": {
+    "id": 385,
+    "zh": "防守互换",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "386": {
+    "id": 386,
+    "zh": "惩罚",
+    "type": "dark",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "387": {
+    "id": 387,
+    "zh": "珍藏",
+    "type": "normal",
+    "typeZh": null,
+    "power": 140,
+    "pp": 5
+  },
+  "388": {
+    "id": 388,
+    "zh": "烦恼种子",
+    "type": "grass",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "389": {
+    "id": 389,
+    "zh": "突袭",
+    "type": "dark",
+    "typeZh": null,
+    "power": 70,
+    "pp": 5
+  },
+  "390": {
+    "id": 390,
+    "zh": "毒菱",
+    "type": "poison",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "392": {
+    "id": 392,
+    "zh": "水流环",
+    "type": "water",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "393": {
+    "id": 393,
+    "zh": "电磁飘浮",
+    "type": "electric",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "394": {
+    "id": 394,
+    "zh": "闪焰冲锋",
+    "type": "fire",
+    "typeZh": null,
+    "power": 120,
+    "pp": 15
+  },
+  "396": {
+    "id": 396,
+    "zh": "波导弹",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 80,
+    "pp": 20
+  },
+  "397": {
+    "id": 397,
+    "zh": "岩石打磨",
+    "type": "rock",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "398": {
+    "id": 398,
+    "zh": "毒击",
+    "type": "poison",
+    "typeZh": null,
+    "power": 80,
+    "pp": 20
+  },
+  "399": {
+    "id": 399,
+    "zh": "恶之波动",
+    "type": "dark",
+    "typeZh": null,
+    "power": 80,
+    "pp": 15
+  },
+  "400": {
+    "id": 400,
+    "zh": "暗袭要害",
+    "type": "dark",
+    "typeZh": null,
+    "power": 70,
+    "pp": 15
+  },
+  "401": {
+    "id": 401,
+    "zh": "水流尾",
+    "type": "water",
+    "typeZh": null,
+    "power": 90,
+    "pp": 10
+  },
+  "402": {
+    "id": 402,
+    "zh": "种子炸弹",
+    "type": "grass",
+    "typeZh": null,
+    "power": 80,
+    "pp": 15
+  },
+  "403": {
+    "id": 403,
+    "zh": "空气斩",
+    "type": "flying",
+    "typeZh": null,
+    "power": 75,
+    "pp": 15
+  },
+  "404": {
+    "id": 404,
+    "zh": "十字剪",
+    "type": "bug",
+    "typeZh": null,
+    "power": 80,
+    "pp": 15
+  },
+  "405": {
+    "id": 405,
+    "zh": "虫鸣",
+    "type": "bug",
+    "typeZh": null,
+    "power": 90,
+    "pp": 10
+  },
+  "406": {
+    "id": 406,
+    "zh": "龙之波动",
+    "type": "dragon",
+    "typeZh": null,
+    "power": 85,
+    "pp": 10
+  },
+  "407": {
+    "id": 407,
+    "zh": "龙之俯冲",
+    "type": "dragon",
+    "typeZh": null,
+    "power": 100,
+    "pp": 10
+  },
+  "408": {
+    "id": 408,
+    "zh": "力量宝石",
+    "type": "rock",
+    "typeZh": null,
+    "power": 80,
+    "pp": 20
+  },
+  "409": {
+    "id": 409,
+    "zh": "吸取拳",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 75,
+    "pp": 10
+  },
+  "410": {
+    "id": 410,
+    "zh": "真空波",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 40,
+    "pp": 30
+  },
+  "412": {
+    "id": 412,
+    "zh": "能量球",
+    "type": "grass",
+    "typeZh": null,
+    "power": 90,
+    "pp": 10
+  },
+  "413": {
+    "id": 413,
+    "zh": "勇鸟猛攻",
+    "type": "flying",
+    "typeZh": null,
+    "power": 120,
+    "pp": 15
+  },
+  "414": {
+    "id": 414,
+    "zh": "大地之力",
+    "type": "ground",
+    "typeZh": null,
+    "power": 90,
+    "pp": 10
+  },
+  "415": {
+    "id": 415,
+    "zh": "掉包",
+    "type": "dark",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "416": {
+    "id": 416,
+    "zh": "终极冲击",
+    "type": "normal",
+    "typeZh": null,
+    "power": 150,
+    "pp": 5
+  },
+  "417": {
+    "id": 417,
+    "zh": "诡计",
+    "type": "dark",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "418": {
+    "id": 418,
+    "zh": "子弹拳",
+    "type": "steel",
+    "typeZh": null,
+    "power": 40,
+    "pp": 30
+  },
+  "419": {
+    "id": 419,
+    "zh": "雪崩",
+    "type": "ice",
+    "typeZh": null,
+    "power": 60,
+    "pp": 10
+  },
+  "420": {
+    "id": 420,
+    "zh": "冰砾",
+    "type": "ice",
+    "typeZh": null,
+    "power": 40,
+    "pp": 30
+  },
+  "421": {
+    "id": 421,
+    "zh": "暗影爪",
+    "type": "ghost",
+    "typeZh": null,
+    "power": 70,
+    "pp": 15
+  },
+  "422": {
+    "id": 422,
+    "zh": "雷电牙",
+    "type": "electric",
+    "typeZh": null,
+    "power": 65,
+    "pp": 15
+  },
+  "423": {
+    "id": 423,
+    "zh": "冰冻牙",
+    "type": "ice",
+    "typeZh": null,
+    "power": 65,
+    "pp": 15
+  },
+  "424": {
+    "id": 424,
+    "zh": "火焰牙",
+    "type": "fire",
+    "typeZh": null,
+    "power": 65,
+    "pp": 15
+  },
+  "425": {
+    "id": 425,
+    "zh": "影子偷袭",
+    "type": "ghost",
+    "typeZh": null,
+    "power": 40,
+    "pp": 30
+  },
+  "426": {
+    "id": 426,
+    "zh": "泥巴炸弹",
+    "type": "ground",
+    "typeZh": null,
+    "power": 65,
+    "pp": 10
+  },
+  "427": {
+    "id": 427,
+    "zh": "精神利刃",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 70,
+    "pp": 20
+  },
+  "428": {
+    "id": 428,
+    "zh": "意念头锤",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 80,
+    "pp": 15
+  },
+  "429": {
+    "id": 429,
+    "zh": "镜光射击",
+    "type": "steel",
+    "typeZh": null,
+    "power": 65,
+    "pp": 10
+  },
+  "430": {
+    "id": 430,
+    "zh": "加农光炮",
+    "type": "steel",
+    "typeZh": null,
+    "power": 80,
+    "pp": 10
+  },
+  "432": {
+    "id": 432,
+    "zh": "清除浓雾",
+    "type": "flying",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "435": {
+    "id": 435,
+    "zh": "放电",
+    "type": "electric",
+    "typeZh": null,
+    "power": 80,
+    "pp": 15
+  },
+  "436": {
+    "id": 436,
+    "zh": "喷烟",
+    "type": "fire",
+    "typeZh": null,
+    "power": 80,
+    "pp": 15
+  },
+  "437": {
+    "id": 437,
+    "zh": "飞叶风暴",
+    "type": "grass",
+    "typeZh": null,
+    "power": 130,
+    "pp": 5
+  },
+  "438": {
+    "id": 438,
+    "zh": "强力鞭打",
+    "type": "grass",
+    "typeZh": null,
+    "power": 120,
+    "pp": 10
+  },
+  "440": {
+    "id": 440,
+    "zh": "十字毒刃",
+    "type": "poison",
+    "typeZh": null,
+    "power": 70,
+    "pp": 20
+  },
+  "441": {
+    "id": 441,
+    "zh": "垃圾射击",
+    "type": "poison",
+    "typeZh": null,
+    "power": 120,
+    "pp": 5
+  },
+  "442": {
+    "id": 442,
+    "zh": "铁头",
+    "type": "steel",
+    "typeZh": null,
+    "power": 80,
+    "pp": 15
+  },
+  "443": {
+    "id": 443,
+    "zh": "磁铁炸弹",
+    "type": "steel",
+    "typeZh": null,
+    "power": 60,
+    "pp": 20
+  },
+  "444": {
+    "id": 444,
+    "zh": "尖石攻击",
+    "type": "rock",
+    "typeZh": null,
+    "power": 100,
+    "pp": 5
+  },
+  "445": {
+    "id": 445,
+    "zh": "诱惑",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "446": {
+    "id": 446,
+    "zh": "隐形岩",
+    "type": "rock",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "450": {
+    "id": 450,
+    "zh": "虫咬",
+    "type": "bug",
+    "typeZh": null,
+    "power": 60,
+    "pp": 20
+  },
+  "451": {
+    "id": 451,
+    "zh": "充电光束",
+    "type": "electric",
+    "typeZh": null,
+    "power": 50,
+    "pp": 10
+  },
+  "452": {
+    "id": 452,
+    "zh": "木槌",
+    "type": "grass",
+    "typeZh": null,
+    "power": 120,
+    "pp": 15
+  },
+  "453": {
+    "id": 453,
+    "zh": "水流喷射",
+    "type": "water",
+    "typeZh": null,
+    "power": 40,
+    "pp": 20
+  },
+  "458": {
+    "id": 458,
+    "zh": "二连击",
+    "type": "normal",
+    "typeZh": null,
+    "power": 35,
+    "pp": 10
+  },
+  "466": {
+    "id": 466,
+    "zh": "奇异之风",
+    "type": "ghost",
+    "typeZh": null,
+    "power": 60,
+    "pp": 5
+  },
+  "469": {
+    "id": 469,
+    "zh": "广域防守",
+    "type": "rock",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "472": {
+    "id": 472,
+    "zh": "奇妙空间",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "473": {
+    "id": 473,
+    "zh": "精神冲击",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 80,
+    "pp": 10
+  },
+  "474": {
+    "id": 474,
+    "zh": "毒液冲击",
+    "type": "poison",
+    "typeZh": null,
+    "power": 65,
+    "pp": 10
+  },
+  "476": {
+    "id": 476,
+    "zh": "愤怒粉",
+    "type": "bug",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "477": {
+    "id": 477,
+    "zh": "意念移物",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "479": {
+    "id": 479,
+    "zh": "击落",
+    "type": "rock",
+    "typeZh": null,
+    "power": 50,
+    "pp": 15
+  },
+  "480": {
+    "id": 480,
+    "zh": "山岚摔",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 60,
+    "pp": 10
+  },
+  "481": {
+    "id": 481,
+    "zh": "烈焰溅射",
+    "type": "fire",
+    "typeZh": null,
+    "power": 70,
+    "pp": 15
+  },
+  "482": {
+    "id": 482,
+    "zh": "污泥波",
+    "type": "poison",
+    "typeZh": null,
+    "power": 95,
+    "pp": 10
+  },
+  "483": {
+    "id": 483,
+    "zh": "蝶舞",
+    "type": "bug",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "484": {
+    "id": 484,
+    "zh": "重磅冲撞",
+    "type": "steel",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "485": {
+    "id": 485,
+    "zh": "同步干扰",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 120,
+    "pp": 10
+  },
+  "486": {
+    "id": 486,
+    "zh": "电球",
+    "type": "electric",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "487": {
+    "id": 487,
+    "zh": "浸水",
+    "type": "water",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "488": {
+    "id": 488,
+    "zh": "蓄能焰袭",
+    "type": "fire",
+    "typeZh": null,
+    "power": 50,
+    "pp": 20
+  },
+  "489": {
+    "id": 489,
+    "zh": "盘蜷",
+    "type": "poison",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "490": {
+    "id": 490,
+    "zh": "下盘踢",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 65,
+    "pp": 20
+  },
+  "491": {
+    "id": 491,
+    "zh": "酸液炸弹",
+    "type": "poison",
+    "typeZh": null,
+    "power": 40,
+    "pp": 20
+  },
+  "495": {
+    "id": 495,
+    "zh": "您先请",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "496": {
+    "id": 496,
+    "zh": "轮唱",
+    "type": "normal",
+    "typeZh": null,
+    "power": 60,
+    "pp": 15
+  },
+  "497": {
+    "id": 497,
+    "zh": "回声",
+    "type": "normal",
+    "typeZh": null,
+    "power": 40,
+    "pp": 15
+  },
+  "498": {
+    "id": 498,
+    "zh": "逐步击破",
+    "type": "normal",
+    "typeZh": null,
+    "power": 70,
+    "pp": 20
+  },
+  "499": {
+    "id": 499,
+    "zh": "清除之烟",
+    "type": "poison",
+    "typeZh": null,
+    "power": 50,
+    "pp": 15
+  },
+  "500": {
+    "id": 500,
+    "zh": "辅助力量",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 20,
+    "pp": 10
+  },
+  "501": {
+    "id": 501,
+    "zh": "快速防守",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "502": {
+    "id": 502,
+    "zh": "交换场地",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "504": {
+    "id": 504,
+    "zh": "破壳",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "505": {
+    "id": 505,
+    "zh": "治愈波动",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "506": {
+    "id": 506,
+    "zh": "祸不单行",
+    "type": "ghost",
+    "typeZh": null,
+    "power": 65,
+    "pp": 10
+  },
+  "507": {
+    "id": 507,
+    "zh": "自由落体",
+    "type": "flying",
+    "typeZh": null,
+    "power": 60,
+    "pp": 10
+  },
+  "509": {
+    "id": 509,
+    "zh": "巴投",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 60,
+    "pp": 10
+  },
+  "510": {
+    "id": 510,
+    "zh": "烧尽",
+    "type": "fire",
+    "typeZh": null,
+    "power": 60,
+    "pp": 15
+  },
+  "512": {
+    "id": 512,
+    "zh": "杂技",
+    "type": "flying",
+    "typeZh": null,
+    "power": 55,
+    "pp": 15
+  },
+  "513": {
+    "id": 513,
+    "zh": "镜面属性",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "514": {
+    "id": 514,
+    "zh": "报仇",
+    "type": "normal",
+    "typeZh": null,
+    "power": 70,
+    "pp": 5
+  },
+  "515": {
+    "id": 515,
+    "zh": "搏命",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 0,
+    "pp": 5
+  },
+  "516": {
+    "id": 516,
+    "zh": "传递礼物",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "517": {
+    "id": 517,
+    "zh": "炼狱",
+    "type": "fire",
+    "typeZh": null,
+    "power": 100,
+    "pp": 5
+  },
+  "522": {
+    "id": 522,
+    "zh": "虫之抵抗",
+    "type": "bug",
+    "typeZh": null,
+    "power": 50,
+    "pp": 20
+  },
+  "523": {
+    "id": 523,
+    "zh": "重踏",
+    "type": "ground",
+    "typeZh": null,
+    "power": 60,
+    "pp": 20
+  },
+  "525": {
+    "id": 525,
+    "zh": "龙尾",
+    "type": "dragon",
+    "typeZh": null,
+    "power": 60,
+    "pp": 10
+  },
+  "526": {
+    "id": 526,
+    "zh": "自我激励",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "528": {
+    "id": 528,
+    "zh": "疯狂伏特",
+    "type": "electric",
+    "typeZh": null,
+    "power": 90,
+    "pp": 15
+  },
+  "529": {
+    "id": 529,
+    "zh": "直冲钻",
+    "type": "ground",
+    "typeZh": null,
+    "power": 80,
+    "pp": 10
+  },
+  "530": {
+    "id": 530,
+    "zh": "二连劈",
+    "type": "dragon",
+    "typeZh": null,
+    "power": 40,
+    "pp": 15
+  },
+  "531": {
+    "id": 531,
+    "zh": "爱心印章",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 60,
+    "pp": 25
+  },
+  "534": {
+    "id": 534,
+    "zh": "贝壳刃",
+    "type": "water",
+    "typeZh": null,
+    "power": 75,
+    "pp": 10
+  },
+  "536": {
+    "id": 536,
+    "zh": "青草搅拌器",
+    "type": "grass",
+    "typeZh": null,
+    "power": 65,
+    "pp": 10
+  },
+  "537": {
+    "id": 537,
+    "zh": "疯狂滚压",
+    "type": "bug",
+    "typeZh": null,
+    "power": 65,
+    "pp": 20
+  },
+  "538": {
+    "id": 538,
+    "zh": "棉花防守",
+    "type": "grass",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "540": {
+    "id": 540,
+    "zh": "精神击破",
+    "type": "psychic",
+    "typeZh": null,
+    "power": 100,
+    "pp": 10
+  },
+  "542": {
+    "id": 542,
+    "zh": "暴风",
+    "type": "flying",
+    "typeZh": null,
+    "power": 110,
+    "pp": 10
+  },
+  "556": {
+    "id": 556,
+    "zh": "冰柱坠击",
+    "type": "ice",
+    "typeZh": null,
+    "power": 85,
+    "pp": 10
+  },
+  "562": {
+    "id": 562,
+    "zh": "打嗝",
+    "type": "poison",
+    "typeZh": null,
+    "power": 120,
+    "pp": 10
+  },
+  "563": {
+    "id": 563,
+    "zh": "耕地",
+    "type": "ground",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "564": {
+    "id": 564,
+    "zh": "黏黏网",
+    "type": "bug",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "565": {
+    "id": 565,
+    "zh": "致命针刺",
+    "type": "bug",
+    "typeZh": null,
+    "power": 50,
+    "pp": 25
+  },
+  "569": {
+    "id": 569,
+    "zh": "等离子浴",
+    "type": "electric",
+    "typeZh": null,
+    "power": 0,
+    "pp": 25
+  },
+  "572": {
+    "id": 572,
+    "zh": "落英缤纷",
+    "type": "grass",
+    "typeZh": null,
+    "power": 90,
+    "pp": 15
+  },
+  "573": {
+    "id": 573,
+    "zh": "冷冻干燥",
+    "type": "ice",
+    "typeZh": null,
+    "power": 70,
+    "pp": 20
+  },
+  "574": {
+    "id": 574,
+    "zh": "魅惑之声",
+    "type": "fairy",
+    "typeZh": null,
+    "power": 40,
+    "pp": 15
+  },
+  "577": {
+    "id": 577,
+    "zh": "吸取之吻",
+    "type": "fairy",
+    "typeZh": null,
+    "power": 50,
+    "pp": 10
+  },
+  "580": {
+    "id": 580,
+    "zh": "青草场地",
+    "type": "grass",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "581": {
+    "id": 581,
+    "zh": "薄雾场地",
+    "type": "fairy",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "583": {
+    "id": 583,
+    "zh": "嬉闹",
+    "type": "fairy",
+    "typeZh": null,
+    "power": 90,
+    "pp": 10
+  },
+  "584": {
+    "id": 584,
+    "zh": "妖精之风",
+    "type": "fairy",
+    "typeZh": null,
+    "power": 40,
+    "pp": 30
+  },
+  "585": {
+    "id": 585,
+    "zh": "月亮之力",
+    "type": "fairy",
+    "typeZh": null,
+    "power": 95,
+    "pp": 15
+  },
+  "589": {
+    "id": 589,
+    "zh": "和睦相处",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "598": {
+    "id": 598,
+    "zh": "怪异电波",
+    "type": "electric",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "599": {
+    "id": 599,
+    "zh": "毒液陷阱",
+    "type": "poison",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "602": {
+    "id": 602,
+    "zh": "磁场操控",
+    "type": "electric",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "604": {
+    "id": 604,
+    "zh": "电气场地",
+    "type": "electric",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "605": {
+    "id": 605,
+    "zh": "魔法闪耀",
+    "type": "fairy",
+    "typeZh": null,
+    "power": 80,
+    "pp": 10
+  },
+  "608": {
+    "id": 608,
+    "zh": "圆瞳",
+    "type": "fairy",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "609": {
+    "id": 609,
+    "zh": "蹭蹭脸颊",
+    "type": "electric",
+    "typeZh": null,
+    "power": 20,
+    "pp": 20
+  },
+  "611": {
+    "id": 611,
+    "zh": "死缠烂打",
+    "type": "bug",
+    "typeZh": null,
+    "power": 20,
+    "pp": 20
+  },
+  "612": {
+    "id": 612,
+    "zh": "增强拳",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 40,
+    "pp": 20
+  },
+  "667": {
+    "id": 667,
+    "zh": "十万马力",
+    "type": "ground",
+    "typeZh": null,
+    "power": 95,
+    "pp": 10
+  },
+  "671": {
+    "id": 671,
+    "zh": "聚光灯",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 15
+  },
+  "672": {
+    "id": 672,
+    "zh": "毒丝",
+    "type": "poison",
+    "typeZh": null,
+    "power": 0,
+    "pp": 20
+  },
+  "673": {
+    "id": 673,
+    "zh": "磨砺",
+    "type": "normal",
+    "typeZh": null,
+    "power": 0,
+    "pp": 30
+  },
+  "679": {
+    "id": 679,
+    "zh": "猛扑",
+    "type": "bug",
+    "typeZh": null,
+    "power": 80,
+    "pp": 15
+  },
+  "682": {
+    "id": 682,
+    "zh": "燃尽",
+    "type": "fire",
+    "typeZh": null,
+    "power": 130,
+    "pp": 5
+  },
+  "684": {
+    "id": 684,
+    "zh": "修长之角",
+    "type": "steel",
+    "typeZh": null,
+    "power": 70,
+    "pp": 10
+  },
+  "707": {
+    "id": 707,
+    "zh": "跺脚",
+    "type": "ground",
+    "typeZh": null,
+    "power": 75,
+    "pp": 10
+  },
+  "710": {
+    "id": 710,
+    "zh": "水流裂破",
+    "type": "water",
+    "typeZh": null,
+    "power": 85,
+    "pp": 10
+  },
+  "791": {
+    "id": 791,
+    "zh": "生命水滴",
+    "type": "water",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "834": {
+    "id": 834,
+    "zh": "波动冲",
+    "type": "water",
+    "typeZh": null,
+    "power": 120,
+    "pp": 10
+  },
+  "853": {
+    "id": 853,
+    "zh": "下压踢",
+    "type": "fighting",
+    "typeZh": null,
+    "power": 120,
+    "pp": 10
+  },
+  "873": {
+    "id": 873,
+    "zh": "怒牛",
+    "type": "normal",
+    "typeZh": null,
+    "power": 90,
+    "pp": 10
+  },
+  "883": {
+    "id": 883,
+    "zh": "雪景",
+    "type": "ice",
+    "typeZh": null,
+    "power": 0,
+    "pp": 10
+  },
+  "889": {
+    "id": 889,
+    "zh": "愤怒之拳",
+    "type": "ghost",
+    "typeZh": null,
+    "power": 50,
+    "pp": 10
+  }
+}

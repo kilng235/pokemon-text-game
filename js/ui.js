@@ -4,6 +4,13 @@ function render() {
   const v = G.view
   const badgeStr = '●'.repeat(G.player.badge) + '○'.repeat(8 - G.player.badge)
   $('header').textContent = `★ 宝可梦文字版   徽章:${badgeStr}   ¥${G.player.money}`
+  // 优先处理待学习的技能
+  if (G.pendingMoveLearn && G.pendingMoveLearn.length > 0) {
+    renderMoveLearn()
+    try { renderMap() } catch(e) { console.warn('map:',e) }
+    renderLog()
+    return
+  }
   if (v === 'start') renderStart()
   else if (v === 'choose') renderChoose()
   else if (v === 'explore') renderExplore()
@@ -15,8 +22,49 @@ function render() {
   else if (v === 'center') renderCenter()
   else if (v === 'dialogue') renderDialogue()
   else if (v === 'worldMap') renderWorldMap()
+  else if (v === 'choice') renderChoice()
   try { renderMap() } catch(e) { console.warn('map:',e) }
   renderLog()
+}
+
+// 学习新技能界面
+function renderMoveLearn() {
+  const pending = G.pendingMoveLearn
+  if (!pending || pending.length === 0) return
+  const info = pending[0]
+  const pkm = G.player.pokemon[info.pokemonIndex]
+  if (!pkm) { G.pendingMoveLearn.shift(); render(); return }
+  const moveName = info.moveName
+  const main = $('main')
+  const hasFourMoves = pkm.moves.length >= 4
+
+  main.innerHTML = `
+    <p class="section-title">✦ 学习新技能</p>
+    <div class="pkm-card" style="border-color:#00ff41;text-align:center;">
+      <div class="pkm-name">${pkm.name} <span class="pkm-level">Lv.${pkm.level}</span></div>
+      <p style="margin:10px 0;color:#ffcc00;font-size:14px;">
+        ${pkm.name} 想要学习新技能「${info.moveName}」！
+      </p>
+      ${hasFourMoves ? '<p style="color:#ff6633;font-size:12px;">但' + pkm.name + '已经学会了4个技能……</p>' : ''}
+      ${hasFourMoves ? '<p style="color:#00aa33;font-size:11px;">是否用新技能替换一个已有技能？</p>' : '<p style="color:#00aa33;font-size:12px;">' + pkm.name + '还有空位，自动学会了！</p>'}
+    </div>
+  `
+
+  if (hasFourMoves) {
+    let html = '<p style="color:#33ff77;margin:6px 0;">选择一个要遗忘的技能：</p><div class="btn-col">'
+    for (let i = 0; i < pkm.moves.length; i++) {
+      const m = pkm.moves[i]
+      html += `<button class="btn" onclick="forgetMove(${info.pokemonIndex}, ${i})">❌ ${m.name}[${m.type}] (威力:${m.power})</button>`
+    }
+    html += `<button class="btn" onclick="skipMove()" style="color:#666;border-color:#333;">↩ 不学习</button>`
+    html += '</div>'
+    $('actions').innerHTML = html
+  } else {
+    $('actions').innerHTML = `
+      <button class="btn" onclick="learnMoveDirect(${info.pokemonIndex})" style="font-size:14px;">✅ 学习 ${moveName}</button>
+      <button class="btn" onclick="skipMove()" style="color:#666;border-color:#333;">↩ 不学习</button>
+    `
+  }
 }
 
 function renderStart() {
@@ -31,7 +79,7 @@ function renderStart() {
       </pre>
       <p class="start-desc">欢迎来到宝可梦的世界！</p>
       <p>在这个文字的世界中，你将和宝可梦一起展开冒险。</p>
-      <p>关都地区 · 151 种宝可梦 · 8 个道馆</p>
+      <p>关都·城都·丰缘 · 386 种宝可梦 · 8 个道馆 · 特性/性格/性别</p>
       <div class="btn-row">
         <button onclick="startNewGame()" class="btn">开始新游戏</button>
         <button onclick="continueGame()" class="btn" id="continueBtn">继续游戏</button>
@@ -108,7 +156,7 @@ function renderExplore() {
   html += `</div>`
   main.innerHTML = html
   $('actions').innerHTML = `
-    <button class="btn" onclick="G.view='worldMap';render()">🗺 地图</button>
+    <button class="btn" onclick="toggleMap()">🗺 地图</button>
     <button class="btn" onclick="G.view='pokemon';render()">队伍</button>
     <button class="btn" onclick="G.view='bag';render()">背包</button>
     <button class="btn" onclick="G.view='pokedex';render()">图鉴</button>
@@ -230,6 +278,8 @@ function renderDialogue() {
   if (d.index >= d.lines.length - 1) {
     if (d.battle) {
       html += `<button class="btn" onclick="startDialogueBattle()">⚔ 战斗！</button>`
+    } else if (d.choices) {
+      html += `<button class="btn" onclick="finishDialogue()">选择</button>`
     } else {
       html += `<button class="btn" onclick="finishDialogue()">继续</button>`
     }
@@ -240,6 +290,19 @@ function renderDialogue() {
   html += `</div>`
   main.innerHTML = html
   $('actions').innerHTML = ''
+}
+
+function renderChoice() {
+  const d = G.dialogue
+  if (!d || !d.choices) { G.view = 'explore'; render(); return }
+  const main = $('main')
+  let html = '<div class="choice-box"><p class="section-title">选择一个选项：</p>'
+  for (let i = 0; i < d.choices.length; i++) {
+    html += `<button class="btn choice-btn" onclick="makeChoice(${i})">${d.choices[i].text}</button>`
+  }
+  html += '</div>'
+  main.innerHTML = html
+  $('actions').innerHTML = '<button class="btn" onclick="G.view=\'explore\';render()">↩ 返回</button>'
 }
 
 function renderBag() {
@@ -269,7 +332,7 @@ function renderPokemon() {
       list.innerHTML += `
         <div class="pkm-card">
           <div class="pkm-name">${p.name} <span class="pkm-level">Lv.${p.level}</span></div>
-          <div class="pkm-types">${p.types.join(' / ')}</div>
+          <div class="pkm-types">${p.types.join(' / ')} ${p.gender ? '<span style="color:'+(p.gender==='♀'?'#e05080':'#5090e0')+'">'+p.gender+'</span>' : ''}${p.nature ? ' ['+p.nature[0]+']' : ''}${p.ability ? ' ['+p.ability.name+']' : ''}</div>
           <div>HP: ${hb} ${p.hp}/${p.maxHp}${p.fainted?' ⚠濒死':''}</div>
           <div class="pkm-moves">${p.moves.map(m=>`${m.name}[${m.type}] 威:${m.power} PP:${m.currentPp}/${m.pp}`).join(' | ')}</div>
           <div class="pkm-exp">EXP: ${p.exp}/${p.nextLevel}</div>
@@ -363,16 +426,30 @@ function renderMap() {
       panel.innerHTML = '<div class="map-title">MAP</div><div class="map-stats" style="text-align:center;color:#003a10;">--</div>'
       return
     }
-    const ICON = { town:'T', route:'R', cave:'C', water:'W' }
-    const types = { town:'town', route:'route', cave:'cave', water:'water' }
-    const typeIcon = ICON[loc[2]] || '?'
-    const typeName = types[loc[2]] || '?'
-    let html = '<div class="map-title">MAP</div>'
-    html += '<div class="map-loc">[' + typeIcon + '] ' + loc[0] + '</div>'
-    html += '<div class="map-type">' + typeName + '</div>'
+    // worldMap view 或 showBigMap 时，由 renderWorldMap 自己渲染到侧边栏
+    if (G.view === 'worldMap') return
+    if (G.showBigMap) {
+      // 展开模式：渲染完整世界地图到侧边栏
+      const app = document.getElementById('app')
+      if (app) app.className = 'map-expanded'
+      renderWorldMap()
+      return
+    }
+    // 探索模式：渲染紧凑地图 + 信息
+    const app = document.getElementById('app')
+    if (app) app.className = ''
+    let html = ''
+    try {
+      html = renderSidebarMap()
+    } catch(e) {
+      console.warn('sidebar map error:', e)
+      html = '<div class="map-title">MAP</div>'
+    }
+    // 连接信息
     const conns = loc[5] || []
     if (conns.length) {
-      html += '<div style="margin-top:4px;">'
+      html += '<div style="margin-top:2px;font-size:9px;color:#005a1a;">'
+      const ICON = { town:'T', route:'R', cave:'C', water:'W' }
       const townMap = { brock:'pewter', misty:'cerulean', ltSurge:'vermilion', erika:'celadon', sabrina:'saffron', koga:'fuchsia', blaine:'cinnabar', giovanni:'viridian' }
       for (const c of conns) {
         const cl = getLocation(c)
@@ -389,7 +466,7 @@ function renderMap() {
       }
       html += '</div>'
     }
-    html += '<div class="map-stats">seen:' + G.player.seen.length + '/151 badge:' + G.player.badge + '/8 $' + G.player.money + '</div>'
+    // 任务
     const q = getCurrentQuest()
     if (q) {
       html += '<div class="quest-panel"><div class="quest-title">📋 ' + q.name + '</div><div class="quest-guide">' + q.guidance + '</div><div class="quest-progress">' + getQuestProgress() + '</div></div>'

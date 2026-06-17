@@ -9,6 +9,8 @@ const QUEST_ORDER = [
   'rocket_hideout', 'silph_co', 'beat_sabrina', 'beat_koga',
   'safari_zone', 'beat_blaine', 'beat_giovanni',
   'final_rival', 'elite_four',
+  // 七之岛篇章
+  'sevii_arrival', 'sevii_rocket', 'sevii_ruins', 'sevii_tower',
 ]
 
 const QUESTS = {
@@ -162,6 +164,31 @@ const QUESTS = {
     guidance: '击败四天王和冠军小茂，成为宝可梦联盟冠军！',
     check: () => G.storyFlags.championDefeated,
   },
+  // 七之岛篇章
+  sevii_arrival: {
+    id: 'sevii_arrival', name: '启程七之岛',
+    desc: '前往脐眼岛，开启七之岛的冒险',
+    guidance: '从枯叶市乘船前往七之岛，探索这片未知的群岛。',
+    check: () => G.storyFlags.seviiArrivalDone,
+  },
+  sevii_rocket: {
+    id: 'sevii_rocket', name: '火箭队残党',
+    desc: '击败群兰岛火箭队仓库的残党',
+    guidance: '前往群兰岛的火箭队仓库，彻底击败火箭队残党。',
+    check: () => G.storyFlags.seviiRocketDone,
+  },
+  sevii_ruins: {
+    id: 'sevii_ruins', name: '遗迹的秘密',
+    desc: '探索战怪岛遗迹，揭开代欧奇希斯的谜团',
+    guidance: '前往战怪岛的遗迹谷，寻找传说中的宝可梦。',
+    check: () => G.storyFlags.seviiRuinsDone,
+  },
+  sevii_tower: {
+    id: 'sevii_tower', name: '征服七之岛',
+    desc: '登顶训练家之塔，完成七之岛的全部挑战',
+    guidance: '前往绝壁岛的训练家之塔，证明你是最强的训练家！',
+    check: () => G.storyFlags.seviiTowerDone,
+  },
 }
 
 function initQuests() {
@@ -196,7 +223,7 @@ function updateQuest() {
       addLog(`📋 任务完成：${cur.name}`)
     } else {
       G.quests.current = null
-      addLog(`🎉 全部主线任务完成！恭喜你成为宝可梦冠军！`)
+      addLog(`🎉 全部冒险完成！你成为了真正的宝可梦大师！`)
     }
     saveGame()
   }

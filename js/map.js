@@ -89,6 +89,60 @@ const TRAINERS = {
     { id:'vr_2', name:'精英训练家',msg:'四天王在等你！',team:[[112,32],[64,33],[22,31]],money:900 },
     { id:'vr_3', name:'精英训练家',msg:'我不会让你通过的！',team:[[65,34],[94,33],[68,32]],money:1000 },
   ],
+  // 七之岛训练家
+  island1: [
+    { id:'i1_1', name:'泳裤男',msg:'七之岛的海水真蓝啊！',team:[[55,28],[130,30]],money:400 },
+    { id:'i1_2', name:'捕虫少年',msg:'这里的虫子没见过的！',team:[[165,26],[166,28],[267,30]],money:380 },
+  ],
+  island1_route1: [
+    { id:'i1r1_1', name:'精英训练家',msg:'这座岛可不简单！',team:[[277,30],[181,32]],money:500 },
+    { id:'i1r1_2', name:'野餐女孩',msg:'脐眼森林里好神秘~',team:[[182,28],[103,30]],money:450 },
+  ],
+  island2: [
+    { id:'i2_1', name:'女学生',msg:'游戏角最好玩了！',team:[[300,30],[310,32]],money:480 },
+    { id:'i2_2', name:'水手',msg:'我在港口等你很久了！',team:[[98,32],[73,34]],money:550 },
+  ],
+  island2_route2: [
+    { id:'i2r2_1', name:'露营少年',msg:'野外训练最棒了！',team:[[190,30],[335,32]],money:500 },
+    { id:'i2r2_2', name:'迷你裙',msg:'来对战吧~',team:[[315,30],[214,32]],money:480 },
+  ],
+  island3: [
+    { id:'i3_1', name:'精英训练家',msg:'树果森林里有好东西哦',team:[[103,34],[182,36]],money:600 },
+  ],
+  island3_forest: [
+    { id:'i3f_1', name:'捕虫少年',msg:'我抓到了超稀有虫！',team:[[212,34],[267,36]],money:520 },
+    { id:'i3f_2', name:'空手道王',msg:'森林修行开始！',team:[[286,35],[68,37]],money:580 },
+  ],
+  island4: [
+    { id:'i4_1', name:'登山男',msg:'冰霜洞穴很危险的！',team:[[95,36],[208,38]],money:600 },
+  ],
+  island4_cave: [
+    { id:'i4c_1', name:'精英训练家',msg:'好冷……但还能战！',team:[[124,37],[87,39]],money:650 },
+    { id:'i4c_2', name:'研究员',msg:'这里的冰层有古老DNA……',team:[[362,38],[365,40]],money:620 },
+  ],
+  island5: [
+    { id:'i5_1', name:'火箭队手下',msg:'又来了个多管闲事的！',team:[[262,38],[110,40]],money:500 },
+    { id:'i5_2', name:'火箭队手下',msg:'不许通过！',team:[[262,39],[229,41]],money:520 },
+  ],
+  island5_rocket: [
+    { id:'i5r_1', name:'火箭队干部',msg:'这里不是你能来的地方！',team:[[229,42],[110,44],[262,45]],money:800 },
+    { id:'i5r_2', name:'火箭队干部',msg:'火箭队的计划不会让你破坏的！',team:[[169,43],[24,45],[89,46]],money:850 },
+  ],
+  island6: [
+    { id:'i6_1', name:'超能者',msg:'遗迹在呼唤我……',team:[[178,40],[282,42]],money:700 },
+  ],
+  island6_ruins: [
+    { id:'i6r_1', name:'精英训练家',msg:'神秘的力量……',team:[[354,42],[356,44]],money:750 },
+    { id:'i6r_2', name:'超能者',msg:'你感受到了吗……？',team:[[326,44],[358,46]],money:780 },
+  ],
+  island7: [
+    { id:'i7_1', name:'精英训练家',msg:'最后的岛屿了！',team:[[330,46],[373,48]],money:900 },
+    { id:'i7_2', name:'泳客',msg:'绝壁岛的风景绝佳！',team:[[350,45],[319,47]],money:850 },
+  ],
+  island7_tower: [
+    { id:'i7t_1', name:'精英训练家',msg:'训练家之塔的第一关！',team:[[68,48],[214,50]],money:1000 },
+    { id:'i7t_2', name:'精英训练家',msg:'不会让你继续前进了！',team:[[248,52],[149,54]],money:1200 },
+  ],
 }
 
 // 关都地图
@@ -97,7 +151,7 @@ const LOCATIONS = {
   viridian:  ['常青市','通往联盟的关卡城市。','town',true,false, ['route1','route22','viridianForest','victoryRoad']],
   pewter:    ['深灰市','化石研究室所在地。','town',true,'brock', ['route2','route3']],
   cerulean:    ['华蓝市','水边的美丽城市。','town',true,'misty', ['route4','route5','route9','route24','ceruleanCave']],
-  vermilion: ['枯叶市','港口城市，圣安奴号在此。','town',true,'ltSurge', ['route5','route6','route11','ssAnne']],
+  vermilion: ['枯叶市','港口城市，圣安奴号在此。从这里可以乘船前往七之岛。','town',true,'ltSurge', ['route5','route6','route11','ssAnne','island1']],
   lavender:  ['紫苑镇','安宁的墓园小镇。','town',true,false, ['route6','route7','route10','route12']],
   celadon:   ['彩虹市','关都最大的商业城市。','town',true,'erika', ['route7','route8','route16','route17','rocketHideout']],
   saffron:   ['金黄市','交通枢纽大都市。','town',true,'sabrina', ['route8','route5','route6','route7']],
@@ -164,6 +218,45 @@ const LOCATIONS = {
     { common:{ids:[16,43,69],lv:[20,26],w:60}, uncommon:{ids:[44,70,83],lv:[22,28],w:30}, rare:{ids:[132,143],lv:[25,30],w:10} }],
   route17: ['17号道路','彩虹市到浅红市的自行车道。','route',false,false,['celadon','fuchsia'],
     { common:{ids:[16,19,77],lv:[22,28],w:60}, uncommon:{ids:[22,78,84],lv:[24,30],w:30}, rare:{ids:[128,132],lv:[27,32],w:10} }],
+  // 七之岛（火红/叶绿新增地区）
+  island1: ['脐眼岛','七之岛的玄关口，有宝可梦中心和商店。','town',true,false,['vermilion','island1_route1','island1_route2'],
+    { common:{ids:[16,278],lv:[25,30],w:55}, uncommon:{ids:[277,279],lv:[28,33],w:30}, rare:{ids:[25,176],lv:[30,35],w:15} }],
+  island1_route1: ['脐眼森林','通往岛内深处的森林小径。','route',false,false,['island1','island1_mtember'],
+    { common:{ids:[10,13,163],lv:[25,32],w:55}, uncommon:{ids:[46,41,48],lv:[28,35],w:30}, rare:{ids:[165,285],lv:[32,38],w:15} }],
+  island1_mtember: ['ember山','脐眼岛的火山上散布着神秘化石。','cave',false,false,['island1_route1'],
+    { common:{ids:[37,66,77],lv:[30,38],w:50}, uncommon:{ids:[58,126],lv:[33,40],w:30}, rare:{ids:[38,219],lv:[36,45],w:20} }],
+  island2: ['高岗岛','有游戏角的悠闲岛屿。','town',true,false,['island1','island2_route2','island2_cape'],
+    { common:{ids:[19,278],lv:[28,34],w:55}, uncommon:{ids:[274,277],lv:[30,36],w:30}, rare:{ids:[176,25],lv:[33,38],w:15} }],
+  island2_route2: ['高岗林间路','连接高岗岛各处的林间小道。','route',false,false,['island2','island3'],
+    { common:{ids:[16,43,69],lv:[28,35],w:55}, uncommon:{ids:[44,114,274],lv:[32,38],w:30}, rare:{ids:[189,103],lv:[35,42],w:15} }],
+  island3: ['绿色岛','充满树果和自然气息的岛屿。','town',true,false,['island2_route2','island3_forest','island3_route3'],
+    { common:{ids:[102,114,191],lv:[30,36],w:55}, uncommon:{ids:[44,192,315],lv:[33,39],w:30}, rare:{ids:[103,182,45],lv:[36,44],w:15} }],
+  island3_forest: ['树果森林','果实累累的茂密森林。','route',false,false,['island3','island3_route3'],
+    { common:{ids:[43,102,114],lv:[30,38],w:55}, uncommon:{ids:[44,114,315],lv:[34,42],w:30}, rare:{ids:[182,83],lv:[38,48],w:15} }],
+  island3_route3: ['绿色岛水路','通往四岛的碧蓝水道。','water',false,false,['island3','island4'],
+    { common:{ids:[72,278,118],lv:[32,40],w:55}, uncommon:{ids:[73,279,119],lv:[35,42],w:30}, rare:{ids:[131,230],lv:[38,48],w:15} }],
+  island4: ['冰霜岛','覆盖着厚厚冰层的岛屿。','route',true,false,['island3_route3','island4_cave'],
+    { common:{ids:[86,220,278],lv:[34,42],w:50}, uncommon:{ids:[42,87,221],lv:[38,45],w:35}, rare:{ids:[124,131],lv:[40,50],w:15} }],
+  island4_cave: ['冰霜洞穴','极寒的天然冰洞。','cave',false,false,['island4','island4_route4'],
+    { common:{ids:[41,86,220],lv:[35,44],w:50}, uncommon:{ids:[42,87,221],lv:[38,48],w:35}, rare:{ids:[144,124],lv:[42,55],w:15} }],
+  island4_route4: ['冰霜岛水路','通往五岛的冰冷海域。','water',false,false,['island4_cave','island5'],
+    { common:{ids:[72,116,118],lv:[36,45],w:55}, uncommon:{ids:[73,117,119],lv:[40,48],w:30}, rare:{ids:[131,230],lv:[44,55],w:15} }],
+  island5: ['群兰岛','火箭队秘密基地所在的岛屿。','town',true,false,['island4_route4','island5_rocket','island5_route5'],
+    { common:{ids:[261,278],lv:[36,44],w:50}, uncommon:{ids:[262,279],lv:[40,48],w:35}, rare:{ids:[262],lv:[44,50],w:15} }],
+  island5_rocket: ['火箭队仓库','火箭队残党盘踞的旧仓库。','cave',false,false,['island5'],
+    { common:{ids:[19,41,109],lv:[38,46],w:50}, uncommon:{ids:[42,24,110],lv:[42,50],w:35}, rare:{ids:[169,89],lv:[46,55],w:15} }],
+  island5_route5: ['群兰岛水路','通往六岛的危险海域。','water',false,false,['island5','island6'],
+    { common:{ids:[116,118,223],lv:[38,46],w:55}, uncommon:{ids:[117,119,224],lv:[42,50],w:30}, rare:{ids:[350],lv:[46,55],w:15} }],
+  island6: ['战怪岛','古代遗迹所在的谜之岛屿。','town',true,false,['island5_route5','island6_ruins','island6_route6'],
+    { common:{ids:[355,352,200],lv:[40,48],w:50}, uncommon:{ids:[356,354,201],lv:[44,52],w:35}, rare:{ids:[302,292],lv:[48,58],w:15} }],
+  island6_ruins: ['遗迹谷','刻满神秘图案的古代遗迹。','cave',false,false,['island6'],
+    { common:{ids:[353,355,201],lv:[42,50],w:50}, uncommon:{ids:[354,356,292],lv:[46,55],w:35}, rare:{ids:[386],lv:[55,70],w:15} }],
+  island6_route6: ['战怪岛水路','连接七岛的最后水路。','water',false,false,['island6','island7'],
+    { common:{ids:[278,118,223],lv:[42,50],w:55}, uncommon:{ids:[279,119,224],lv:[46,54],w:30}, rare:{ids:[131,230],lv:[50,60],w:15} }],
+  island7: ['绝壁岛','训练家之塔所在的最终岛屿。','route',true,false,['island6_route6','island7_tower'],
+    { common:{ids:[278,276,207],lv:[44,52],w:50}, uncommon:{ids:[277,214,217],lv:[48,56],w:35}, rare:{ids:[330,373],lv:[52,62],w:15} }],
+  island7_tower: ['训练家之塔','强者云集的对战高塔。','cave',false,false,['island7'],
+    { common:{ids:[68,214,57],lv:[48,56],w:50}, uncommon:{ids:[64,65,68],lv:[52,60],w:35}, rare:{ids:[149],lv:[58,68],w:15} }],
 }
 
 const LINK_LABELS = {
@@ -171,13 +264,20 @@ const LINK_LABELS = {
   viridian:  { route1:'1号道路', route22:'22号道路', viridianForest:'常青森林', victoryRoad:'冠军之路' },
   pewter:    { route2:'2号道路', route3:'3号道路' },
   cerulean:  { route4:'4号道路', route5:'5号道路', route9:'9号道路', route24:'24号道路', ceruleanCave:'华蓝洞穴' },
-  vermilion: { route5:'5号道路', route6:'6号道路', route11:'11号道路', ssAnne:'圣安奴号' },
+  vermilion: { route5:'5号道路', route6:'6号道路', route11:'11号道路', ssAnne:'圣安奴号', island1:'🚢七之岛' },
   lavender:  { route6:'6号道路', route7:'7号道路', route10:'10号道路', route12:'12号道路' },
   celadon:   { route7:'7号道路', route8:'8号道路', route16:'16号道路', route17:'17号道路', rocketHideout:'火箭队基地' },
   saffron:   { route5:'5号道路', route6:'6号道路', route7:'7号道路', route8:'8号道路' },
   fuchsia:   { route9:'9号道路', route10:'10号道路', route11:'11号道路', route15:'15号道路', route17:'17号道路', safariZone:'狩猎地带' },
   cinnabar:  { route20:'20号水道', route21:'21号水道', pokemonMansion:'宝可梦屋' },
   indigo:    { victoryRoad:'冠军之路', route23:'23号道路' },
+  island1:  { vermilion:'枯叶市', island1_route1:'脐眼森林', island1_route2:'脐眼村' },
+  island2:  { island1:'脐眼岛', island2_route2:'高岗林间路', island2_cape:'高岗岬' },
+  island3:  { island2_route2:'高岗林间路', island3_forest:'树果森林', island3_route3:'绿色岛水路' },
+  island4:  { island3_route3:'绿色岛水路', island4_cave:'冰霜洞穴' },
+  island5:  { island4_route4:'冰霜岛水路', island5_rocket:'火箭队仓库', island5_route5:'群兰岛水路' },
+  island6:  { island5_route5:'群兰岛水路', island6_ruins:'遗迹谷', island6_route6:'战怪岛水路' },
+  island7:  { island6_route6:'战怪岛水路', island7_tower:'训练家之塔' },
 }
 
 function getLocation(id) { return LOCATIONS[id] }
@@ -228,25 +328,136 @@ const MAP_COORDS = {
   pokemonMansion:{x:6, y:16, icon:'🏚' },
   ceruleanCave:{ x:42, y:6,  icon:'🕳' },
   safariZone:  { x:38, y:18, icon:'🦒' },
+  // 七之岛
+  island1:      { x:58, y:8,  icon:'🏝' },
+  island1_route1:{x:58, y:6,  icon:'·' },
+  island1_mtember:{ x:60, y:4, icon:'🌋' },
+  island2:      { x:58, y:12, icon:'🎰' },
+  island2_route2:{x:58, y:14, icon:'·' },
+  island3:      { x:58, y:16, icon:'🏡' },
+  island3_forest:{x:60, y:16, icon:'🌲' },
+  island3_route3:{x:56, y:18, icon:'~' },
+  island4:      { x:58, y:20, icon:'❄' },
+  island4_cave: { x:60, y:20, icon:'⛰' },
+  island4_route4:{x:56, y:22, icon:'~' },
+  island5:      { x:58, y:24, icon:'🏙' },
+  island5_rocket:{x:60, y:24, icon:'💀' },
+  island5_route5:{x:56, y:26, icon:'~' },
+  island6:      { x:58, y:28, icon:'🏚' },
+  island6_ruins:{ x:60, y:28, icon:'🗿' },
+  island6_route6:{x:56, y:30, icon:'~' },
+  island7:      { x:58, y:32, icon:'🗼' },
+  island7_tower:{ x:60, y:32, icon:'🏯' },
 }
 
-// ASCII地图渲染
+// 侧边栏紧凑型地图（探索模式使用）
+function renderSidebarMap() {
+  const pos = G.player.position
+  const loc = LOCATIONS[pos]
+  const pkmLevel = G.player.pokemon.length > 0 ? Math.max(...G.player.pokemon.map(p => p.level)) : 1
+  const badge = G.player.badge
+
+  // 小网格 (36列 x 16行)
+  const W = 36, H = 16
+  const grid = Array.from({length:H}, () => Array(W).fill(' '))
+
+  // 边框
+  for (let x = 0; x < W; x++) { grid[0][x] = '═'; grid[H-1][x] = '═' }
+  for (let y = 0; y < H; y++) { grid[y][0] = '║'; grid[y][W-1] = '║' }
+  grid[0][0] = '╔'; grid[0][W-1] = '╗'; grid[H-1][0] = '╚'; grid[H-1][W-1] = '╝'
+
+  // 标题
+  const title = ' 关都 '
+  const titleX = Math.floor((W - title.length) / 2)
+  for (let i = 0; i < title.length; i++) grid[1][titleX + i] = title[i]
+
+  // 简化的连接线（只保留主干）
+  const connLines = [
+    [28,14,28,12],[28,12,28,10],[28,10,22,10],[28,10,24,10],
+    [22,8,18,6],[18,6,14,6],[14,6,22,6],[22,6,30,6],
+    [30,6,38,6],[38,6,32,8],[32,8,28,8],[28,8,20,8],
+    [28,8,16,12],[28,8,36,12],[36,12,42,12],[36,12,20,12],
+    [12,12,12,14],[20,12,24,12],[24,12,38,16],[38,16,38,18],
+    [28,14,18,18],[6,18,4,18],
+  ]
+  // 缩放坐标到小网格（关都范围: x[0~52], y[0~24] → 映射到 2~34, 2~14）
+  const scaleX = (x) => Math.max(1, Math.min(W-2, 1 + Math.floor(x * (W-4) / 52)))
+  const scaleY = (y) => Math.max(1, Math.min(H-2, 1 + Math.floor(y * (H-4) / 24)))
+
+  for (const [x1,y1,x2,y2] of connLines) {
+    const sx1=scaleX(x1), sx2=scaleX(x2), sy1=scaleY(y1), sy2=scaleY(y2)
+    if (sy1 === sy2) {
+      for (let x = Math.min(sx1,sx2); x <= Math.max(sx1,sx2); x++) {
+        if (grid[sy1][x] === ' ') grid[sy1][x] = '─'
+      }
+    } else if (sx1 === sx2) {
+      for (let y = Math.min(sy1,sy2); y <= Math.max(sy1,sy2); y++) {
+        if (grid[y][sx1] === ' ') grid[y][sx1] = '│'
+      }
+    }
+  }
+
+  // 关键地点的图标
+  const keyPoints = [
+    ['pallet',28,14,'🏠'], ['viridian',28,10,'🏙'], ['pewter',18,6,'T'],
+    ['cerulean',38,6,'T'], ['vermillion',42,12,'⚓'], ['lavender',20,12,'T'],
+    ['celadon',12,12,'🎰'], ['saffron',28,8,'🏢'], ['fuchsia',38,16,'T'],
+    ['cinnabar',6,18,'🌋'], ['indigo',50,4,'👑'],
+  ]
+  for (const [id, ox, oy, icon] of keyPoints) {
+    const x = scaleX(ox), y = scaleY(oy)
+    let display = icon
+    if (id === pos) display = '★'
+    else if (LOCATIONS[id] && LOCATIONS[id][4]) {
+      const gymData = GYM_LEADERS[LOCATIONS[id][4]]
+      display = gymData && gymData[4] <= badge ? '✔' : '!'
+    }
+    grid[y][x] = display
+  }
+
+  // 当前城镇用高亮标记
+  if (loc && loc[2] === 'town') {
+    const coord = MAP_COORDS[pos]
+    if (coord) {
+      const x = scaleX(coord.x), y = scaleY(coord.y)
+      grid[y][x] = '★'
+    }
+  }
+
+  // 生成 HTML
+  let html = '<pre class="sidebar-map">'
+  for (let y = 0; y < H; y++) html += grid[y].join('') + '\n'
+  html += '</pre>'
+
+  // 信息条
+  html += `<div style="text-align:center;font-size:9px;color:#006a1a;margin-bottom:4px;">`
+  html += `<span class="info-badge">${loc ? loc[0] : '???'}</span>`
+  html += `<span class="info-badge">Lv.${pkmLevel}</span>`
+  html += `<span class="info-badge">徽章${badge}/8</span>`
+  html += `<span class="info-badge">💰${G.player.money}</span>`
+  html += `<span class="info-badge">📖${G.player.seen.length}</span>`
+  html += `</div>`
+
+  return html
+}
+
+// ASCII地图渲染（完整版，用于展开的侧边栏）
 function renderWorldMap() {
-  const main = $('main')
   const pos = G.player.position
   const badge = G.player.badge
-  
-  // 构建地图网格 (52列 x 22行)
-  const W = 54, H = 24
+
+  // 检测是否在七之岛区域，动态扩展地图
+  const isSevii = pos && pos.startsWith('island')
+  const W = isSevii ? 74 : 54, H = isSevii ? 36 : 24
   const grid = Array.from({length:H}, () => Array(W).fill(' '))
-  
+
   // 绘制边框
   for (let x = 0; x < W; x++) { grid[0][x] = '═'; grid[H-1][x] = '═' }
   for (let y = 0; y < H; y++) { grid[y][0] = '║'; grid[y][W-1] = '║' }
   grid[0][0] = '╔'; grid[0][W-1] = '╗'; grid[H-1][0] = '╚'; grid[H-1][W-1] = '╝'
-  
+
   // 绘制标题
-  const title = '◆ 关都地区全图 ◆'
+  const title = isSevii ? '◆ 七之岛地区全图 ◆' : '◆ 关都地区全图 ◆'
   const titleX = Math.floor((W - title.length) / 2)
   for (let i = 0; i < title.length; i++) grid[1][titleX + i] = title[i]
   
@@ -292,10 +503,31 @@ function renderWorldMap() {
     [46,6, 50,6],   // victoryRoad -> route23
     [50,6, 50,4],   // route23 -> indigo
     [38,18, 38,16], // safariZone -> fuchsia
+    // 七之岛连接线（坐标x偏移+54，y偏移+0）
+    [42,12, 58,8],  // vermilion -> island1 (跨越地图)
+    [58,8, 58,6],   // island1 -> island1_route1
+    [58,6, 60,4],   // island1_route1 -> mtEmber
+    [58,8, 58,12],  // island1 -> island2
+    [58,12, 58,14], // island2 -> island2_route2
+    [58,14, 58,16], // island2_route2 -> island3
+    [58,16, 60,16], // island3 -> island3_forest
+    [58,16, 56,18], // island3 -> island3_route3
+    [56,18, 58,20], // island3_route3 -> island4
+    [58,20, 60,20], // island4 -> island4_cave
+    [58,20, 56,22], // island4 -> island4_route4
+    [56,22, 58,24], // island4_route4 -> island5
+    [58,24, 60,24], // island5 -> island5_rocket
+    [58,24, 56,26], // island5 -> island5_route5
+    [56,26, 58,28], // island5_route5 -> island6
+    [58,28, 60,28], // island6 -> island6_ruins
+    [58,28, 56,30], // island6 -> island6_route6
+    [56,30, 58,32], // island6_route6 -> island7
+    [58,32, 60,32], // island7 -> island7_tower
   ]
   
   // 绘制连接线
   for (const [x1,y1,x2,y2] of connections) {
+    if (x1 >= W || x2 >= W || y1 >= H || y2 >= H) continue
     if (y1 === y2) {
       for (let x = Math.min(x1,x2); x <= Math.max(x1,x2); x++) {
         if (grid[y1][x] === ' ') grid[y1][x] = '─'
@@ -344,7 +576,7 @@ function renderWorldMap() {
     html += grid[y].join('') + '\n'
   }
   html += '</pre>'
-  
+
   // 图例
   html += `
     <div class="map-legend">
@@ -355,12 +587,13 @@ function renderWorldMap() {
       <span class="legend-item"><span class="legend-icon">·</span> 道路</span>
     </div>
   `
-  
+
   // 详细信息面板
   html += renderMapInfo()
-  
-  main.innerHTML = html
-  $('actions').innerHTML = '<button class="btn" onclick="G.view=\'explore\';render()">↩ 返回</button>'
+
+  // 渲染到侧边栏
+  const panel = $('map-panel')
+  if (panel) panel.innerHTML = html
 }
 
 // 地图详细信息

@@ -47,6 +47,7 @@ function startChampionBattle() {
     name: '小茂',
     onFinish: () => {
       G.storyFlags.championDefeated = true
+      addLog('★ 枯叶港新开通了前往七之岛的航线！新的冒险在等待着你……')
       return '★ ★ ★ 你击败了冠军小茂，成为了新的宝可梦联盟冠军！★ ★ ★'
     },
   }, [
@@ -94,6 +95,17 @@ function startBattle(type, extra, enemyTeam) {
     ran: false, captured: false, battleMsg: '',
   }
   const name = enemyTeam[0].name
+
+  // 特性触发：威吓（出场时降低对方攻击）
+  const playerActive = getActivePokemon()
+  if (playerActive && playerActive.ability && playerActive.ability.key === 'intimidate' && !playerActive.ability.activated) {
+    playerActive.ability.activated = true
+    if (enemyTeam[0] && !enemyTeam[0].fainted) {
+      enemyTeam[0].atk = Math.max(1, Math.floor(enemyTeam[0].atk * 0.75))
+      addLog(`${playerActive.name} 的特性[威吓]降低了对手的攻击！`)
+    }
+  }
+
   if (type === 'wild') {
     addLog(`野生的 ${name} 出现了！ (Lv.${enemyTeam[0].level})`)
     G.battle.battleMsg = `野生的 ${name} 跳出来了！`
@@ -144,6 +156,32 @@ function checkStatusSkip(pkm) {
 }
 
 function calcDamage(atkPkm, defPkm, move) {
+  // 能力免疫检查（防御方特性）
+  if (defPkm.ability) {
+    const abKey = defPkm.ability.key
+    if (abKey === 'levitate' && move.type === '地面') {
+      addLog(`${defPkm.name} 因特性[浮游]免疫了地面系攻击！`)
+      return { damage: 0, effectiveness: 0, missed: false, abilityBlocked: true }
+    }
+    if ((abKey === 'voltAbsorb' || abKey === 'lightningRod') && move.type === '电') {
+      const heal = Math.floor(defPkm.maxHp * 0.25)
+      defPkm.hp = Math.min(defPkm.maxHp, defPkm.hp + heal)
+      addLog(`${defPkm.name} 因特性吸收了电力，回复了 ${heal} HP！`)
+      return { damage: 0, effectiveness: 0, missed: false, abilityBlocked: true }
+    }
+    if (abKey === 'waterAbsorb' && move.type === '水') {
+      const heal = Math.floor(defPkm.maxHp * 0.25)
+      defPkm.hp = Math.min(defPkm.maxHp, defPkm.hp + heal)
+      addLog(`${defPkm.name} 因特性吸收了水流，回复了 ${heal} HP！`)
+      return { damage: 0, effectiveness: 0, missed: false, abilityBlocked: true }
+    }
+    if (abKey === 'flashFire' && move.type === '火') {
+      defPkm.ability.activated = true
+      addLog(`${defPkm.name} 因特性[引火]吸收了火焰！`)
+      return { damage: 0, effectiveness: 0, missed: false, abilityBlocked: true }
+    }
+  }
+
   // 命中判定
   const baseAcc = MOVE_ACCURACY[move.id] || 100
   const effAcc = atkPkm.accuracy + (atkPkm.tempDebuffs?.accuracy || 0)
@@ -160,6 +198,23 @@ function calcDamage(atkPkm, defPkm, move) {
   let damage = Math.floor(Math.floor((lvF * atkStat * move.power) / defStat) / 50 + 2)
   const eff = getEffectiveness(move.type, defPkm.types)
   damage = Math.floor(damage * eff)
+  // STAB: 同属性加成 ×1.5
+  if (atkPkm.types.includes(move.type)) {
+    damage = Math.floor(damage * 1.5)
+  }
+  // 特性加成：HP低时对应属性技能威力提升
+  if (atkPkm.ability && atkPkm.hp < atkPkm.maxHp * 0.33) {
+    const abKey = atkPkm.ability.key
+    const typeBoostMap = { overgrow:'草', blaze:'火', torrent:'水', swarm:'虫' }
+    if (typeBoostMap[abKey] === move.type) {
+      damage = Math.floor(damage * 1.5)
+      addLog(`特性[${atkPkm.ability.name}]使${move.type}系技能威力提升！`)
+    }
+    // 引火激活后火系技能提升
+    if (abKey === 'flashFire' && atkPkm.ability.activated && move.type === '火') {
+      damage = Math.floor(damage * 1.5)
+    }
+  }
   damage = Math.max(1, Math.floor(damage * (0.85 + Math.random() * 0.15)))
   let msg = `${atkPkm.name} 使用了 ${move.name}！`
   if (eff >= 2) msg += ' 效果拔群！'
@@ -301,7 +356,13 @@ function battleVictory() {
     }
   }
   updateQuest()
-  for (const p of G.player.pokemon) if (p.tempDebuffs) p.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0 }
+  for (const p of G.player.pokemon) {
+    if (p.tempDebuffs) p.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0 }
+    // Natural Cure: 战斗结束后恢复异常状态
+    if (p.ability && p.ability.key === 'naturalCure' && p.status) {
+      p.status = null; addLog(`${p.name} 的特性[自然回复]恢复了异常状态！`)
+    }
+  }
   G.battle = null; saveGame(); render()
 }
 
