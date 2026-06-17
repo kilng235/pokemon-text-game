@@ -185,7 +185,7 @@ function renderBattle() {
   const main = $('main')
   main.innerHTML = `
     <div class="battle-enemy">
-      <span class="pkm-name">${b.enemy.name}</span>
+      <span class="pkm-name">${b.enemy.name}${b.enemy.isElite ? ' <span class="elite-badge">精英</span>' : ''}</span>
       <span class="pkm-level">Lv.${b.enemy.level}</span>
       <span class="pkm-types">${b.enemy.types.join('/')}</span>
       <div class="hp-row">HP: ${hpBar(b.enemy.hp,b.enemy.maxHp)} ${b.enemy.hp}/${b.enemy.maxHp}</div>

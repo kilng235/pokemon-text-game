@@ -540,3 +540,13 @@ body {
   background: #00ff41;
   color: #0a0a0a;
 }
+
+.elite-badge {
+  background: #ff4444;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  margin-left: 8px;
+  font-weight: bold;
+}

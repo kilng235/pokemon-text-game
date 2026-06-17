@@ -1,11 +1,9 @@
 function getScaledLevel(baseMin, baseMax) {
-  if (G.player.pokemon.length === 0) return baseMin + Math.floor(Math.random() * (baseMax - baseMin + 1))
-  const playerMax = Math.max(...G.player.pokemon.map(p => p.level), 1)
-  const center = (baseMin + baseMax) / 2
-  const bias = (playerMax - center) * 0.4
-  const adjMin = Math.max(2, Math.round(baseMin + bias))
-  const adjMax = Math.max(adjMin, Math.min(Math.round(baseMax + bias), playerMax + 2))
-  return adjMin + Math.floor(Math.random() * (adjMax - adjMin + 1))
+  // 8% 概率遇到精英野生（等级+5~+10）
+  if (Math.random() < 0.08) {
+    return baseMax + 5 + Math.floor(Math.random() * 6)
+  }
+  return baseMin + Math.floor(Math.random() * (baseMax - baseMin + 1))
 }
 
 function startWildBattle() {
@@ -20,7 +18,13 @@ function startWildBattle() {
   const pool = en[tier]
   const id = pool.ids[Math.floor(Math.random() * pool.ids.length)]
   const level = getScaledLevel(pool.lv[0], pool.lv[1])
-  return startBattle('wild', null, [createPokemon(id, level)])
+  const pokemon = createPokemon(id, level)
+  // 精英野生：等级超过该区域上限
+  if (level > pool.lv[1]) {
+    pokemon.isElite = true
+    addLog(`⚠ 一只强力的野生 ${pokemon.name} 出现了！`)
+  }
+  return startBattle('wild', null, [pokemon])
 }
 
 function startTrainerBattle(trainer) {
@@ -442,9 +446,13 @@ function playerAttack(moveIndex, skipTurnCheck) {
 
 function battleVictory() {
   const b = G.battle; if (!b) return
-  const totalExp = b.enemyTeam.reduce((s,p) => {
-    const d = getPokemonData(p.id); return s + Math.floor(p.level * (d ? d[9] : 60) / 5)
+  let totalExp = b.enemyTeam.reduce((s,p) => {
+    const d = getPokemonData(p.id); return s + Math.floor(p.level * (d ? d[10] : 60) / 5)
   }, 0)
+  // 精英野生给1.5倍经验
+  if (b.enemy && b.enemy.isElite) {
+    totalExp = Math.floor(totalExp * 1.5)
+  }
   let msg = '你获得了胜利！'
   if (b.type === 'gym') {
     const ld = b.extra.data; setBadge(ld[4]); addMoney(ld[3])
