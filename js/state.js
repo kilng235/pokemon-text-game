@@ -29,7 +29,8 @@ function createInitialState() {
       name: '小智', pokemon: [], pc: [],
       items: { pokeball: 10, potion: 5 },
       badge: 0, position: 'pallet', money: 500,
-      seen: [], trainersDefeated: [],
+      seen: [], shinySeen: [], trainersDefeated: [],
+      shinyChain: 0,
     },
     battle: null, bagView: 'use', pokedexDetail: null,
     storyFlags: {},
@@ -43,6 +44,12 @@ function createInitialState() {
 
 let G = createInitialState()
 
+function getShinyChance() {
+  const base = 1 / 4096
+  const bonus = G.player.shinyChain * base
+  return Math.min(base + bonus, 0.25)
+}
+
 function saveGame() {
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(G)) }
   catch (e) { console.warn('存档失败:', e) }
@@ -55,6 +62,8 @@ function loadGame() {
       G = JSON.parse(raw)
       if (!G.player.seen) G.player.seen = []
       if (!G.player.trainersDefeated) G.player.trainersDefeated = []
+      if (!G.player.shinySeen) G.player.shinySeen = []
+      if (G.player.shinyChain === undefined) G.player.shinyChain = 0
       if (!G.storyFlags) G.storyFlags = {}
       if (!G.quests) G.quests = { current: 'choose_starter', completed: [] }
       if (G.showBigMap === undefined) G.showBigMap = false
@@ -168,6 +177,7 @@ function createPokemon(id, level, movesOverride) {
   const nature = randNature()
   const gender = getGender(id)
   const ability = getPokemonAbility(id)
+  const isShiny = Math.random() < (1 / 4096)
   const stats = getPokemonStats(id, level, ivs, evs, nature)
   const rawMoves = movesOverride || base[12] || [1]
   const moveIds = getMovesForLevel(rawMoves, level)
@@ -180,7 +190,7 @@ function createPokemon(id, level, movesOverride) {
     relearnMoves: [],
     moveList: base[12] || null, // 保存完整的技能学习表（含等级信息）
     exp: 0, nextLevel: Math.floor(level ** 3 * 0.8 + 10),
-    ivs, evs, nature, gender, ability, status: null, fainted: false,
+    ivs, evs, nature, gender, ability, isShiny, status: null, fainted: false,
     accuracy: 100, evasion: 100, tempDebuffs: { accuracy: 0, evasion: 0, spe: 0, atk: 0, def: 0, spd: 0, spa: 0 },
   }
 }

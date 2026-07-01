@@ -1,5 +1,13 @@
 const $ = id => document.getElementById(id)
 
+function spriteHTML(id, isShiny, extraClass) {
+  const shinyClass = isShiny ? ' shiny' : ''
+  const shinyStars = isShiny ? '<div class="shiny-stars"><span></span><span></span><span></span></div>' : ''
+  const cls = extraClass || ''
+  const src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${isShiny ? 'shiny/' : ''}${id}.png`
+  return `<div class="sprite-container${shinyClass}${cls ? ' ' + cls : ''}">${shinyStars}<div class="sprite-shadow"></div><img class="sprite-img" src="${src}" onerror="this.style.display='none'" loading="lazy"></div>`
+}
+
 function render() {
   const v = G.view
   const app = $('app')
@@ -43,9 +51,9 @@ function renderMoveLearn() {
 
   main.innerHTML = `
     <p class="section-title">✦ 学习新技能</p>
-    <div class="pkm-card" style="border-color:var(--accent);text-align:center;">
-      <div class="sprite-container"><div class="sprite-shadow"></div><img class="sprite-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pkm.id}.png" onerror="this.style.display='none'" loading="lazy"></div>
-      <div class="pkm-name">${pkm.name} <span class="pkm-level">Lv.${pkm.level}</span></div>
+    <div class="pkm-card${pkm.isShiny ? ' shiny-card' : ''}" style="border-color:var(--accent);text-align:center;">
+      ${spriteHTML(pkm.id, pkm.isShiny)}
+      <div class="pkm-name">${pkm.name}${pkm.isShiny ? ' <span class="shiny-badge">✨</span>' : ''} <span class="pkm-level">Lv.${pkm.level}</span></div>
       <p style="margin:10px 0;color:var(--warning);font-size:14px;font-weight:600;">
         ${pkm.name} 想要学习新技能「${info.moveName}」！
       </p>
@@ -167,7 +175,11 @@ function renderExplore() {
     if (loc[3]) html += `<button class="btn" onclick="healAtCenter()">🏥 宝可梦中心</button>`
   }
   if (loc[2] !== 'town') {
+    const shinyChance = getShinyChance()
+    const shinyPercent = (shinyChance * 100).toFixed(2)
+    const chain = G.player.shinyChain
     html += `<button class="btn" onclick="tryWildEncounter()">🌿 探索（遇敌）</button>`
+    html += `<div style="margin-top:8px;font-size:12px;color:#888;">✨ 闪光连锁: ${chain} 连 (概率: ${shinyPercent}%)</div>`
   }
   html += `</div>`
   main.innerHTML = html
@@ -220,25 +232,19 @@ function renderBattle() {
   const faintedEnemy = b.enemy.hp <= 0 || b.enemy.fainted ? ' fainted' : ''
   const faintedPlayer = pkm && (pkm.hp <= 0 || pkm.fainted) ? ' fainted' : ''
 
-  const pokemonSprite = (id, extraClass) =>
-    `<div class="sprite-container${extraClass}">` +
-    `<div class="sprite-shadow"></div>` +
-    `<img class="sprite-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png" onerror="this.style.display='none'" loading="lazy">` +
-    `</div>`
-
   const main = $('main')
   main.innerHTML = `
     <div class="battle-enemy">
-      ${pokemonSprite(b.enemy.id, ` enemy${hitEnemyClass}${faintedEnemy}`)}
-      <span class="pkm-name">${b.enemy.name}${b.enemy.isElite ? ' <span class="elite-badge">精英</span>' : ''}</span>
+      ${spriteHTML(b.enemy.id, b.enemy.isShiny, `enemy${hitEnemyClass}${faintedEnemy}`)}
+      <span class="pkm-name">${b.enemy.name}${b.enemy.isShiny ? ' <span class="shiny-badge">✨</span>' : ''}${b.enemy.isElite ? ' <span class="elite-badge">精英</span>' : ''}</span>
       <span class="pkm-level">Lv.${b.enemy.level}</span>
       <span class="pkm-types">${b.enemy.types.join('/')}</span>
       ${renderHpBar(b.enemy, true)}
     </div>
     ${b.battleMsg ? `<div class="battle-msg">${b.battleMsg}</div>` : `<div class="battle-divider">━━ V.S. ━━</div>`}
     <div class="battle-player">
-      ${pkm ? pokemonSprite(pkm.id, ` player${hitPlayerClass}${faintedPlayer}`) : ''}
-      <span class="pkm-name">${pkm ? pkm.name : '---'}</span>
+      ${pkm ? spriteHTML(pkm.id, pkm.isShiny, `player${hitPlayerClass}${faintedPlayer}`) : ''}
+      <span class="pkm-name">${pkm ? pkm.name + (pkm.isShiny ? ' <span class="shiny-badge">✨</span>' : '') : '---'}</span>
       <span class="pkm-level">${pkm ? 'Lv.'+pkm.level : ''}</span>
       <span class="pkm-types">${pkm ? pkm.types.join('/') : ''}</span>
       ${renderHpBar(pkm, false)}
@@ -272,16 +278,16 @@ function renderBattle() {
 
     main.innerHTML = `
       <div class="battle-enemy">
-        ${pokemonSprite(b.enemy.id, ` enemy${faintedEnemy}`)}
-        <span class="pkm-name">${b.enemy.name}</span>
+        ${spriteHTML(b.enemy.id, b.enemy.isShiny, `enemy${faintedEnemy}`)}
+        <span class="pkm-name">${b.enemy.name}${b.enemy.isShiny ? ' <span class="shiny-badge">✨</span>' : ''}</span>
         <span class="pkm-level">Lv.${b.enemy.level}</span>
         <span class="pkm-types">${b.enemy.types.join('/')}</span>
         ${renderHpBar(b.enemy, true)}
       </div>
       ${b.battleMsg ? `<div class="battle-msg">${b.battleMsg}</div>` : `<div class="battle-divider">━━ V.S. ━━</div>`}
       <div class="battle-player">
-        ${pkm ? pokemonSprite(pkm.id, ` player${faintedPlayer}`) : ''}
-        <span class="pkm-name">${pkm ? pkm.name : '---'}</span>
+        ${pkm ? spriteHTML(pkm.id, pkm.isShiny, `player${faintedPlayer}`) : ''}
+        <span class="pkm-name">${pkm ? pkm.name + (pkm.isShiny ? ' <span class="shiny-badge">✨</span>' : '') : '---'}</span>
         <span class="pkm-level">${pkm ? 'Lv.'+pkm.level : ''}</span>
         <span class="pkm-types">${pkm ? pkm.types.join('/') : ''}</span>
         ${renderHpBar(pkm, false)}
@@ -387,9 +393,9 @@ function renderPokemon() {
     const p = G.player.pokemon[manager.pokemonIndex]
     const remembered = p.relearnMoves || []
     const selected = manager.relearnIndex !== null ? remembered[manager.relearnIndex] : null
-    let html = `<p class="section-title">✦ ${p.name} 技能整理</p>`
-    html += `<div class="pkm-card" style="border-color:#00ff41;">
-      <div class="pkm-name">${p.name} <span class="pkm-level">Lv.${p.level}</span></div>
+    let html = `<p class="section-title">✦ ${p.name}${p.isShiny ? ' ✨' : ''} 技能整理</p>`
+    html += `<div class="pkm-card${p.isShiny ? ' shiny-card' : ''}" style="border-color:#00ff41;">
+      <div class="pkm-name">${p.name}${p.isShiny ? ' <span class="shiny-badge">✨</span>' : ''} <span class="pkm-level">Lv.${p.level}</span></div>
       <div class="pkm-types">${p.types.join(' / ')}</div>
       <div class="pkm-moves">${p.moves.map(m=>`${m.name}[${m.type}] 威力:${m.power} PP:${m.currentPp}/${m.pp}`).join(' | ')}</div>
       <div class="pkm-exp">可换回技能: ${remembered.length}</div>
@@ -433,15 +439,15 @@ function renderPokemon() {
     if (p) {
       const hb = '#'.repeat(Math.max(1,Math.floor(p.hp/Math.max(1,p.maxHp)*8)))+'-'.repeat(8-Math.max(1,Math.floor(p.hp/Math.max(1,p.maxHp)*8)))
       const rememberedCount = (p.relearnMoves || []).length
-      const spriteSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png`
-      list.innerHTML += `<div class="pkm-card" onclick="openPokemonManager(${i})" style="cursor:pointer;">
+      list.innerHTML += `<div class="pkm-card${p.isShiny ? ' shiny-card' : ''}" onclick="openPokemonManager(${i})" style="cursor:pointer;">
           <div style="display:flex;align-items:center;gap:10px;">
-            <div class="sprite-container small" style="margin:0;flex-shrink:0;${p.fainted?' filter:grayscale(1);opacity:0.5;':''}" onclick="event.stopPropagation()">
+            <div class="sprite-container small${p.isShiny ? ' shiny' : ''}" style="margin:0;flex-shrink:0;${p.fainted ? ' filter:grayscale(1);opacity:0.5;' : ''}" onclick="event.stopPropagation()">
+              ${p.isShiny ? '<div class="shiny-stars"><span></span><span></span><span></span></div>' : ''}
               <div class="sprite-shadow"></div>
-              <img class="sprite-img" src="${spriteSrc}" onerror="this.style.display='none'" loading="lazy">
+              <img class="sprite-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.isShiny ? 'shiny/' : ''}${p.id}.png" onerror="this.style.display='none'" loading="lazy">
             </div>
             <div style="flex:1;min-width:0;">
-              <div class="pkm-name">${p.name} <span class="pkm-level">Lv.${p.level}</span></div>
+              <div class="pkm-name">${p.name}${p.isShiny ? ' <span class="shiny-badge">✨</span>' : ''} <span class="pkm-level">Lv.${p.level}</span></div>
               <div class="pkm-types">${p.types.join(' / ')} ${p.gender ? '<span style="color:'+(p.gender==='♀'?'#e05080':'#5090e0')+'">'+p.gender+'</span>' : ''}${p.nature ? ' ['+p.nature[0]+']' : ''}${p.ability ? ' ['+p.ability.name+']' : ''}</div>
               <div>HP: ${hb} ${p.hp}/${p.maxHp}${p.fainted?' 已失去战斗能力':''}</div>
               <div class="pkm-exp">EXP: ${p.exp}/${p.nextLevel}${rememberedCount > 0 ? ` | 可换回技能:${rememberedCount}` : ''}</div>
@@ -466,10 +472,11 @@ function renderPokedex() {
     if (!p) { G.pokedexDetail = null; renderPokedex(); return }
     const seen = G.player.seen.includes(p[0])
     const evoInfo = p[11] ? `→ Lv.${p[11][0]} ${getPokemonData(p[11][1])?.[1] || '???'}` : '最终形态'
+    const isShinySeen = G.player.shinySeen.includes(p[0])
     main.innerHTML = `
-      <p class="section-title">📖 #${String(p[0]).padStart(2,'0')} ${seen ? p[1] : '???'}</p>
-        <div class="pkm-card" style="border-color:var(--accent);">
-        ${seen ? `<div class="sprite-container"><div class="sprite-shadow"></div><img class="sprite-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p[0]}.png" onerror="this.style.display='none'" loading="lazy"></div>` : ''}
+      <p class="section-title">📖 #${String(p[0]).padStart(2,'0')} ${seen ? p[1] : '???'}${isShinySeen ? ' <span class="shiny-badge">✨</span>' : ''}</p>
+        <div class="pkm-card${isShinySeen ? ' shiny-card' : ''}" style="border-color:var(--accent);">
+        ${seen ? spriteHTML(p[0], isShinySeen) : ''}
         <div class="pkm-types">${seen ? p[2].replace(',',' / ') : '???'}</div>
         <hr style="border-color:#003a10;margin:6px 0;">
         <div class="pkm-stat">HP: ${seen ? p[3] : '???'}</div>
@@ -490,9 +497,10 @@ function renderPokedex() {
     const grid = main.querySelector('.pokedex-grid')
     for (const p of POKEMON) {
       const seen = G.player.seen.includes(p[0])
-      grid.innerHTML += `<div class="pkm-card${seen?'':' unseen'}" onclick="${seen?`G.pokedexDetail=${p[0]};render()`:''}" style="cursor:${seen?'pointer':'default'};${seen?'':'opacity:0.45;'}">
-        <div class="pkm-name">#${String(p[0]).padStart(2,'0')} ${seen ? p[1] : '???'}</div>
-        ${seen ? `<div class="sprite-container small" style="min-height:48px;margin:2px 0;"><div class="sprite-shadow"></div><img class="sprite-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p[0]}.png" onerror="this.style.display='none'" loading="lazy"></div>` : ''}
+      const isShinySeen = G.player.shinySeen.includes(p[0])
+      grid.innerHTML += `<div class="pkm-card${seen?'':' unseen'}${isShinySeen?' shiny-card':''}" onclick="${seen?`G.pokedexDetail=${p[0]};render()`:''}" style="cursor:${seen?'pointer':'default'};${seen?'':'opacity:0.45;'}">
+        <div class="pkm-name">#${String(p[0]).padStart(2,'0')} ${seen ? p[1] : '???'}${isShinySeen ? ' <span class="shiny-badge">✨</span>' : ''}</div>
+        ${seen ? `<div class="sprite-container small${isShinySeen ? ' shiny' : ''}" style="min-height:48px;margin:2px 0;">${isShinySeen ? '<div class="shiny-stars"><span></span><span></span><span></span></div>' : ''}<div class="sprite-shadow"></div><img class="sprite-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${isShinySeen ? 'shiny/' : ''}${p[0]}.png" onerror="this.style.display='none'" loading="lazy"></div>` : ''}
         <div class="pkm-types">${seen ? p[2].replace(',',' / ') : '???'}</div>
       </div>`
     }

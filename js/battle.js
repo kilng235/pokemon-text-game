@@ -19,7 +19,16 @@ function startWildBattle() {
   const id = pool.ids[Math.floor(Math.random() * pool.ids.length)]
   const level = getScaledLevel(pool.lv[0], pool.lv[1])
   const pokemon = createPokemon(id, level)
-  // 精英野生：等级超过该区域上限
+  const shinyChance = getShinyChance()
+  const rollShiny = Math.random() < shinyChance
+  pokemon.isShiny = rollShiny
+  if (pokemon.isShiny) {
+    addLog(`✨ 野生的闪光 ${pokemon.name} 出现了！`)
+    if (!G.player.shinySeen.includes(pokemon.id)) G.player.shinySeen.push(pokemon.id)
+    G.player.shinyChain = 0
+  } else {
+    G.player.shinyChain++
+  }
   if (level > pool.lv[1]) {
     pokemon.isElite = true
     addLog(`⚠ 一只强力的野生 ${pokemon.name} 出现了！`)
@@ -126,7 +135,11 @@ function startBattle(type, extra, enemyTeam) {
 
   if (type === 'wild') {
     addLog(`野生的 ${name} 出现了！ (Lv.${enemyTeam[0].level})`)
-    G.battle.battleMsg = `野生的 ${name} 跳出来了！`
+    if (enemyTeam[0].isShiny) {
+      G.battle.battleMsg = `✨ 野生的闪光 ${name} 跳出来了！`
+    } else {
+      G.battle.battleMsg = `野生的 ${name} 跳出来了！`
+    }
   } else if (type === 'gym') {
     addLog(`道馆馆主 ${extra.data[1]} 派出了 ${name}！`)
     G.battle.battleMsg = `馆主 ${extra.data[1]}：来吧！`
