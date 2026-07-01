@@ -2,7 +2,7 @@
 // 每个任务: { id, name, desc, guidance, check() → bool }
 
 const QUEST_ORDER = [
-  'choose_starter', 'first_rival', 'go_viridian', 'get_package',
+  'choose_starter', 'first_rival', 'go_cerulean', 'get_package',
   'deliver_package', 'get_pokedex', 'go_pewter', 'beat_brock',
   'mt_moon', 'beat_misty', 'bill_house', 'ss_anne',
   'beat_surge', 'rock_tunnel', 'pokemon_tower', 'beat_erika',
@@ -26,11 +26,11 @@ const QUESTS = {
     guidance: '小茂向你发起了挑战！用你刚选的宝可梦应战吧。',
     check: () => G.storyFlags.firstRivalDone,
   },
-  go_viridian: {
-    id: 'go_viridian', name: '前往常青市',
-    desc: '沿着1号道路前往常青市',
-    guidance: '向北穿过1号道路，前往常青市。',
-    check: () => G.player.position === 'viridian',
+  go_cerulean: {
+    id: 'go_cerulean', name: '前往华蓝市',
+    desc: '沿着道路前往华蓝市',
+    guidance: '前往华蓝市，那里有大木博士需要的包裹。',
+    check: () => G.player.position === 'cerulean',
   },
   get_package: {
     id: 'get_package', name: '领取包裹',
@@ -66,7 +66,7 @@ const QUESTS = {
     id: 'mt_moon', name: '穿越月见山',
     desc: '穿越月见山，前往华蓝市',
     guidance: '穿越月见山，据说那里有珍贵的化石。',
-    check: () => G.player.position === 'cerulean' || G.storyFlags.mtMoonDone,
+    check: () => G.storyFlags.mtMoonDone,
   },
   beat_misty: {
     id: 'beat_misty', name: '挑战华蓝道馆',

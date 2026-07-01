@@ -4,7 +4,7 @@ const STORY_EVENTS = {
   // 月见山 - 火箭队抢夺化石
   mtMoonRocket: {
     location: 'mtMoon',
-    condition: () => !G.storyFlags.mtMoonDone,
+    condition: () => G.player.badge >= 1 && !G.storyFlags.mtMoonDone,
     dialogue: [
       { speaker: '火箭队手下', text: '站住！这里是火箭队的地盘！' },
       { speaker: '火箭队手下', text: '我们在挖掘化石，不想死就快滚！' },

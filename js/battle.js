@@ -104,11 +104,13 @@ function startBattle(type, extra, enemyTeam) {
   if (!playerPkm) {
     addLog('你没有能战斗的宝可梦！'); return false
   }
+  const lp = getActivePokemon()
   G.battle = {
     type, extra, enemyTeam,
     enemy: enemyTeam[0], enemyIndex: 0,
     turn: 'player', subState: 'main',
     ran: false, captured: false, battleMsg: '',
+    lastEnemyHp: enemyTeam[0].hp, lastPlayerHp: lp ? lp.hp : 0,
   }
   const name = enemyTeam[0].name
 
@@ -138,6 +140,27 @@ function startBattle(type, extra, enemyTeam) {
     addLog(`四天王 ${extra.name} 派出了 ${name}！`)
     G.battle.battleMsg = `四天王 ${extra.name}：让你见识一下！`
   }
+  return true
+}
+
+function applySelfBuff(move, actor, enemyTarget) {
+  const buff = (stat) => { actor.tempDebuffs[stat] = Math.min(50, (actor.tempDebuffs[stat] || 0) + 20) }
+  const D = move.effect
+  if (D === 'atkUp') { buff('atk'); addLog(`${actor.name} 的攻击提升了！`) }
+  else if (D === 'defUp') { buff('def'); addLog(`${actor.name} 的防御提升了！`) }
+  else if (D === 'spAtkUp') { buff('spa'); addLog(`${actor.name} 的特攻提升了！`) }
+  else if (D === 'spDefUp') { buff('spd'); addLog(`${actor.name} 的特防提升了！`) }
+  else if (D === 'speedUp') { buff('spe'); addLog(`${actor.name} 的速度提升了！`) }
+  else if (D === 'evasionUp') { buff('evasion'); addLog(`${actor.name} 的回避率提升了！`) }
+  else if (D === 'atkUpDefUp') { buff('atk'); buff('def'); addLog(`${actor.name} 的攻击和防御都提升了！`) }
+  else if (D === 'atkUpSpeedUp') { buff('atk'); buff('spe'); addLog(`${actor.name} 的攻击和速度都提升了！`) }
+  else if (D === 'atkUpSpAtkUp') { buff('atk'); buff('spa'); addLog(`${actor.name} 的攻击和特攻都提升了！`) }
+  else if (D === 'defUpSpDefUp') { buff('def'); buff('spd'); addLog(`${actor.name} 的防御和特防都提升了！`) }
+  else if (D === 'spAtkUpSpDefUpSpeedUp') { buff('spa'); buff('spd'); buff('spe'); addLog(`${actor.name} 的特攻、特防和速度都提升了！`) }
+  else if (D === 'recover') { const h = Math.floor(actor.maxHp / 2); actor.hp = Math.min(actor.maxHp, actor.hp + h); addLog(`${actor.name} 回复了 ${h} HP！`) }
+  else if (D === 'recoverAll') { actor.hp = actor.maxHp; actor.status = null; addLog(`${actor.name} 的HP完全回复了！异常状态也治愈了！`) }
+  else if (D === 'leechSeed') { enemyTarget.leechSeed = true; addLog(`${enemyTarget.name} 被寄生种子寄生了！`) }
+  else return false
   return true
 }
 
@@ -187,12 +210,6 @@ function handleStatusEffect(target, effect) {
   } else if (effect === 'clearAll') {
     target.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0, atk: 0, def: 0, spd: 0, spa: 0 }
     addLog(`${target.name} 的能力变化被清除了！`); return true
-  } else if (effect === 'confuse') {
-    target.confused = true
-    addLog(`${target.name} 混乱了！`); return true
-  } else if (effect === 'disable') {
-    target.disabled = true
-    addLog(`${target.name} 被定身了，无法行动！`); return true
   }
   return false
 }
@@ -326,6 +343,8 @@ function playerAttack(moveIndex, skipTurnCheck) {
   if (move.currentPp <= 0) { addLog(`${move.name} 的PP已经用完了！`); return }
   move.currentPp--
 
+  b.lastEnemyHp = b.enemy.hp
+  b.lastPlayerHp = pkm.hp
   const result = calcDamage(pkm, b.enemy, move)
 
   if (result.missed) {
@@ -345,56 +364,8 @@ function playerAttack(moveIndex, skipTurnCheck) {
   }
 
   // Apply self-buff effects
-  if (move.effect === 'atkUp') {
-    pkm.tempDebuffs.atk = Math.min(50, (pkm.tempDebuffs.atk || 0) + 20)
-    addLog(`${pkm.name} 的攻击提升了！`)
-  } else if (move.effect === 'defUp') {
-    pkm.tempDebuffs.def = Math.min(50, (pkm.tempDebuffs.def || 0) + 20)
-    addLog(`${pkm.name} 的防御提升了！`)
-  } else if (move.effect === 'spAtkUp') {
-    pkm.tempDebuffs.spa = Math.min(50, (pkm.tempDebuffs.spa || 0) + 20)
-    addLog(`${pkm.name} 的特攻提升了！`)
-  } else if (move.effect === 'spDefUp') {
-    pkm.tempDebuffs.spd = Math.min(50, (pkm.tempDebuffs.spd || 0) + 20)
-    addLog(`${pkm.name} 的特防提升了！`)
-  } else if (move.effect === 'speedUp') {
-    pkm.tempDebuffs.spe = Math.min(50, (pkm.tempDebuffs.spe || 0) + 20)
-    addLog(`${pkm.name} 的速度提升了！`)
-  } else if (move.effect === 'evasionUp') {
-    pkm.tempDebuffs.evasion = Math.min(50, (pkm.tempDebuffs.evasion || 0) + 20)
-    addLog(`${pkm.name} 的回避率提升了！`)
-  } else if (move.effect === 'atkUpDefUp') {
-    pkm.tempDebuffs.atk = Math.min(50, (pkm.tempDebuffs.atk || 0) + 20)
-    pkm.tempDebuffs.def = Math.min(50, (pkm.tempDebuffs.def || 0) + 20)
-    addLog(`${pkm.name} 的攻击和防御都提升了！`)
-  } else if (move.effect === 'atkUpSpeedUp') {
-    pkm.tempDebuffs.atk = Math.min(50, (pkm.tempDebuffs.atk || 0) + 20)
-    pkm.tempDebuffs.spe = Math.min(50, (pkm.tempDebuffs.spe || 0) + 20)
-    addLog(`${pkm.name} 的攻击和速度都提升了！`)
-  } else if (move.effect === 'atkUpSpAtkUp') {
-    pkm.tempDebuffs.atk = Math.min(50, (pkm.tempDebuffs.atk || 0) + 20)
-    pkm.tempDebuffs.spa = Math.min(50, (pkm.tempDebuffs.spa || 0) + 20)
-    addLog(`${pkm.name} 的攻击和特攻都提升了！`)
-  } else if (move.effect === 'defUpSpDefUp') {
-    pkm.tempDebuffs.def = Math.min(50, (pkm.tempDebuffs.def || 0) + 20)
-    pkm.tempDebuffs.spd = Math.min(50, (pkm.tempDebuffs.spd || 0) + 20)
-    addLog(`${pkm.name} 的防御和特防都提升了！`)
-  } else if (move.effect === 'spAtkUpSpDefUpSpeedUp') {
-    pkm.tempDebuffs.spa = Math.min(50, (pkm.tempDebuffs.spa || 0) + 20)
-    pkm.tempDebuffs.spd = Math.min(50, (pkm.tempDebuffs.spd || 0) + 20)
-    pkm.tempDebuffs.spe = Math.min(50, (pkm.tempDebuffs.spe || 0) + 20)
-    addLog(`${pkm.name} 的特攻、特防和速度都提升了！`)
-  } else if (move.effect === 'recover') {
-    const heal = Math.floor(pkm.maxHp / 2)
-    pkm.hp = Math.min(pkm.maxHp, pkm.hp + heal)
-    addLog(`${pkm.name} 回复了 ${heal} HP！`)
-  } else if (move.effect === 'recoverAll') {
-    pkm.hp = pkm.maxHp
-    pkm.status = null
-    addLog(`${pkm.name} 的HP完全回复了！异常状态也治愈了！`)
-  } else if (move.effect === 'leechSeed') {
-    b.enemy.leechSeed = true
-    addLog(`${b.enemy.name} 被寄生种子寄生了！`)
+  if (['atkUp','defUp','spAtkUp','spDefUp','speedUp','evasionUp','atkUpDefUp','atkUpSpeedUp','atkUpSpAtkUp','defUpSpDefUp','spAtkUpSpDefUpSpeedUp','recover','recoverAll','leechSeed'].includes(move.effect)) {
+    applySelfBuff(move, pkm, b.enemy)
   }
 
   // 0威力状态技能：立即渲染显示效果，然后进入敌方回合
@@ -548,72 +519,14 @@ function syncEnemyAttack() {
   }
 
   // Enemy self-buff effects
-  if (move.effect === 'atkUp') {
-    b.enemy.tempDebuffs.atk = Math.min(50, (b.enemy.tempDebuffs.atk || 0) + 20)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
-    render(); return true
-  } else if (move.effect === 'defUp') {
-    b.enemy.tempDebuffs.def = Math.min(50, (b.enemy.tempDebuffs.def || 0) + 20)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
-    render(); return true
-  } else if (move.effect === 'spAtkUp') {
-    b.enemy.tempDebuffs.spa = Math.min(50, (b.enemy.tempDebuffs.spa || 0) + 20)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
-    render(); return true
-  } else if (move.effect === 'spDefUp') {
-    b.enemy.tempDebuffs.spd = Math.min(50, (b.enemy.tempDebuffs.spd || 0) + 20)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
-    render(); return true
-  } else if (move.effect === 'speedUp') {
-    b.enemy.tempDebuffs.spe = Math.min(50, (b.enemy.tempDebuffs.spe || 0) + 20)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
-    render(); return true
-  } else if (move.effect === 'evasionUp') {
-    b.enemy.tempDebuffs.evasion = Math.min(50, (b.enemy.tempDebuffs.evasion || 0) + 20)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
-    render(); return true
-  } else if (move.effect === 'atkUpDefUp') {
-    b.enemy.tempDebuffs.atk = Math.min(50, (b.enemy.tempDebuffs.atk || 0) + 20)
-    b.enemy.tempDebuffs.def = Math.min(50, (b.enemy.tempDebuffs.def || 0) + 20)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
-    render(); return true
-  } else if (move.effect === 'atkUpSpeedUp') {
-    b.enemy.tempDebuffs.atk = Math.min(50, (b.enemy.tempDebuffs.atk || 0) + 20)
-    b.enemy.tempDebuffs.spe = Math.min(50, (b.enemy.tempDebuffs.spe || 0) + 20)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
-    render(); return true
-  } else if (move.effect === 'atkUpSpAtkUp') {
-    b.enemy.tempDebuffs.atk = Math.min(50, (b.enemy.tempDebuffs.atk || 0) + 20)
-    b.enemy.tempDebuffs.spa = Math.min(50, (b.enemy.tempDebuffs.spa || 0) + 20)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
-    render(); return true
-  } else if (move.effect === 'defUpSpDefUp') {
-    b.enemy.tempDebuffs.def = Math.min(50, (b.enemy.tempDebuffs.def || 0) + 20)
-    b.enemy.tempDebuffs.spd = Math.min(50, (b.enemy.tempDebuffs.spd || 0) + 20)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
-    render(); return true
-  } else if (move.effect === 'spAtkUpSpDefUpSpeedUp') {
-    b.enemy.tempDebuffs.spa = Math.min(50, (b.enemy.tempDebuffs.spa || 0) + 20)
-    b.enemy.tempDebuffs.spd = Math.min(50, (b.enemy.tempDebuffs.spd || 0) + 20)
-    b.enemy.tempDebuffs.spe = Math.min(50, (b.enemy.tempDebuffs.spe || 0) + 20)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
-    render(); return true
-  } else if (move.effect === 'recover') {
-    const heal = Math.floor(b.enemy.maxHp / 2)
-    b.enemy.hp = Math.min(b.enemy.maxHp, b.enemy.hp + heal)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
-    render(); return true
-  } else if (move.effect === 'recoverAll') {
-    b.enemy.hp = b.enemy.maxHp
-    b.enemy.status = null
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
-    render(); return true
-  } else if (move.effect === 'leechSeed') {
-    pkm.leechSeed = true
+  if (['atkUp','defUp','spAtkUp','spDefUp','speedUp','evasionUp','atkUpDefUp','atkUpSpeedUp','atkUpSpAtkUp','defUpSpDefUp','spAtkUpSpDefUpSpeedUp','recover','recoverAll','leechSeed'].includes(move.effect)) {
+    applySelfBuff(move, b.enemy, pkm)
     b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   }
 
+  b.lastEnemyHp = b.enemy.hp
+  b.lastPlayerHp = pkm.hp
   const result = calcDamage(b.enemy, pkm, move)
   if (result.missed) { b.battleMsg = `${b.enemy.name} 的 ${move.name} 没有命中！`; return true }
 

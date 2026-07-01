@@ -438,13 +438,31 @@ function skipMove() {
   }
 }
 
+// 移动端地图面板折叠
+function toggleMapPanel() {
+  const panel = $('map-panel')
+  if (!panel) return
+  const content = panel.querySelector('.panel-content')
+  const toggle = panel.querySelector('.panel-toggle')
+  if (!content || !toggle) return
+  
+  if (content.style.display === 'none') {
+    content.style.display = 'block'
+    toggle.textContent = '📋 任务信息 ▲'
+  } else {
+    content.style.display = 'none'
+    toggle.textContent = '📋 任务信息 ▼'
+  }
+}
+
 // 暴露到全局（用于内联 onclick）
 const globalFns = [startNewGame, continueGame, selectStarter, travelTo, challengeGym,
   tryWildEncounter, battleSub, playerAttack, tryFlee, enemyTurn,
   useItemInBattle, useItemFromBag, switchPokemon, closeBag, healAtCenter, buyItem,
   advanceDialogue, skipDialogue, finishDialogue, startDialogueBattle, restartGame, makeChoice,
   confirmMove, cancelMove, toggleMap, learnMoveDirect, forgetMove, skipMove,
-  openPokemonManager, closePokemonManager, prepareRelearnMove, cancelRelearnMove, swapRelearnMove]
+  openPokemonManager, closePokemonManager, prepareRelearnMove, cancelRelearnMove, swapRelearnMove,
+  toggleMapPanel]
 for (const fn of globalFns) window[fn.name] = fn
 
 document.addEventListener('DOMContentLoaded', () => {

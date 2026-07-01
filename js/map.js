@@ -371,19 +371,19 @@ const MAP_REGION_CONFIGS = {
   kanto: {
     title: '关都地区路线图',
     subtitle: '主线、道馆与相邻区域一眼看清',
-    stageWidth: 1240,
-    stageHeight: 800,
-    paddingX: 76,
-    paddingY: 68,
+    stageWidth: 1800,
+    stageHeight: 1100,
+    paddingX: 100,
+    paddingY: 90,
     nodeIds: Object.keys(MAP_COORDS).filter(id => !id.startsWith('island')),
   },
   sevii: {
     title: '七之岛航线图',
     subtitle: '岛屿航线、据点与目标区域总览',
-    stageWidth: 800,
-    stageHeight: 1040,
-    paddingX: 100,
-    paddingY: 60,
+    stageWidth: 1100,
+    stageHeight: 1500,
+    paddingX: 120,
+    paddingY: 80,
     nodeIds: Object.keys(MAP_COORDS).filter(id => id.startsWith('island')),
   },
 }
@@ -404,7 +404,7 @@ for (const region of Object.values(MAP_REGION_CONFIGS)) {
 const QUEST_TARGET_LOCATIONS = {
   choose_starter: 'pallet',
   first_rival: 'pallet',
-  go_viridian: 'viridian',
+  go_cerulean: 'cerulean',
   get_package: 'cerulean',
   deliver_package: 'pallet',
   get_pokedex: 'pallet',
@@ -479,47 +479,48 @@ const MAP_LABEL_OVERRIDES = {
 
 const MAP_STAGE_LAYOUTS = {
   kanto: {
-    pallet: { x: 15, y: 73 },
-    route1: { x: 15, y: 60 },
-    viridian: { x: 15, y: 46 },
-    route2: { x: 15, y: 31 },
-    viridianForest: { x: 24, y: 40 },
-    pewter: { x: 15, y: 16 },
-    route3: { x: 29, y: 16 },
-    mtMoon: { x: 41, y: 16 },
-    route4: { x: 53, y: 16 },
-    cerulean: { x: 67, y: 16 },
-    billHouse: { x: 82, y: 8 },
-    ceruleanCave: { x: 82, y: 23 },
-    route5: { x: 57, y: 28 },
-    saffron: { x: 46, y: 34 },
-    route6: { x: 60, y: 47 },
-    vermilion: { x: 79, y: 48 },
-    ssAnne: { x: 92, y: 53 },
-    route11: { x: 87, y: 64 },
-    route9: { x: 75, y: 30 },
-    powerPlant: { x: 91, y: 31 },
-    lavender: { x: 68, y: 34 },
-    route10: { x: 71, y: 48 },
-    route12: { x: 72, y: 65 },
-    route7: { x: 33, y: 36 },
-    route8: { x: 54, y: 23 },
-    celadon: { x: 19, y: 40 },
-    rocketHideout: { x: 7, y: 40 },
-    route16: { x: 15, y: 56 },
-    route17: { x: 28, y: 73 },
-    fuchsia: { x: 58, y: 81 },
-    route15: { x: 77, y: 73 },
-    safariZone: { x: 77, y: 89 },
-    route21: { x: 15, y: 89 },
-    cinnabar: { x: 15, y: 99 },
-    route20: { x: 4, y: 94 },
-    seafoamIslands: { x: 2, y: 84 },
-    pokemonMansion: { x: 26, y: 99 },
-    route22: { x: 3, y: 45 },
-    victoryRoad: { x: 89, y: 9 },
-    route23: { x: 97, y: 18 },
-    indigo: { x: 97, y: 5 },
+    pallet: {x:8, y:80},
+    route1: {x:8, y:66},
+    viridian: {x:8, y:52},
+    route2: {x:8, y:38},
+    viridianForest:{x:18, y:60},
+    route22: {x:0, y:52},
+    pewter: {x:8, y:24},
+    route3: {x:18, y:24},
+    mtMoon: {x:28, y:24},
+    route4: {x:38, y:24},
+    cerulean: {x:48, y:24},
+    route24: {x:48, y:14},
+    billHouse: {x:48, y:4},
+    ceruleanCave: {x:62, y:26},
+    saffron: {x:33, y:40},
+    route5: {x:41, y:30},
+    route8: {x:24, y:36},
+    celadon: {x:12, y:44},
+    rocketHideout: {x:2, y:44},
+    route7: {x:26, y:54},
+    lavender: {x:33, y:58},
+    vermilion: {x:58, y:58},
+    route6: {x:46, y:50},
+    route9: {x:54, y:30},
+    powerPlant: {x:48, y:38},
+    route10: {x:40, y:58},
+    ssAnne: {x:58, y:48},
+    route11: {x:63, y:72},
+    route12: {x:44, y:72},
+    route16: {x:10, y:62},
+    route17: {x:28, y:70},
+    fuchsia: {x:48, y:80},
+    route15: {x:62, y:80},
+    safariZone: {x:62, y:92},
+    route21: {x:8, y:90},
+    cinnabar: {x:8, y:100},
+    route20: {x:2, y:96},
+    seafoamIslands:{x:0, y:84},
+    pokemonMansion:{x:20, y:100},
+    victoryRoad: {x:68, y:12},
+    route23: {x:72, y:20},
+    indigo: {x:74, y:4},
   },
   sevii: {
     island1: { x: 49, y: 9 },
@@ -552,42 +553,50 @@ const MAP_STAGE_POINT_OFFSETS = {
 const MAP_LABEL_DIRECTION_OVERRIDES = {
   kanto: {
     billHouse: 'label-below',
-    cerulean: 'label-below',
-    ceruleanCave: 'label-below',
+    cerulean: 'label-above',
+    ceruleanCave: 'label-right',
     indigo: 'label-below',
-    powerPlant: 'label-above',
+    powerPlant: 'label-below',
     route11: 'label-above',
     route12: 'label-above',
     route15: 'label-above',
     route23: 'label-below',
     safariZone: 'label-right',
-    ssAnne: 'label-below',
+    ssAnne: 'label-above',
     vermilion: 'label-below',
     victoryRoad: 'label-below',
     route5: 'label-above',
     route6: 'label-right',
-    route7: 'label-below',
+    route7: 'label-above',
     route8: 'label-left',
     route9: 'label-below',
     route10: 'label-below',
     lavender: 'label-left',
     celadon: 'label-below',
     route16: 'label-below',
-    rocketHideout: 'label-right',
+    rocketHideout: 'label-above',
+    route24: 'label-below',
     saffron: 'label-above',
     fuchsia: 'label-right',
+    route22: 'label-above',
+    cinnabar: 'label-right',
+    route20: 'label-above',
+    viridianForest: 'label-below',
   },
 }
 
 const MAP_LABEL_OFFSET_OVERRIDES = {
   kanto: {
-    powerPlant: { x: 6, y: -8 },
-    route11: { x: 8, y: 0 },
-    route12: { x: 8, y: 2 },
-    route15: { x: 8, y: -6 },
-    rocketHideout: { x: 22, y: 0 },
-    ssAnne: { x: 10, y: 0 },
-    billHouse: { x: 6, y: -2 },
+    route11: { x: 10, y: 0 },
+    route12: { x: -10, y: 0 },
+    route15: { x: 10, y: 0 },
+    ssAnne: { x: 8, y: -2 },
+    billHouse: { x: 8, y: -2 },
+    route10: { x: -10, y: 0 },
+    route7: { x: -10, y: 0 },
+    route8: { x: 10, y: 0 },
+    route5: { x: -8, y: 0 },
+    route9: { x: -6, y: 0 },
   },
   sevii: {},
 }
@@ -797,8 +806,8 @@ function renderSidebarMap() {
   const pkmLevel = G.player.pokemon.length > 0 ? Math.max(...G.player.pokemon.map(p => p.level)) : 1
   const badge = G.player.badge
 
-  // 小网格 (36列 x 16行)
-  const W = 36, H = 16
+  // 小网格 (48列 x 20行)
+  const W = 48, H = 20
   const grid = Array.from({length:H}, () => Array(W).fill(' '))
 
   // 边框
@@ -820,7 +829,7 @@ function renderSidebarMap() {
     [12,12,12,14],[20,12,24,12],[24,12,38,16],[38,16,38,18],
     [28,14,18,18],[6,18,4,18],
   ]
-  // 缩放坐标到小网格（关都范围: x[0~52], y[0~24] → 映射到 2~34, 2~14）
+  // 缩放坐标到小网格（关都范围: x[0~52], y[0~24] → 映射到 2~46, 2~18）
   const scaleX = (x) => Math.max(1, Math.min(W-2, 1 + Math.floor(x * (W-4) / 52)))
   const scaleY = (y) => Math.max(1, Math.min(H-2, 1 + Math.floor(y * (H-4) / 24)))
 
@@ -870,7 +879,7 @@ function renderSidebarMap() {
   html += '</pre>'
 
   // 信息条
-  html += `<div style="text-align:center;font-size:9px;color:#006a1a;margin-bottom:4px;">`
+  html += `<div style="text-align:center;font-size:11px;color:#006a1a;margin-bottom:6px;">`
   html += `<span class="info-badge">${loc ? loc[0] : '???'}</span>`
   html += `<span class="info-badge">Lv.${pkmLevel}</span>`
   html += `<span class="info-badge">徽章${badge}/8</span>`
@@ -894,16 +903,94 @@ function renderWorldMap() {
   let html = '<p class="section-title">🗺 世界地图</p>'
   html += renderExpandedMapStage(regionKey, pos, targetId)
   html += renderExpandedMapLegend()
-  html += renderMapInfo()
   main.innerHTML = html
 
+  // 右侧任务面板（移动端可折叠）
   const panel = $('map-panel')
-  if (panel) panel.innerHTML = ''
+  if (panel) {
+    const isMobile = window.innerWidth <= 750
+    panel.innerHTML = `
+      ${isMobile ? '<div class="panel-toggle" onclick="toggleMapPanel()">📋 任务信息 ▼</div>' : ''}
+      <div class="panel-content">${renderMapQuestPanel()}</div>
+    `
+  }
 
   const actions = $('actions')
   if (actions) {
     actions.innerHTML = '<button class="btn" onclick="G.view=\'explore\';render()">← 返回探索</button>'
   }
+}
+
+function renderMapQuestPanel() {
+  const currentQ = getCurrentQuest()
+  const completedCount = G.quests && G.quests.completed ? G.quests.completed.length : 0
+  const total = QUEST_ORDER.length
+  const progressPct = Math.round((completedCount / total) * 100)
+
+  let html = '<div class="quest-panel-card">'
+
+  // 进度头部
+  html += '<div class="quest-progress-header">'
+  html += '<span class="quest-progress-label">📋 任务</span>'
+  html += `<span class="quest-progress-count">${completedCount}/${total}</span>`
+  html += '</div>'
+
+  // 进度条
+  html += '<div style="height:6px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:4px;">'
+  html += `<div style="height:100%;width:${progressPct}%;background:var(--accent);border-radius:99px;transition:width 0.4s ease;"></div>`
+  html += '</div>'
+
+  // 当前任务
+  if (currentQ) {
+    html += '<div class="quest-section-title">当前任务</div>'
+    html += '<div class="quest-item active">'
+    html += `<div class="quest-name"><span class="quest-badge current">▶</span>${currentQ.name}</div>`
+    html += `<div class="quest-desc">${currentQ.desc}</div>`
+    html += `<div class="quest-guidance">💡 ${currentQ.guidance}</div>`
+    html += '</div>'
+  } else {
+    html += '<div class="quest-section-title">当前任务</div>'
+    html += '<div class="quest-item" style="border-left-color:var(--success);">'
+    html += '<div class="quest-name" style="color:var(--success);">🎉 全部完成！</div>'
+    html += '<div class="quest-desc">你已成为真正的宝可梦大师。</div>'
+    html += '</div>'
+  }
+
+  html += '<div class="quest-section-divider"></div>'
+
+  // 最近已完成（最多4个）
+  const completed = G.quests && G.quests.completed ? G.quests.completed : []
+  const recentCompleted = completed.slice(-4).reverse()
+  if (recentCompleted.length > 0) {
+    html += '<div class="quest-section-title">已完成</div>'
+    for (const qid of recentCompleted) {
+      const q = QUESTS[qid]
+      if (!q) continue
+      html += '<div class="quest-item completed">'
+      html += `<div class="quest-name"><span class="quest-badge done">✓</span>${q.name}</div>`
+      html += `<div class="quest-desc">${q.desc}</div>`
+      html += '</div>'
+    }
+  }
+
+  // 接下来的任务（最多3个）
+  const currentIdx = currentQ ? QUEST_ORDER.indexOf(currentQ.id) : total
+  const upcoming = QUEST_ORDER.slice(currentIdx + 1, currentIdx + 4)
+  if (upcoming.length > 0) {
+    html += '<div class="quest-section-divider"></div>'
+    html += '<div class="quest-section-title">即将到来</div>'
+    for (const qid of upcoming) {
+      const q = QUESTS[qid]
+      if (!q) continue
+      html += '<div class="quest-item">'
+      html += `<div class="quest-name"><span class="quest-badge pending">○</span>${q.name}</div>`
+      html += `<div class="quest-desc">${q.desc}</div>`
+      html += '</div>'
+    }
+  }
+
+  html += '</div>'
+  return html
 }
 
 function renderMapInfo() {

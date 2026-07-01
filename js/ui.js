@@ -3,9 +3,10 @@ const $ = id => document.getElementById(id)
 function render() {
   const v = G.view
   const app = $('app')
-  if (app) app.className = v === 'worldMap' ? 'world-map-page' : ''
-  const badgeStr = '●'.repeat(G.player.badge) + '○'.repeat(8 - G.player.badge)
-  $('header').textContent = `★ 宝可梦文字版   徽章:${badgeStr}   ¥${G.player.money}`
+  if (app) app.className = v === 'worldMap' ? 'world-map-view' : ''
+  const filledBadges = Array(G.player.badge).fill('<span class="badges" style="color:var(--success)">●</span>').join('')
+  const emptyBadges = Array(8 - G.player.badge).fill('<span class="badges" style="color:var(--border)">●</span>').join('')
+  $('header').innerHTML = `<span>宝可梦文字版</span><span class="badges">${filledBadges}${emptyBadges}</span><span class="money">¥${G.player.money}</span>`
   // 优先处理待学习的技能
   if (G.pendingMoveLearn && G.pendingMoveLearn.length > 0) {
     renderMoveLearn()
@@ -42,13 +43,14 @@ function renderMoveLearn() {
 
   main.innerHTML = `
     <p class="section-title">✦ 学习新技能</p>
-    <div class="pkm-card" style="border-color:#00ff41;text-align:center;">
+    <div class="pkm-card" style="border-color:var(--accent);text-align:center;">
+      <div class="sprite-container"><div class="sprite-shadow"></div><img class="sprite-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pkm.id}.png" onerror="this.style.display='none'" loading="lazy"></div>
       <div class="pkm-name">${pkm.name} <span class="pkm-level">Lv.${pkm.level}</span></div>
-      <p style="margin:10px 0;color:#ffcc00;font-size:14px;">
+      <p style="margin:10px 0;color:var(--warning);font-size:14px;font-weight:600;">
         ${pkm.name} 想要学习新技能「${info.moveName}」！
       </p>
-      ${hasFourMoves ? '<p style="color:#ff6633;font-size:12px;">但' + pkm.name + '已经学会了4个技能……</p>' : ''}
-      ${hasFourMoves ? '<p style="color:#00aa33;font-size:11px;">是否用新技能替换一个已有技能？</p>' : '<p style="color:#00aa33;font-size:12px;">' + pkm.name + '还有空位，自动学会了！</p>'}
+      ${hasFourMoves ? '<p style="color:var(--danger);font-size:12px;">但' + pkm.name + '已经学会了4个技能……</p>' : ''}
+      ${hasFourMoves ? '<p style="color:var(--success);font-size:11px;">是否用新技能替换一个已有技能？</p>' : '<p style="color:var(--success);font-size:12px;">' + pkm.name + '还有空位，自动学会了！</p>'}
     </div>
   `
 
@@ -105,6 +107,10 @@ function renderChoose() {
     if (!p) continue
     grid.innerHTML += `
       <div class="choose-card">
+        <div class="sprite-container">
+          <div class="sprite-shadow"></div>
+          <img class="sprite-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png" onerror="this.style.display='none'" loading="lazy">
+        </div>
         <div class="pkm-name">${p[1]}</div>
         <div class="pkm-types">${p[2].replace(',',' / ')}</div>
         <div class="pkm-stat">HP:${p[3]} 攻:${p[4]} 防:${p[5]}</div>
@@ -209,9 +215,21 @@ function renderBattle() {
     </div>`
   }
   
+  const hitEnemyClass = b.enemy.hp < (b.lastEnemyHp || b.enemy.maxHp) ? ' hit' : ''
+  const hitPlayerClass = pkm && pkm.hp < (b.lastPlayerHp || pkm.maxHp) ? ' hit' : ''
+  const faintedEnemy = b.enemy.hp <= 0 || b.enemy.fainted ? ' fainted' : ''
+  const faintedPlayer = pkm && (pkm.hp <= 0 || pkm.fainted) ? ' fainted' : ''
+
+  const pokemonSprite = (id, extraClass) =>
+    `<div class="sprite-container${extraClass}">` +
+    `<div class="sprite-shadow"></div>` +
+    `<img class="sprite-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png" onerror="this.style.display='none'" loading="lazy">` +
+    `</div>`
+
   const main = $('main')
   main.innerHTML = `
     <div class="battle-enemy">
+      ${pokemonSprite(b.enemy.id, ` enemy${hitEnemyClass}${faintedEnemy}`)}
       <span class="pkm-name">${b.enemy.name}${b.enemy.isElite ? ' <span class="elite-badge">精英</span>' : ''}</span>
       <span class="pkm-level">Lv.${b.enemy.level}</span>
       <span class="pkm-types">${b.enemy.types.join('/')}</span>
@@ -219,6 +237,7 @@ function renderBattle() {
     </div>
     ${b.battleMsg ? `<div class="battle-msg">${b.battleMsg}</div>` : `<div class="battle-divider">━━ V.S. ━━</div>`}
     <div class="battle-player">
+      ${pkm ? pokemonSprite(pkm.id, ` player${hitPlayerClass}${faintedPlayer}`) : ''}
       <span class="pkm-name">${pkm ? pkm.name : '---'}</span>
       <span class="pkm-level">${pkm ? 'Lv.'+pkm.level : ''}</span>
       <span class="pkm-types">${pkm ? pkm.types.join('/') : ''}</span>
@@ -250,39 +269,10 @@ function renderBattle() {
     const m = pkm && pkm.moves[moveIndex]
     if (!m) { b.subState = 'attack'; return }
     G.view = 'battle'
-    
-    // HP条渲染函数
-    const renderHpBar = (pokemon, isEnemy = false) => {
-      if (!pokemon) return '<div class="hp-bar-container"><div class="hp-text">倒下了</div></div>'
-      const pct = Math.max(0, pokemon.hp / pokemon.maxHp) * 100
-      let hpClass = 'hp-bar-fill'
-      let textClass = 'hp-text'
-      if (pct <= 20) {
-        hpClass += ' hp-low'
-        textClass += ' hp-low'
-      } else if (pct <= 50) {
-        hpClass += ' hp-medium'
-        textClass += ' hp-medium'
-      }
-      
-      // 检测HP变化并添加波动动画
-      const lastHpKey = isEnemy ? 'lastEnemyHp' : 'lastPlayerHp'
-      if (!b[lastHpKey] && b[lastHpKey] !== 0) b[lastHpKey] = pokemon.hp
-      if (pokemon.hp < b[lastHpKey]) {
-        hpClass += ' hp-damaged'
-      }
-      b[lastHpKey] = pokemon.hp
-      
-      return `<div class="hp-bar-container">
-        <div class="hp-bar-wrapper">
-          <div class="${hpClass}" style="width:${pct}%"></div>
-        </div>
-        <div class="${textClass}">${pokemon.hp}/${pokemon.maxHp}</div>
-      </div>`
-    }
-    
+
     main.innerHTML = `
       <div class="battle-enemy">
+        ${pokemonSprite(b.enemy.id, ` enemy${faintedEnemy}`)}
         <span class="pkm-name">${b.enemy.name}</span>
         <span class="pkm-level">Lv.${b.enemy.level}</span>
         <span class="pkm-types">${b.enemy.types.join('/')}</span>
@@ -290,6 +280,7 @@ function renderBattle() {
       </div>
       ${b.battleMsg ? `<div class="battle-msg">${b.battleMsg}</div>` : `<div class="battle-divider">━━ V.S. ━━</div>`}
       <div class="battle-player">
+        ${pkm ? pokemonSprite(pkm.id, ` player${faintedPlayer}`) : ''}
         <span class="pkm-name">${pkm ? pkm.name : '---'}</span>
         <span class="pkm-level">${pkm ? 'Lv.'+pkm.level : ''}</span>
         <span class="pkm-types">${pkm ? pkm.types.join('/') : ''}</span>
@@ -442,15 +433,24 @@ function renderPokemon() {
     if (p) {
       const hb = '#'.repeat(Math.max(1,Math.floor(p.hp/Math.max(1,p.maxHp)*8)))+'-'.repeat(8-Math.max(1,Math.floor(p.hp/Math.max(1,p.maxHp)*8)))
       const rememberedCount = (p.relearnMoves || []).length
+      const spriteSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png`
       list.innerHTML += `<div class="pkm-card" onclick="openPokemonManager(${i})" style="cursor:pointer;">
-          <div class="pkm-name">${p.name} <span class="pkm-level">Lv.${p.level}</span></div>
-          <div class="pkm-types">${p.types.join(' / ')} ${p.gender ? '<span style="color:'+(p.gender==='♀'?'#e05080':'#5090e0')+'">'+p.gender+'</span>' : ''}${p.nature ? ' ['+p.nature[0]+']' : ''}${p.ability ? ' ['+p.ability.name+']' : ''}</div>
-          <div>HP: ${hb} ${p.hp}/${p.maxHp}${p.fainted?' 已失去战斗能力':''}</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="sprite-container small" style="margin:0;flex-shrink:0;${p.fainted?' filter:grayscale(1);opacity:0.5;':''}" onclick="event.stopPropagation()">
+              <div class="sprite-shadow"></div>
+              <img class="sprite-img" src="${spriteSrc}" onerror="this.style.display='none'" loading="lazy">
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div class="pkm-name">${p.name} <span class="pkm-level">Lv.${p.level}</span></div>
+              <div class="pkm-types">${p.types.join(' / ')} ${p.gender ? '<span style="color:'+(p.gender==='♀'?'#e05080':'#5090e0')+'">'+p.gender+'</span>' : ''}${p.nature ? ' ['+p.nature[0]+']' : ''}${p.ability ? ' ['+p.ability.name+']' : ''}</div>
+              <div>HP: ${hb} ${p.hp}/${p.maxHp}${p.fainted?' 已失去战斗能力':''}</div>
+              <div class="pkm-exp">EXP: ${p.exp}/${p.nextLevel}${rememberedCount > 0 ? ` | 可换回技能:${rememberedCount}` : ''}</div>
+            </div>
+          </div>
           <div class="pkm-moves">${p.moves.map(m=>`${m.name}[${m.type}] 威力:${m.power} PP:${m.currentPp}/${m.pp}`).join(' | ')}</div>
-          <div class="pkm-exp">EXP: ${p.exp}/${p.nextLevel}${rememberedCount > 0 ? ` | 可换回技能:${rememberedCount}` : ''}</div>
           <div class="pkm-iv">个体: H${p.ivs.hp} A${p.ivs.atk} D${p.ivs.def} SA${p.ivs.spa} SD${p.ivs.spd} S${p.ivs.spe}</div>
           <div class="pkm-ev">努力: H${p.evs.hp} A${p.evs.atk} D${p.evs.def} SA${p.evs.spa} SD${p.evs.spd} S${p.evs.spe}</div>
-          <div class="pkm-exp" style="margin-top:4px;color:#33ff77;">点击这只宝可梦可整理技能</div>
+          <div class="pkm-exp" style="margin-top:4px;color:var(--accent);">点击这只宝可梦可整理技能</div>
         </div>`
     } else {
       list.innerHTML += '<div class="pkm-card"><div class="empty-slot">[空位]</div></div>'
@@ -468,7 +468,8 @@ function renderPokedex() {
     const evoInfo = p[11] ? `→ Lv.${p[11][0]} ${getPokemonData(p[11][1])?.[1] || '???'}` : '最终形态'
     main.innerHTML = `
       <p class="section-title">📖 #${String(p[0]).padStart(2,'0')} ${seen ? p[1] : '???'}</p>
-      <div class="pkm-card" style="border-color:#00ff41;">
+        <div class="pkm-card" style="border-color:var(--accent);">
+        ${seen ? `<div class="sprite-container"><div class="sprite-shadow"></div><img class="sprite-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p[0]}.png" onerror="this.style.display='none'" loading="lazy"></div>` : ''}
         <div class="pkm-types">${seen ? p[2].replace(',',' / ') : '???'}</div>
         <hr style="border-color:#003a10;margin:6px 0;">
         <div class="pkm-stat">HP: ${seen ? p[3] : '???'}</div>
@@ -491,6 +492,7 @@ function renderPokedex() {
       const seen = G.player.seen.includes(p[0])
       grid.innerHTML += `<div class="pkm-card${seen?'':' unseen'}" onclick="${seen?`G.pokedexDetail=${p[0]};render()`:''}" style="cursor:${seen?'pointer':'default'};${seen?'':'opacity:0.45;'}">
         <div class="pkm-name">#${String(p[0]).padStart(2,'0')} ${seen ? p[1] : '???'}</div>
+        ${seen ? `<div class="sprite-container small" style="min-height:48px;margin:2px 0;"><div class="sprite-shadow"></div><img class="sprite-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p[0]}.png" onerror="this.style.display='none'" loading="lazy"></div>` : ''}
         <div class="pkm-types">${seen ? p[2].replace(',',' / ') : '???'}</div>
       </div>`
     }
@@ -533,10 +535,8 @@ function renderCenter() {
 function renderMap() {
   const panel = $('map-panel')
   if (!panel) return
-  if (G.view === 'worldMap') {
-    panel.innerHTML = ''
-    return
-  }
+  // 在 worldMap 视图下，map-panel 由 renderWorldMap() 管理
+  if (G.view === 'worldMap') return
   panel.innerHTML = ''
 }
 
