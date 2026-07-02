@@ -138,7 +138,7 @@ function tryWildEncounter(fromTravel) {
   // 检查是否有未击败的训练家
   const trainers = getTrainersForArea(G.player.position)
   const undefeated = trainers.filter(t => !G.player.trainersDefeated.includes(t.id))
-  if (undefeated.length > 0 && Math.random() < 0.5) {
+  if (undefeated.length > 0 && Math.random() < 0.3) {
     const t = undefeated[Math.floor(Math.random() * undefeated.length)]
     if (startTrainerBattle(t)) { G.view = 'battle'; render(); return }
   }
