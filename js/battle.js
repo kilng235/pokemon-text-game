@@ -337,6 +337,8 @@ function calcDamage(atkPkm, defPkm, move) {
   else if (eff <= 0.5 && eff > 0) msg += ' 效果不太好…'
   else if (eff === 0) msg += ' 对对手没有效果…'
   else if (move.power === 0) msg = `${atkPkm.name} 使用了 ${move.name}！`
+  // 普通命中音效（效果拔群/不理想由消息关键字另行触发）
+  if (window.AU && eff > 0.5 && eff < 2 && damage > 0) AU.sfx('hit')
   addLog(msg)
   return { damage, effectiveness: eff, missed: false }
 }

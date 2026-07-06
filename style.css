@@ -84,6 +84,26 @@ body {
   font-size: 14px;
 }
 
+#header .audio-ctrl {
+  display: flex;
+  gap: 4px;
+}
+
+.audio-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 14px;
+  cursor: pointer;
+  line-height: 1;
+  transition: background 0.15s;
+}
+
+.audio-btn:hover {
+  background: var(--border);
+}
+
 #main-wrap {
   display: flex;
   gap: 12px;

@@ -88,6 +88,7 @@ function travelTo(key) {
     render(); return
   }
   G.player.position = key
+  if (window.AU) AU.sfx('move')
   updateQuest()
   // 城镇剧情触发
   if (loc[2] === 'town') {
@@ -445,7 +446,7 @@ function toggleMapPanel() {
   const content = panel.querySelector('.panel-content')
   const toggle = panel.querySelector('.panel-toggle')
   if (!content || !toggle) return
-  
+
   if (content.style.display === 'none') {
     content.style.display = 'block'
     toggle.textContent = '📋 任务信息 ▲'
@@ -455,6 +456,22 @@ function toggleMapPanel() {
   }
 }
 
+// 音效开关
+function toggleSound() {
+  if (!window.AU) return
+  G.soundEnabled = AU.toggleSound()
+  saveGame()
+  render()
+}
+
+// 音乐开关
+function toggleMusic() {
+  if (!window.AU) return
+  G.musicEnabled = AU.toggleMusic()
+  saveGame()
+  render()
+}
+
 // 暴露到全局（用于内联 onclick）
 const globalFns = [startNewGame, continueGame, selectStarter, travelTo, challengeGym,
   tryWildEncounter, battleSub, playerAttack, tryFlee, enemyTurn,
@@ -462,13 +479,58 @@ const globalFns = [startNewGame, continueGame, selectStarter, travelTo, challeng
   advanceDialogue, skipDialogue, finishDialogue, startDialogueBattle, restartGame, makeChoice,
   confirmMove, cancelMove, toggleMap, learnMoveDirect, forgetMove, skipMove,
   openPokemonManager, closePokemonManager, prepareRelearnMove, cancelRelearnMove, swapRelearnMove,
-  toggleMapPanel]
+  toggleMapPanel, toggleSound, toggleMusic]
 for (const fn of globalFns) window[fn.name] = fn
 
+// 当前 BGM 标记，用于切换场景时自动换曲
+let currentBgmTrack = null
+function updateBgmForView() {
+  if (!window.AU) return
+  let track = null
+  if (G.view === 'battle') {
+    // 道馆战 / 四天王 / 劲敌 用 gym 曲，普通野生/训练家用 battle 曲
+    const b = G.battle
+    if (b && (b.type === 'gym' || b.type === 'rival' || b.type === 'elite')) track = 'gym'
+    else track = 'battle'
+  } else if (G.view === 'explore' || G.view === 'worldMap' || G.view === 'bag' ||
+             G.view === 'pokemon' || G.view === 'pokedex' || G.view === 'shop' || G.view === 'center') {
+    track = 'explore'
+  } else if (G.view === 'start' || G.view === 'dialogue' || G.view === 'choose' || G.view === 'choice') {
+    track = 'title'
+  }
+  if (track !== currentBgmTrack) {
+    currentBgmTrack = track
+    AU.setBgm(track)
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  if (window.AU) AU.init()
   if (loadGame()) {
     G.view = G.battle ? 'battle' : 'explore'
     if (G.player.position === 'town') G.player.position = 'pallet'
   }
+  // 同步音频设置到引擎
+  if (window.AU) {
+    AU.setSoundOn(G.soundEnabled)
+    AU.setMusicOn(G.musicEnabled)
+    AU.setVolume(G.volume)
+  }
+  // 首次用户交互解锁音频（浏览器自动播放策略）
+  const unlock = () => {
+    if (window.AU) AU.resume()
+    document.removeEventListener('click', unlock)
+    document.removeEventListener('keydown', unlock)
+    document.removeEventListener('touchstart', unlock)
+  }
+  document.addEventListener('click', unlock)
+  document.addEventListener('keydown', unlock)
+  document.addEventListener('touchstart', unlock)
+  // 按钮点击音（事件委托，覆盖所有 .btn）
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn')
+    if (btn && window.AU) AU.playClick()
+  })
   render()
+  updateBgmForView()
 })

@@ -39,6 +39,9 @@ function createInitialState() {
     pendingMoveLearn: null,
     pokemonManager: null,
     logs: ['欢迎来到宝可梦世界！'],
+    soundEnabled: true,
+    musicEnabled: true,
+    volume: 0.4,
   }
 }
 
@@ -69,6 +72,14 @@ function loadGame() {
       if (G.showBigMap === undefined) G.showBigMap = false
       if (G.pendingMoveLearn === undefined) G.pendingMoveLearn = null
       if (G.pokemonManager === undefined) G.pokemonManager = null
+      if (G.soundEnabled === undefined) G.soundEnabled = true
+      if (G.musicEnabled === undefined) G.musicEnabled = true
+      if (G.volume === undefined) G.volume = 0.4
+      if (window.AU) {
+        AU.setSoundOn(G.soundEnabled)
+        AU.setMusicOn(G.musicEnabled)
+        AU.setVolume(G.volume)
+      }
       for (const p of [...G.player.pokemon, ...(G.player.pc||[])]) {
         if (!p.ivs) p.ivs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
         if (!p.evs) p.evs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
@@ -103,6 +114,7 @@ function resetGame() {
 function addLog(msg) {
   G.logs.push(msg)
   if (G.logs.length > 100) G.logs.splice(0, 20)
+  if (window.AU) AU.playByMessage(msg)
 }
 
 function getPokemonStats(id, level, ivs, evs, nature) {

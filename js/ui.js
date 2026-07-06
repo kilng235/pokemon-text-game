@@ -14,7 +14,9 @@ function render() {
   if (app) app.className = v === 'worldMap' ? 'world-map-view' : ''
   const filledBadges = Array(G.player.badge).fill('<span class="badges" style="color:var(--success)">●</span>').join('')
   const emptyBadges = Array(8 - G.player.badge).fill('<span class="badges" style="color:var(--border)">●</span>').join('')
-  $('header').innerHTML = `<span>宝可梦文字版</span><span class="badges">${filledBadges}${emptyBadges}</span><span class="money">¥${G.player.money}</span>`
+  const sndIcon = G.soundEnabled ? '🔊' : '🔇'
+  const musIcon = G.musicEnabled ? '🎵' : '🎶'
+  $('header').innerHTML = `<span>宝可梦文字版</span><span class="badges">${filledBadges}${emptyBadges}</span><span class="money">¥${G.player.money}</span><span class="audio-ctrl"><button class="audio-btn" onclick="toggleSound()" title="音效开关">${sndIcon}</button><button class="audio-btn" onclick="toggleMusic()" title="音乐开关">${musIcon}</button></span>`
   // 优先处理待学习的技能
   if (G.pendingMoveLearn && G.pendingMoveLearn.length > 0) {
     renderMoveLearn()
@@ -36,6 +38,8 @@ function render() {
   else if (v === 'choice') renderChoice()
   try { renderMap() } catch(e) { console.warn('map:',e) }
   renderLog()
+  // 根据当前场景切换 BGM
+  if (window.AU && typeof updateBgmForView === 'function') updateBgmForView()
 }
 
 // 学习新技能界面
