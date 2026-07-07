@@ -294,7 +294,7 @@ function calcDamage(atkPkm, defPkm, move) {
   }
 
   // 命中判定
-  const baseAcc = MOVE_ACCURACY[move.id] || 100
+  const baseAcc = MOVE_ACCURACY[move.id] != null ? MOVE_ACCURACY[move.id] : 100
   const effAcc = atkPkm.accuracy + (atkPkm.tempDebuffs?.accuracy || 0)
   const effEva = defPkm.evasion + (defPkm.tempDebuffs?.evasion || 0)
   const hitChance = baseAcc * (effAcc / effEva)
@@ -304,14 +304,6 @@ function calcDamage(atkPkm, defPkm, move) {
   }
   // 0威力技能只触发效果，不造成伤害（但仍需命中判定）
   if (move.power === 0) {
-    const baseAcc = MOVE_ACCURACY[move.id] || 100
-    const effAcc = atkPkm.accuracy + (atkPkm.tempDebuffs?.accuracy || 0)
-    const effEva = defPkm.evasion + (defPkm.tempDebuffs?.evasion || 0)
-    const hitChance = baseAcc * (effAcc / effEva)
-    if (Math.random() * 100 >= hitChance) {
-      addLog(`${atkPkm.name} 的 ${move.name} 没有命中！`)
-      return { damage: 0, effectiveness: 0, missed: true }
-    }
     return { damage: 0, effectiveness: 1, missed: false }
   }
   const isSp = ['火','水','草','电','冰','超能','幽灵','龙','恶'].includes(move.type)
