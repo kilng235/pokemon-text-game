@@ -711,6 +711,15 @@ function getMapLabelOffset(regionKey, id) {
   return (MAP_LABEL_OFFSET_OVERRIDES[regionKey] && MAP_LABEL_OFFSET_OVERRIDES[regionKey][id]) || { x: 0, y: 0 }
 }
 
+// 节点视觉半径（用于连线避让：让连线从节点边缘开始，不穿过节点圆圈）
+function getMapNodeRadius(loc) {
+  if (!loc) return 22
+  const type = loc[2]
+  if (type === 'town' || type === 'cave') return 30
+  if (type === 'route' || type === 'water') return 18
+  return 22
+}
+
 function renderExpandedMapLegend() {
   return `
     <div class="map-legend map-legend-expanded">
@@ -740,12 +749,24 @@ function renderExpandedMapStage(regionKey, currentId, targetId) {
     if (!from || !to) continue
     const dx = to.x - from.x
     const dy = to.y - from.y
-    const length = Math.sqrt(dx * dx + dy * dy)
-    const angle = Math.atan2(dy, dx) * 180 / Math.PI
+    const dist = Math.sqrt(dx * dx + dy * dy)
+    if (dist < 1) continue
+    // 单位方向向量
+    const ux = dx / dist
+    const uy = dy / dist
+    // 连线起点/终点从节点边缘开始，避开节点 core
+    const rFrom = getMapNodeRadius(LOCATIONS[fromId])
+    const rTo = getMapNodeRadius(LOCATIONS[toId])
+    const startX = from.x + ux * rFrom
+    const startY = from.y + uy * rFrom
+    const endX = to.x - ux * rTo
+    const endY = to.y - uy * rTo
+    const length = Math.max(0, Math.sqrt((endX - startX) ** 2 + (endY - startY) ** 2))
+    const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI
     const classes = ['map-link']
     if (fromId === currentId || toId === currentId) classes.push('is-current-path')
     if (targetId && (fromId === targetId || toId === targetId)) classes.push('is-target-path')
-    linesHtml += `<div class="${classes.join(' ')}" style="left:${from.x}px;top:${from.y}px;width:${length}px;transform:rotate(${angle}deg);"></div>`
+    linesHtml += `<div class="${classes.join(' ')}" style="left:${startX}px;top:${startY}px;width:${length}px;transform:rotate(${angle}deg);"></div>`
   }
 
   let nodesHtml = ''
