@@ -302,9 +302,16 @@ function calcDamage(atkPkm, defPkm, move) {
     addLog(`${atkPkm.name} 的 ${move.name} 没有命中！`)
     return { damage: 0, effectiveness: 0, missed: true }
   }
-  // 0威力技能只触发效果，不造成伤害
+  // 0威力技能只触发效果，不造成伤害（但仍需命中判定）
   if (move.power === 0) {
-    addLog(`${atkPkm.name} 使用了 ${move.name}！`)
+    const baseAcc = MOVE_ACCURACY[move.id] || 100
+    const effAcc = atkPkm.accuracy + (atkPkm.tempDebuffs?.accuracy || 0)
+    const effEva = defPkm.evasion + (defPkm.tempDebuffs?.evasion || 0)
+    const hitChance = baseAcc * (effAcc / effEva)
+    if (Math.random() * 100 >= hitChance) {
+      addLog(`${atkPkm.name} 的 ${move.name} 没有命中！`)
+      return { damage: 0, effectiveness: 0, missed: true }
+    }
     return { damage: 0, effectiveness: 1, missed: false }
   }
   const isSp = ['火','水','草','电','冰','超能','幽灵','龙','恶'].includes(move.type)
@@ -589,16 +596,23 @@ function enemyTurn() {
   const move = usable[Math.floor(Math.random() * usable.length)]
   move.currentPp--
 
-  if (move.effect && ['sleep','paralyze'].includes(move.effect)) {
+  if (move.effect && ['sleep','paralyze','poison','burn','confuse','disable'].includes(move.effect)) {
     const eff = getEffectiveness(move.type, pkm.types)
     if (eff > 0) handleStatusEffect(pkm, move.effect)
     b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     b.turn = 'player'; render(); return
   }
 
-  if (move.effect && ['accuracyDown','speedDown'].includes(move.effect)) {
+  if (move.effect && ['accuracyDown','speedDown','atkDown','defDown','spDefDown','spAtkDown','poisonSpeedDown','clearAll'].includes(move.effect)) {
     const eff = getEffectiveness(move.type, pkm.types)
     if (eff > 0) handleStatusEffect(pkm, move.effect)
+    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
+    b.turn = 'player'; render(); return
+  }
+
+  // 敌方 self-buff
+  if (move.effect && ['atkUp','defUp','spAtkUp','spDefUp','speedUp','evasionUp','atkUpDefUp','atkUpSpeedUp','atkUpSpAtkUp','defUpSpDefUp','spAtkUpSpDefUpSpeedUp','recover','recoverAll','leechSeed'].includes(move.effect)) {
+    applySelfBuff(move, b.enemy, pkm)
     b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     b.turn = 'player'; render(); return
   }
