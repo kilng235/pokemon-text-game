@@ -373,7 +373,8 @@ const MAP_REGION_CONFIGS = {
     subtitle: '主线、道馆与相邻区域一眼看清',
     stageWidth: 2000,
     stageHeight: 1200,
-    paddingX: 120,
+    paddingLeft: 60,
+    paddingRight: 180,
     paddingY: 80,
     nodeIds: Object.keys(MAP_COORDS).filter(id => !id.startsWith('island')),
   },
@@ -682,12 +683,14 @@ function getMapRegionConnections(regionKey) {
 function getMapStagePoint(regionKey, id) {
   const region = MAP_REGION_CONFIGS[regionKey]
   if (!region) return null
+  const paddingLeft = region.paddingLeft != null ? region.paddingLeft : region.paddingX
+  const paddingRight = region.paddingRight != null ? region.paddingRight : region.paddingX
   const layout = MAP_STAGE_LAYOUTS[regionKey] && MAP_STAGE_LAYOUTS[regionKey][id]
   if (layout) {
-    const innerW = region.stageWidth - region.paddingX * 2
+    const innerW = region.stageWidth - paddingLeft - paddingRight
     const innerH = region.stageHeight - region.paddingY * 2
     return {
-      x: region.paddingX + (layout.x / 100) * innerW,
+      x: paddingLeft + (layout.x / 100) * innerW,
       y: region.paddingY + (layout.y / 100) * innerH,
     }
   }
@@ -695,11 +698,11 @@ function getMapStagePoint(regionKey, id) {
   if (!coord) return null
   const spanX = Math.max(1, region.bounds.maxX - region.bounds.minX)
   const spanY = Math.max(1, region.bounds.maxY - region.bounds.minY)
-  const innerW = region.stageWidth - region.paddingX * 2
+  const innerW = region.stageWidth - paddingLeft - paddingRight
   const innerH = region.stageHeight - region.paddingY * 2
   const offset = (MAP_STAGE_POINT_OFFSETS[regionKey] && MAP_STAGE_POINT_OFFSETS[regionKey][id]) || { x: 0, y: 0 }
   return {
-    x: region.paddingX + ((coord.x - region.bounds.minX) / spanX) * innerW + offset.x,
+    x: paddingLeft + ((coord.x - region.bounds.minX) / spanX) * innerW + offset.x,
     y: region.paddingY + ((coord.y - region.bounds.minY) / spanY) * innerH + offset.y,
   }
 }
