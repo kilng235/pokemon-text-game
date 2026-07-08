@@ -138,7 +138,7 @@ function renderExplore() {
   const loc = getLocation(G.player.position)
   if (!loc) { G.player.position = 'pallet'; render(); return }
   const storyKey = checkStoryTrigger(G.player.position)
-  if (storyKey) {
+  if (storyKey && G.dialogue?.eventKey !== storyKey) {
     const ev = STORY_EVENTS[storyKey]
     G.dialogue = { eventKey: storyKey, lines: ev.dialogue, index: 0, battle: ev.battle !== null, choices: ev.choices, canSkip: false }
     G.view = 'dialogue'

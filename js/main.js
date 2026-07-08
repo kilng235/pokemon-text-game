@@ -1,3 +1,5 @@
+let encounterTimer = null
+
 function toggleMap() {
   G.showBigMap = false
   G.view = 'worldMap'
@@ -102,7 +104,8 @@ function travelTo(key) {
   G.view = 'explore'; saveGame(); render()
   // 自动遇敌（非城镇）
   if (loc[2] !== 'town') {
-    setTimeout(() => tryWildEncounter(true), 200)
+    if (encounterTimer) clearTimeout(encounterTimer)
+    encounterTimer = setTimeout(() => { encounterTimer = null; tryWildEncounter(true) }, 200)
   }
 }
 

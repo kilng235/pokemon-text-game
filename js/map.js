@@ -218,10 +218,6 @@ const LOCATIONS = {
     { common:{ids:[41,42,111],lv:[50,55],w:55}, uncommon:{ids:[113,115,132],lv:[52,55],w:30}, rare:{ids:[150],lv:[70,70],w:15} }],
   safariZone: ['狩猎地带','浅红市北部的野生原野保护区。','route',false,false,['fuchsia'],
     { common:{ids:[29,30,32,33,102,111],lv:[20,28],w:50}, uncommon:{ids:[113,115,123,127],lv:[24,30],w:35}, rare:{ids:[112,128,132],lv:[26,32],w:15} }],
-  route12: ['12号道路','紫苑镇通往南方的道路。','route',false,false,['lavender','route10','route11'],
-    { common:{ids:[16,43,69],lv:[20,26],w:60}, uncommon:{ids:[44,70,83],lv:[22,28],w:30}, rare:{ids:[132,143],lv:[25,30],w:10} }],
-  route17: ['17号道路','彩虹市到浅红市的自行车道。','route',false,false,['celadon','route16','fuchsia','viridianForest'],
-    { common:{ids:[16,19,77],lv:[22,28],w:60}, uncommon:{ids:[22,78,84],lv:[24,30],w:30}, rare:{ids:[128,132],lv:[27,32],w:10} }],
   // 七之岛（火红/叶绿新增地区）
   island1: ['脐眼岛','七之岛的玄关口，有宝可梦中心和商店。','town',true,false,['vermilion','island1_route1','island2'],
     { common:{ids:[16,278],lv:[25,30],w:55}, uncommon:{ids:[277,279],lv:[28,33],w:30}, rare:{ids:[25,176],lv:[30,35],w:15} }],
