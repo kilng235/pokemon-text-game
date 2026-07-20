@@ -2,7 +2,7 @@
 // 每个任务: { id, name, desc, guidance, check() → bool }
 
 const QUEST_ORDER = [
-  'choose_starter', 'first_rival', 'go_cerulean', 'get_package',
+  'choose_starter', 'first_rival', 'go_viridian', 'get_package',
   'deliver_package', 'get_pokedex', 'go_pewter', 'beat_brock',
   'mt_moon', 'beat_misty', 'bill_house', 'ss_anne',
   'beat_surge', 'rock_tunnel', 'pokemon_tower', 'beat_erika',
@@ -10,7 +10,8 @@ const QUEST_ORDER = [
   'safari_zone', 'beat_blaine', 'beat_giovanni',
   'final_rival', 'elite_four',
   // 七之岛篇章
-  'sevii_arrival', 'sevii_rocket', 'sevii_ruins', 'sevii_tower',
+  'sevii_arrival', 'sevii_lostelle', 'sevii_mt_ember', 'sevii_dotted_hole',
+  'sevii_rocket', 'sevii_celio', 'sevii_icefall', 'sevii_birth', 'sevii_tower',
 ]
 
 const QUESTS = {
@@ -26,16 +27,16 @@ const QUESTS = {
     guidance: '小茂向你发起了挑战！用你刚选的宝可梦应战吧。',
     check: () => G.storyFlags.firstRivalDone,
   },
-  go_cerulean: {
-    id: 'go_cerulean', name: '前往华蓝市',
-    desc: '沿着道路前往华蓝市',
-    guidance: '前往华蓝市，那里有大木博士需要的包裹。',
-    check: () => G.player.position === 'cerulean',
+  go_viridian: {
+    id: 'go_viridian', name: '前往常青市',
+    desc: '沿着1号道路前往常青市',
+    guidance: '向北穿过1号道路，前往常青市领取大木博士的包裹。',
+    check: () => G.player.position === 'viridian',
   },
   get_package: {
     id: 'get_package', name: '领取包裹',
     desc: '去友好商店领取大木博士的包裹',
-    guidance: '去华蓝市的友好商店取一个包裹。',
+    guidance: '去常青市的友好商店取一个包裹。',
     check: () => G.storyFlags.gotPackage,
   },
   deliver_package: {
@@ -168,25 +169,55 @@ const QUESTS = {
   sevii_arrival: {
     id: 'sevii_arrival', name: '启程七之岛',
     desc: '前往脐眼岛，开启七之岛的冒险',
-    guidance: '从枯叶市乘船前往七之岛，探索这片未知的群岛。',
+    guidance: '从枯叶市乘船前往七之岛，Celio 在那里等你。',
     check: () => G.storyFlags.seviiArrivalDone,
   },
+  sevii_lostelle: {
+    id: 'sevii_lostelle', name: '寻找 Lostelle',
+    desc: '在三之岛森林救出失踪的小女孩',
+    guidance: '前往三之岛的树果森林，救出被火箭队残党劫持的小女孩 Lostelle。',
+    check: () => G.storyFlags.seviiLostelleDone,
+  },
+  sevii_mt_ember: {
+    id: 'sevii_mt_ember', name: 'Ember 山的红宝石',
+    desc: '在 Ember 山火山口击败火箭队，取得红宝石',
+    guidance: '前往脐眼岛北部的 Ember 山，从火箭队手中夺取红宝石。',
+    check: () => G.storyFlags.seviiMtEmberDone,
+  },
+  sevii_dotted_hole: {
+    id: 'sevii_dotted_hole', name: '谜之遗迹',
+    desc: '在战怪岛谜之遗迹取得蓝宝石',
+    guidance: '前往战怪岛的谜之遗迹（Dotted Hole），找到传说中的蓝宝石。',
+    check: () => G.storyFlags.seviiDottedHoleDone,
+  },
   sevii_rocket: {
-    id: 'sevii_rocket', name: '火箭队残党',
-    desc: '击败群兰岛火箭队仓库的残党',
-    guidance: '前往群兰岛的火箭队仓库，彻底击败火箭队残党。',
+    id: 'sevii_rocket', name: '夺回蓝宝石',
+    desc: '攻入火箭队仓库，夺回被抢走的蓝宝石',
+    guidance: '前往群兰岛的火箭队仓库，击败精英夺回蓝宝石。',
     check: () => G.storyFlags.seviiRocketDone,
   },
-  sevii_ruins: {
-    id: 'sevii_ruins', name: '遗迹的秘密',
-    desc: '探索战怪岛遗迹，揭开代欧奇希斯的谜团',
-    guidance: '前往战怪岛的遗迹谷，寻找传说中的宝可梦。',
-    check: () => G.storyFlags.seviiRuinsDone,
+  sevii_celio: {
+    id: 'sevii_celio', name: '开通全岛网络',
+    desc: '把红蓝宝石交给 Celio，开通七之岛网络',
+    guidance: '回到脐眼岛，把红蓝宝石交给 Celio，开通全岛通行。',
+    check: () => G.storyFlags.seviiCelioDone,
+  },
+  sevii_icefall: {
+    id: 'sevii_icefall', name: '冰霜洞穴事件',
+    desc: '协助四天王科拿击退火箭队残党',
+    guidance: '前往四之岛的冰霜洞穴，协助科拿击退火箭队残党。',
+    check: () => G.storyFlags.seviiIcefallDone,
+  },
+  sevii_birth: {
+    id: 'sevii_birth', name: 'Birth Island',
+    desc: '探索绝壁岛外海的神秘小岛',
+    guidance: '前往绝壁岛外海的 Birth Island，揭开宇宙宝可梦的谜团。',
+    check: () => G.storyFlags.seviiBirthDone,
   },
   sevii_tower: {
     id: 'sevii_tower', name: '征服七之岛',
     desc: '登顶训练家之塔，完成七之岛的全部挑战',
-    guidance: '前往绝壁岛的训练家之塔，证明你是最强的训练家！',
+    guidance: '前往绝壁岛的训练家之塔，登顶证明你是最强的训练家！',
     check: () => G.storyFlags.seviiTowerDone,
   },
 }

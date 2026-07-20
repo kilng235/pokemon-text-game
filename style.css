@@ -23,6 +23,27 @@
   --radius-lg: 16px;
   --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+  --font-pixel: 'Press Start 2P', 'Courier New', monospace;
+  --font-num: 'VT323', 'Courier New', monospace;
+
+  /* 地图地形色板：珊瑚(城镇) / 青绿(道路) / 灰紫(洞穴) / 天蓝(水道) */
+  --terrain-town: #ef6b5a;
+  --terrain-town-bg: #fdeeeb;
+  --terrain-route: #14b8a6;
+  --terrain-route-bg: #e6faf7;
+  --terrain-cave: #8b7da6;
+  --terrain-cave-bg: #f1edf6;
+  --terrain-water: #38bdf8;
+  --terrain-water-bg: #e3f6fe;
+  --terrain-special: #f59e0b;
+  --terrain-special-bg: #fffbeb;
+  /* 地图画布背景与网格 */
+  --map-canvas: #fbf8f1;
+  --map-canvas-grid: rgba(139,125,166,0.10);
+  /* 连线色 */
+  --map-link: #d4cfc4;
+  --map-link-current: #3b82f6;
+  --map-link-target: #f59e0b;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -41,7 +62,7 @@ body {
 }
 
 #app {
-  width: 720px;
+  width: 1040px;
   max-width: 100%;
 }
 
@@ -53,8 +74,6 @@ body {
 .world-map-view .world-map-stage-wrap {
   overflow: auto;
   padding: 10px 18px 14px;
-  display: flex;
-  justify-content: center;
 }
 
 #header {
@@ -106,17 +125,196 @@ body {
 
 #main-wrap {
   display: flex;
-  gap: 12px;
+  gap: 24px;
   min-height: 360px;
 }
 
 #main {
-  flex: 1;
+  flex: 0 0 720px;
+  width: 720px;
   min-width: 0;
 }
 
 #map-panel {
   display: none;
+}
+
+/* 侧边栏队伍面板 */
+#team-panel {
+  flex: 0 0 280px;
+  width: 280px;
+  max-width: 280px;
+  font-size: 13px;
+  align-self: flex-start;
+  position: sticky;
+  top: 0;
+}
+#team-panel:empty { display: none; }
+
+.team-panel-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.team-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.team-panel-label { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.team-panel-count { font-size: 11px; color: var(--text-muted); background: var(--surface-hover); padding: 2px 8px; border-radius: 99px; }
+
+.team-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.team-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface-hover);
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--border);
+  cursor: pointer;
+  position: relative;
+  transition: background 0.12s ease, border-left-color 0.12s ease;
+  min-height: 56px;
+}
+.team-item:hover { background: var(--accent-subtle); }
+.team-item.is-active {
+  border-left-color: var(--accent);
+  background: var(--accent-subtle);
+}
+.team-item.is-fainted {
+  opacity: 0.55;
+  filter: grayscale(0.6);
+  border-left-color: var(--danger);
+}
+.team-item.empty {
+  justify-content: center;
+  background: transparent;
+  border-left-color: var(--border);
+  cursor: default;
+  min-height: 28px;
+  padding: 6px;
+}
+.team-empty-slot { color: var(--text-muted); font-size: 11px; }
+
+.team-sprite {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.team-sprite img {
+  width: 56px;
+  height: 56px;
+  image-rendering: pixelated;
+}
+.team-shiny-star {
+  position: absolute;
+  top: -6px;
+  right: -4px;
+  font-size: 13px;
+  filter: drop-shadow(0 0 3px #fff200);
+}
+
+.team-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.team-name-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 13px;
+}
+.team-name {
+  color: var(--text-primary);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 130px;
+}
+.team-lv { color: var(--text-muted); font-size: 12px; flex-shrink: 0; }
+
+.team-status {
+  font-size: 11px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.team-status-sleep { color: #8a7fff; }
+.team-status-paralyze { color: #f0c020; }
+.team-status-poison { color: #c040c0; }
+.team-status-burn { color: #f08030; }
+.team-status-confuse { color: #ff6090; }
+
+.team-hp-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.team-types { display: flex; gap: 2px; flex-wrap: wrap; margin-top: 1px; }
+.team-type-badge {
+  display: inline-block;
+  padding: 0 4px;
+  font-size: 9px;
+  font-weight: 600;
+  color: #fff;
+  border-radius: 2px;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+  line-height: 1.4;
+}
+.team-hp-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.team-hp-bar-fill { height: 100%; transition: width 0.25s ease, background 0.25s ease; }
+.team-hp-text { font-size: 11px; color: var(--text-muted); flex-shrink: 0; min-width: 54px; text-align: right; }
+
+.team-active-tag {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.team-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+.team-summary-item {
+  background: var(--surface-hover);
+  padding: 1px 6px;
+  border-radius: 4px;
 }
 
 .map-title { color: var(--text-secondary); font-size: 12px; font-weight: 700; margin-bottom: 4px; text-align: center; }
@@ -222,28 +420,664 @@ body {
 .pkm-iv { font-size: 10px; color: var(--text-muted); }
 .pkm-ev { font-size: 10px; color: var(--text-muted); }
 
-.battle-enemy, .battle-player {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 12px 16px;
+/* === 战斗场景：GBA 风格重构 === */
+/* ════════════════════════════════════════════
+   对战舞台 · 复古掌机风
+   ════════════════════════════════════════════ */
+.battle-stage {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  min-height: 480px;
+  padding: 0;
   margin: 6px 0;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  border: 3px solid #2A2A2A;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.22), inset 0 0 0 2px rgba(255,255,255,0.28);
+  image-rendering: pixelated;
 }
-.battle-divider { text-align: center; color: var(--text-muted); margin: 4px 0; font-size: 11px; font-weight: 600; }
-.battle-msg {
+
+/* 战斗背景：按场景类型（天空 + 大地双色） */
+.battle-stage.battle-bg-route {
+  background: linear-gradient(180deg, #AEE3FF 0%, #7FC9F2 44%, #63B46F 44%, #3E7D4C 100%);
+}
+.battle-stage.battle-bg-cave {
+  background: linear-gradient(180deg, #4A4038 0%, #5C5044 44%, #6E5F50 44%, #4A3F34 100%);
+}
+.battle-stage.battle-bg-water {
+  background: linear-gradient(180deg, #8FD4F0 0%, #4FA6D4 44%, #2E7DA8 44%, #1C5678 100%);
+}
+.battle-stage.battle-bg-town {
+  background: linear-gradient(180deg, #FFE0B0 0%, #F5B878 44%, #C8C2B4 44%, #948E80 100%);
+}
+
+/* ── 背景层次 ── */
+.battle-layer { position: absolute; inset: 0; pointer-events: none; }
+
+/* 天空层：顶部光晕 + 太阳 */
+.battle-sky {
+  background:
+    radial-gradient(circle at 78% 12%, rgba(255,252,220,0.95) 0 26px, rgba(255,244,180,0.5) 26px 52px, transparent 52px),
+    linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 30%);
+  z-index: 0;
+}
+.battle-bg-cave .battle-sky {
+  background:
+    radial-gradient(circle at 70% 10%, rgba(255,240,200,0.16) 0 40px, transparent 40px),
+    linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 30%);
+}
+
+/* 云层：像素云缓慢漂移 */
+.battle-clouds { z-index: 1; }
+.battle-clouds i {
+  position: absolute;
+  background: rgba(255,255,255,0.85);
+  width: 74px; height: 20px;
+  box-shadow:
+    16px -12px 0 0 rgba(255,255,255,0.85),
+    38px -6px 0 0 rgba(255,255,255,0.85),
+    -4px 6px 0 0 rgba(255,255,255,0.6);
+  animation: cloudDrift 34s linear infinite;
+}
+.battle-clouds i:nth-child(1) { top: 9%;  left: -15%; animation-duration: 38s; }
+.battle-clouds i:nth-child(2) { top: 20%; left: -45%; transform: scale(0.7); animation-duration: 50s; animation-delay: -18s; opacity: 0.75; }
+.battle-clouds i:nth-child(3) { top: 4%;  left: -70%; transform: scale(1.25); animation-duration: 62s; animation-delay: -30s; opacity: 0.6; }
+.battle-bg-cave .battle-clouds i { display: none; }
+@keyframes cloudDrift { from { translate: 0 0; } to { translate: 130vw 0; } }
+
+/* 地面层：透视网格 + 地平线高光 */
+.battle-ground {
+  z-index: 2;
+  top: 44%;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.35) 0 3px, transparent 3px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.14) 0 2px, transparent 2px 56px),
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.10) 0 2px, transparent 2px 34px);
+  transform: perspective(420px) rotateX(38deg);
+  transform-origin: top center;
+  opacity: 0.8;
+}
+
+/* 扫描线 + 暗角：CRT 质感 */
+.battle-scanlines {
+  position: absolute; inset: 0; z-index: 60; pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 62%, rgba(0,0,0,0.20) 100%),
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.07) 0 1px, transparent 1px 3px);
+}
+
+/* ──  arena 布局 ── */
+.battle-arena {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  min-height: 420px;
+  padding: 14px;
+  gap: 0;
+}
+
+.battle-enemy-side {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+.battle-player-side {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.battle-center {
+  grid-column: 1 / span 2;
+  grid-row: 1 / span 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ── 信息卡片：厚边框 + 硬阴影像素卡 ── */
+.enemy-info-card, .player-info-card {
+  background: linear-gradient(180deg, #FFFDF2 0%, #F6EFD8 100%);
+  border: 3px solid #2A2A2A;
+  border-radius: 6px;
+  padding: 8px 12px 9px;
+  min-width: 210px;
+  max-width: 250px;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.28), inset 0 2px 0 rgba(255,255,255,0.9);
+  font-size: 12px;
+  position: relative;
+}
+.player-info-card { align-self: flex-end; }
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin: 3px 0;
+}
+.info-row .pkm-name { font-size: 14px; font-weight: 800; color: #2A2A2A; letter-spacing: 0.5px; }
+.info-row .pkm-level {
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  color: #fff;
+  background: #2A2A2A;
+  padding: 3px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+}
+
+/* 属性徽章 */
+.type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #fff;
+  border-radius: 3px;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.55);
+  letter-spacing: 1px;
+  border: 2px solid rgba(0,0,0,0.25);
+  box-shadow: 0 2px 0 rgba(0,0,0,0.22);
+  margin-right: 3px;
+}
+
+/* 状态徽章 */
+.status-badges { display: flex; gap: 4px; margin-top: 3px; flex-wrap: wrap; }
+.status-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+  border: 2px solid rgba(0,0,0,0.25);
+  box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+}
+.status-sleep { background: #8a7fff; }
+.status-paralyze { background: #F8D030; color: #333; }
+.status-poison { background: #A040A0; }
+.status-burn { background: #F08030; }
+.status-confuse { background: #F85888; }
+
+/* ── 站台：像素椭圆战斗平台 ── */
+.enemy-platform, .player-platform {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+  min-width: 150px;
+}
+.enemy-platform::before, .player-platform::before {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 132px;
+  height: 34px;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.55) 0 38%, rgba(255,255,255,0.18) 39% 62%, transparent 63%);
+  border: 3px solid rgba(255,255,255,0.5);
+  border-radius: 50%;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.18);
+  z-index: 0;
+}
+
+.battle-stage .sprite-container { margin: 0; min-height: 140px; z-index: 1; }
+.battle-stage .sprite-img { width: 118px; height: 118px; }
+.battle-stage .sprite-container.enemy .sprite-img { filter: drop-shadow(0 5px 0 rgba(0,0,0,0.25)); }
+
+/* ── 中央消息框 ── */
+.battle-divider {
+  font-family: var(--font-pixel);
   text-align: center;
-  color: var(--warning);
-  padding: 6px 10px;
-  margin: 4px 0;
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: var(--radius-sm);
-  background: var(--warning-bg);
+  color: #FFE9A8;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.6);
+  font-size: 12px;
+  background: rgba(20,18,14,0.55);
+  padding: 8px 16px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-radius: 4px;
+  letter-spacing: 2px;
 }
-.battle-status { text-align: center; font-size: 11px; color: var(--text-muted); margin: 4px 0; }
-.hp-row { font-size: 12px; color: var(--success); margin: 2px 0; }
-.exp-row { font-size: 11px; color: var(--text-muted); }
+.battle-msg {
+  position: relative;
+  text-align: center;
+  color: #2A2A2A;
+  padding: 10px 26px 10px 16px;
+  font-size: 14px;
+  font-weight: 800;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #FFFDF2 0%, #F6EFD8 100%);
+  border: 3px solid #2A2A2A;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.9);
+  max-width: 300px;
+  animation: msgBounce 0.3s ease;
+  letter-spacing: 0.5px;
+}
+.battle-msg::after {
+  content: '▼';
+  position: absolute;
+  right: 8px;
+  bottom: 4px;
+  font-size: 9px;
+  color: #2A2A2A;
+  animation: blinkCursor 0.9s steps(2) infinite;
+}
+@keyframes blinkCursor { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+@keyframes msgBounce {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ── 对战状态角标 ── */
+.battle-status {
+  font-family: var(--font-pixel);
+  text-align: center;
+  font-size: 8px;
+  color: #FFE9A8;
+  margin: 4px 0;
+  padding: 5px 10px;
+  background: rgba(20,18,14,0.62);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 4px;
+  display: inline-block;
+  position: absolute;
+  bottom: 10px;
+  right: 14px;
+  z-index: 40;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.6);
+}
+
+/* ── EXP 条 ── */
+.exp-row { display: flex; align-items: center; gap: 5px; margin-top: 4px; }
+.exp-label { font-family: var(--font-pixel); font-size: 7px; color: #2A6DB0; font-weight: 700; }
+.exp-bar { flex: 1; height: 6px; background: rgba(0,0,0,0.22); border: 2px solid #2A2A2A; border-radius: 3px; overflow: hidden; }
+.exp-bar-fill { height: 100%; background: linear-gradient(180deg, #7CD4F8 0%, #3E96D8 100%); transition: width 0.4s ease; }
+.exp-text { font-family: var(--font-num); font-size: 13px; color: #2A2A2A; line-height: 1; }
+
+/* ── 战斗 HP 条：GBA 经典样式 ── */
+.battle-stage .hp-bar-container { margin: 5px 0; gap: 7px; }
+.battle-stage .hp-bar-wrapper {
+  height: 11px;
+  border: 2px solid #2A2A2A;
+  border-radius: 6px;
+  background: #5A4A42;
+  box-shadow: inset 0 2px 0 rgba(0,0,0,0.3);
+  overflow: hidden;
+  flex: 1;
+}
+.battle-stage .hp-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #8CE8A0 0%, #3CB860 55%, #2A9A4C 100%);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,0.45);
+  transition: width 0.5s ease, background 0.3s ease;
+}
+.battle-stage .hp-bar-fill.hp-medium { background: linear-gradient(180deg, #FFE08A 0%, #F5B838 55%, #D89A20 100%); }
+.battle-stage .hp-bar-fill.hp-low { background: linear-gradient(180deg, #FF9E8E 0%, #F05848 55%, #D03828 100%); animation: hpPulse 1s ease-in-out infinite; }
+.battle-stage .hp-text {
+  font-family: var(--font-num);
+  color: #2A2A2A;
+  min-width: 58px;
+  font-size: 15px;
+  line-height: 1;
+  text-align: right;
+  font-weight: 700;
+}
+
+/* === 招式四宫格 === */
+.moves-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.move-slot {
+  background: linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(0,0,0,0.22) 100%), var(--move-bg, var(--surface));
+  color: #fff;
+  border: 3px solid #2A2A2A;
+  padding: 9px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 0 rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.35);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.move-slot:hover { transform: translateY(-2px); box-shadow: 0 6px 0 rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.35); }
+.move-slot:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.2); }
+.move-slot.empty { background: rgba(0,0,0,0.08); border: 3px dashed rgba(0,0,0,0.2); pointer-events: none; box-shadow: none; }
+.move-slot .move-name { font-size: 14px; font-weight: 800; color: #fff; letter-spacing: 0.5px; text-shadow: 0 2px 0 rgba(0,0,0,0.5); }
+.move-slot .move-type { margin: 0; }
+.move-slot .move-type .type-badge { font-size: 10px; }
+.move-slot .move-stats { color: #FFF6D8; font-family: var(--font-num); font-size: 14px; letter-spacing: 0.5px; text-shadow: 0 2px 0 rgba(0,0,0,0.5); }
+
+.move-confirm {
+  margin: 10px;
+  padding: 13px 15px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.22) 100%), var(--move-bg, var(--accent-subtle));
+  border: 3px solid #2A2A2A;
+  border-radius: 8px;
+  text-align: center;
+  color: #2A2A2A;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.55);
+  box-shadow: 0 5px 0 rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.6);
+}
+.move-confirm-name { font-weight: 800; font-size: 18px; display: flex; justify-content: center; align-items: center; gap: 7px; letter-spacing: 1.5px; color: #2A2A2A; text-shadow: 0 1px 0 rgba(255,255,255,0.6); }
+.move-confirm-stats { font-family: var(--font-num); font-size: 16px; margin: 6px 0; opacity: 1; letter-spacing: 0.5px; color: #4A3D30; text-shadow: 0 1px 0 rgba(255,255,255,0.5); }
+.move-confirm-desc { font-size: 13px; font-style: normal; font-weight: 700; color: #2A2A2A; letter-spacing: 0.5px; border-top: 2px solid rgba(0,0,0,0.18); padding-top: 6px; margin-top: 6px; text-shadow: 0 1px 0 rgba(255,255,255,0.6); }
+
+/* 战斗按钮：像素厚按钮 + 按压下沉 */
+.btn-action {
+  font-size: 14px;
+  font-weight: 800;
+  padding: 11px 18px;
+  border: 3px solid #2A2A2A;
+  border-radius: 6px;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.4);
+  letter-spacing: 1px;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.btn-action:hover { transform: translateY(-2px); box-shadow: 0 6px 0 rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.4); }
+.btn-action:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.2); }
+.btn-attack { background: linear-gradient(180deg, #FF9A4D 0%, #F08030 55%, #D06820 100%); color: #fff; border-color: #2A2A2A; }
+.btn-attack:hover { background: linear-gradient(180deg, #FFAA60 0%, #FF9040 55%, #D06820 100%); color: #fff; }
+.btn-switch { background: linear-gradient(180deg, #82A8F5 0%, #6890F0 55%, #4E74D0 100%); color: #fff; border-color: #2A2A2A; }
+.btn-switch:hover { background: linear-gradient(180deg, #92B8FF 0%, #78A0FF 55%, #4E74D0 100%); color: #fff; }
+.btn-item { background: linear-gradient(180deg, #FFE060 0%, #F8D030 55%, #D8B020 100%); color: #2A2A2A; border-color: #2A2A2A; }
+.btn-item:hover { background: linear-gradient(180deg, #FFF070 0%, #FFE040 55%, #D8B020 100%); color: #2A2A2A; }
+.btn-flee { background: linear-gradient(180deg, #BCBC90 0%, #A8A878 55%, #8E8E60 100%); color: #fff; border-color: #2A2A2A; }
+.btn-flee:hover { background: linear-gradient(180deg, #CCCCA0 0%, #B8B888 55%, #8E8E60 100%); color: #fff; }
+.btn-confirm { background: linear-gradient(180deg, #92DC6A 0%, #78C850 55%, #5CA838 100%); color: #fff; border-color: #2A2A2A; box-shadow: 0 4px 0 rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.4); }
+.btn-confirm:hover { background: linear-gradient(180deg, #A2EC7A 0%, #88D860 55%, #5CA838 100%); color: #fff; }
+.btn-back { background: linear-gradient(180deg, #A0A0A0 0%, #888 55%, #6E6E6E 100%); color: #fff; border-color: #2A2A2A; box-shadow: 0 4px 0 rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.4); }
+
+/* 换宠网格 */
+.switch-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.switch-slot {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 10px;
+  text-align: left;
+  background: var(--surface);
+}
+.switch-head { display: flex; align-items: center; gap: 8px; }
+.switch-sprite { width: 40px; height: 40px; image-rendering: pixelated; }
+.switch-name { font-weight: 700; font-size: 13px; flex: 1; }
+.switch-lv { font-size: 11px; color: var(--text-muted); }
+.switch-active { font-size: 10px; color: var(--accent); background: var(--accent-subtle); padding: 1px 6px; border-radius: 4px; }
+.switch-faint { font-size: 10px; color: var(--danger); background: var(--danger-bg); padding: 1px 6px; border-radius: 4px; }
+.switch-hp { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+.switch-hp-bar { height: 100%; transition: width 0.3s ease; }
+.switch-hp-text { font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); }
+
+/* 道具网格 */
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.item-slot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  text-align: left;
+}
+.item-icon { font-size: 18px; }
+.item-label { font-size: 12px; flex: 1; }
+
+/* === 战斗特效层 === */
+.fx-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  overflow: hidden;
+}
+.fx-flash {
+  position: absolute;
+  inset: 0;
+  opacity: 0.7;
+  animation: fxFlashAnim 0.25s ease-out forwards;
+}
+@keyframes fxFlashAnim {
+  0% { opacity: 0.85; }
+  100% { opacity: 0; }
+}
+
+/* 屏幕震动 */
+.shake-small { animation: shakeSmall 0.4s ease; }
+.shake-medium { animation: shakeMedium 0.5s ease; }
+.shake-large { animation: shakeLarge 0.6s ease; }
+@keyframes shakeSmall {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-3px, 1px); }
+  40% { transform: translate(3px, -1px); }
+  60% { transform: translate(-2px, 2px); }
+  80% { transform: translate(2px, -1px); }
+}
+@keyframes shakeMedium {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-6px, 2px); }
+  30% { transform: translate(6px, -2px); }
+  50% { transform: translate(-5px, 3px); }
+  70% { transform: translate(5px, -2px); }
+  90% { transform: translate(-3px, 1px); }
+}
+@keyframes shakeLarge {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  10% { transform: translate(-10px, 4px) rotate(-1deg); }
+  25% { transform: translate(10px, -3px) rotate(1deg); }
+  40% { transform: translate(-8px, 5px) rotate(-1deg); }
+  55% { transform: translate(9px, -4px) rotate(1deg); }
+  70% { transform: translate(-6px, 3px) rotate(-0.5deg); }
+  85% { transform: translate(4px, -2px) rotate(0.5deg); }
+}
+
+/* 粒子基础 */
+.fx-particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: fxParticleFly 0.9s ease-out forwards;
+  --dx: 50px; --dy: 50px; --rot: 0deg;
+}
+@keyframes fxParticleFly {
+  0% { transform: translate(-50%, -50%) scale(1) rotate(0); opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.2) rotate(var(--rot)); opacity: 0; }
+}
+
+/* 不同粒子形状 */
+.fx-fire { width: 8px; height: 12px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: radial-gradient(circle at 50% 70%, #FFF080, #F08030 60%, #C04020); box-shadow: 0 0 8px #F08030; }
+.fx-water { width: 8px; height: 10px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: radial-gradient(circle at 50% 30%, #D0E8FF, #6890F0); box-shadow: 0 0 6px #6890F0; }
+.fx-bubbles { width: 10px; height: 10px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, #9DB7F5 70%); border: 1px solid #6890F0; }
+.fx-leaves { width: 10px; height: 6px; border-radius: 50% 0; background: linear-gradient(135deg, #A7DB8D, #78C850); transform: translate(-50%, -50%) rotate(0); }
+.fx-vine { width: 4px; height: 16px; background: linear-gradient(180deg, #A7DB8D, #78C850); border-radius: 2px; }
+.fx-seeds { width: 8px; height: 8px; border-radius: 50%; background: radial-gradient(circle, #78C850, #4A8030); }
+.fx-spark { width: 4px; height: 12px; background: linear-gradient(180deg, #FFFAA0, #F8D030); box-shadow: 0 0 8px #F8D030; border-radius: 2px; }
+.fx-thunder { width: 6px; height: 30px; background: linear-gradient(180deg, #FFFFFF, #F8D030); box-shadow: 0 0 12px #FFFFFF; clip-path: polygon(40% 0, 100% 40%, 60% 50%, 80% 100%, 0 60%, 40% 50%); }
+.fx-snow { width: 8px; height: 8px; background: #FFFFFF; clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%); box-shadow: 0 0 4px #FFFFFF; }
+.fx-ice { width: 10px; height: 14px; background: linear-gradient(180deg, #FFFFFF, #98D8D8); clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); box-shadow: 0 0 6px #98D8D8; }
+.fx-slash { width: 24px; height: 4px; background: linear-gradient(90deg, transparent, #FFFFFF, transparent); border-radius: 2px; box-shadow: 0 0 8px rgba(255,255,255,0.8); }
+.fx-impact { width: 16px; height: 16px; background: radial-gradient(circle, #FFFFFF, transparent 70%); border-radius: 50%; box-shadow: 0 0 12px #FFFFFF; }
+.fx-orb { width: 14px; height: 14px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, currentColor 70%); box-shadow: 0 0 12px currentColor; }
+.fx-beam { width: 4px; height: 30px; background: linear-gradient(180deg, transparent, #FFFFFF, transparent); box-shadow: 0 0 10px #FFFFFF; }
+.fx-quake { width: 14px; height: 10px; background: #8B6F47; border-radius: 3px; box-shadow: 0 0 6px rgba(0,0,0,0.5); }
+.fx-rocks { width: 12px; height: 12px; background: #B8A038; clip-path: polygon(20% 0, 80% 10%, 100% 50%, 90% 100%, 30% 90%, 0 60%); }
+.fx-shadow { width: 14px; height: 14px; background: radial-gradient(circle, #705898, transparent 70%); border-radius: 50%; box-shadow: 0 0 10px #705898; }
+.fx-psy { width: 10px; height: 10px; background: radial-gradient(circle, #FA92B2, #F85888); border-radius: 50%; box-shadow: 0 0 10px #F85888; animation: fxParticleFly 0.9s ease-out forwards, fxPsyRotate 0.9s linear; }
+@keyframes fxPsyRotate { from { transform: translate(-50%, -50%) rotate(0); } to { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(720deg) scale(0.2); } }
+.fx-flame { width: 10px; height: 14px; background: radial-gradient(circle, #A27DFA, #7038F8); border-radius: 50% 50% 30% 30%; box-shadow: 0 0 10px #7038F8; }
+.fx-rage { width: 8px; height: 8px; background: #FF4040; border-radius: 50%; box-shadow: 0 0 10px #FF4040; }
+.fx-wind { width: 20px; height: 3px; background: linear-gradient(90deg, transparent, #C6B7F5, transparent); border-radius: 2px; }
+.fx-vortex { width: 10px; height: 10px; border: 2px solid #F08030; border-radius: 50%; box-shadow: 0 0 8px #F08030; }
+.fx-charge { width: 8px; height: 14px; background: linear-gradient(180deg, #FFD040, #F08030); border-radius: 4px; box-shadow: 0 0 10px #FFD040; }
+.fx-ripple { width: 30px; height: 30px; border: 2px solid #9DB7F5; border-radius: 50%; background: transparent; }
+.fx-needle { width: 3px; height: 14px; background: #A040A0; border-radius: 1px; }
+.fx-sludge { width: 10px; height: 10px; background: radial-gradient(circle, #C183C1, #A040A0); border-radius: 50% 30% 50% 40%; }
+.fx-dust { width: 8px; height: 8px; background: radial-gradient(circle, #E0C068, transparent 70%); border-radius: 50%; }
+.fx-drain { width: 8px; height: 8px; background: radial-gradient(circle, #A7DB8D, #78C850); border-radius: 50%; box-shadow: 0 0 8px #78C850; animation: fxDrainFly 0.9s ease-in forwards; }
+@keyframes fxDrainFly {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(calc(-50% - var(--dx)), calc(-50% - var(--dy))) scale(0.3); opacity: 0; }
+}
+.fx-z { width: 14px; height: 14px; color: #8a7fff; font-weight: 700; font-size: 14px; background: transparent; display: flex; align-items: center; justify-content: center; }
+.fx-z::before { content: 'Z'; }
+.fx-star { width: 12px; height: 12px; background: #FFD700; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); box-shadow: 0 0 8px #FFD700; }
+.fx-bubble { width: 10px; height: 10px; background: radial-gradient(circle at 30% 30%, #fff, #A040A0); border-radius: 50%; border: 1px solid #A040A0; }
+.fx-heal { width: 10px; height: 10px; background: radial-gradient(circle, #A7DB8D, #78C850); clip-path: polygon(50% 0%, 80% 50%, 50% 100%, 20% 50%); box-shadow: 0 0 8px #78C850; }
+
+/* 伤害数字 */
+.fx-damage {
+  position: absolute;
+  font-size: 24px;
+  font-weight: 900;
+  color: #FF3030;
+  text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 0 4px 6px rgba(0,0,0,0.5);
+  font-family: var(--font-mono);
+  transform: translate(-50%, 0);
+  animation: fxDamageRise 1.1s ease-out forwards;
+  pointer-events: none;
+  z-index: 200;
+}
+.fx-damage.crit { color: #FF8000; font-size: 30px; }
+.fx-damage.heal { color: #20B040; animation: fxHealRise 1.1s ease-out forwards; }
+.fx-damage.miss { color: #888; font-size: 18px; }
+@keyframes fxDamageRise {
+  0% { transform: translate(-50%, 0) scale(0.3); opacity: 0; }
+  20% { transform: translate(-50%, -10px) scale(1.4); opacity: 1; }
+  40% { transform: translate(-50%, -20px) scale(1); }
+  100% { transform: translate(-50%, -60px) scale(0.9); opacity: 0; }
+}
+@keyframes fxHealRise {
+  0% { transform: translate(-50%, 0) scale(0.5); opacity: 0; }
+  20% { transform: translate(-50%, -10px) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -50px) scale(1); opacity: 0; }
+}
+
+/* 命中抖动 */
+.fx-hit-shake {
+  animation: fxHitShake 0.5s ease !important;
+}
+@keyframes fxHitShake {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-8px, 2px) rotate(-3deg); }
+  25% { transform: translate(8px, -2px) rotate(3deg); }
+  40% { transform: translate(-6px, 3px) rotate(-2deg); filter: brightness(2) sepia(1) hue-rotate(-30deg); }
+  55% { transform: translate(6px, -3px) rotate(2deg); filter: brightness(1.5); }
+  70% { transform: translate(-4px, 2px) rotate(-1deg); filter: brightness(1.2); }
+  85% { transform: translate(3px, -1px) rotate(0.5deg); }
+}
+
+/* 倒下动画 */
+.fx-faint {
+  animation: fxFaintAnim 0.8s ease forwards !important;
+}
+@keyframes fxFaintAnim {
+  0% { transform: translateY(0); opacity: 1; filter: brightness(1); }
+  30% { transform: translateY(10px); opacity: 0.8; filter: brightness(1.5); }
+  100% { transform: translateY(60px) scale(0.3); opacity: 0; filter: brightness(0.5) grayscale(1); }
+}
+
+/* 攻击冲锋动画 */
+.fx-attack-player {
+  animation: fxAttackPlayer 0.6s ease !important;
+}
+@keyframes fxAttackPlayer {
+  0% { transform: translateX(0); }
+  30% { transform: translateX(-20px) scale(1.05); }
+  50% { transform: translateX(40px) scale(1.1); filter: brightness(1.3); }
+  70% { transform: translateX(20px) scale(1.05); }
+  100% { transform: translateX(0); }
+}
+.fx-attack-enemy {
+  animation: fxAttackEnemy 0.6s ease !important;
+}
+@keyframes fxAttackEnemy {
+  0% { transform: translateX(0); }
+  30% { transform: translateX(20px) scale(1.05); }
+  50% { transform: translateX(-40px) scale(1.1); filter: brightness(1.3); }
+  70% { transform: translateX(-20px) scale(1.05); }
+  100% { transform: translateX(0); }
+}
+
+/* 捕捉动画 */
+.fx-capture-in {
+  animation: fxCapture 0.8s ease forwards !important;
+}
+@keyframes fxCapture {
+  0% { transform: scale(1); opacity: 1; }
+  40% { transform: scale(0.8) translateY(-20px); opacity: 1; }
+  70% { transform: scale(0.2); opacity: 0.5; filter: brightness(2) sepia(1) hue-rotate(30deg); }
+  100% { transform: scale(0.1); opacity: 0; }
+}
+
+/* 进化动画 */
+.fx-evolving {
+  animation: fxEvolve 2s ease-in-out !important;
+}
+@keyframes fxEvolve {
+  0% { transform: scale(1); filter: brightness(1) hue-rotate(0); }
+  20% { transform: scale(1.1); filter: brightness(1.5) hue-rotate(60deg) saturate(2); }
+  40% { transform: scale(1.2); filter: brightness(3) hue-rotate(120deg) saturate(3); }
+  60% { transform: scale(1.3); filter: brightness(5) hue-rotate(180deg) saturate(4) blur(1px); }
+  80% { transform: scale(1.2); filter: brightness(3) hue-rotate(120deg) saturate(3); }
+  100% { transform: scale(1); filter: brightness(1) hue-rotate(0); }
+}
+
+/* 升级闪光 */
+.fx-levelup {
+  animation: fxLevelUp 1s ease-out !important;
+}
+@keyframes fxLevelUp {
+  0% { filter: brightness(1); }
+  30% { filter: brightness(2.5) drop-shadow(0 0 20px #FFD700); }
+  100% { filter: brightness(1); }
+}
+
+/* 移动端战斗场景适配 */
+@media (max-width: 750px) {
+  .battle-stage { min-height: 380px; }
+  .battle-arena { min-height: 320px; padding: 8px; }
+  .battle-stage .sprite-img { width: 88px; height: 88px; }
+  .enemy-platform, .player-platform { min-height: 110px; min-width: 110px; }
+  .enemy-info-card, .player-info-card { min-width: 160px; max-width: 200px; padding: 4px 8px; font-size: 11px; }
+  .info-row .pkm-name { font-size: 12px; }
+  .moves-grid { grid-template-columns: 1fr; }
+  .switch-grid { grid-template-columns: 1fr; }
+  .item-grid { grid-template-columns: 1fr; }
+  .fx-damage { font-size: 20px; }
+  .fx-damage.crit { font-size: 24px; }
+}
 
 .pkm-list { display: flex; flex-direction: column; gap: 8px; }
 .pkm-card {
@@ -290,18 +1124,6 @@ body {
 }
 .dialogue-text p { margin: 4px 0; color: var(--text-secondary); }
 .dialogue-text b { color: var(--accent); }
-
-.move-confirm {
-  margin-top: 12px;
-  padding: 12px;
-  background: var(--accent-subtle);
-  border: 1px solid var(--accent);
-  text-align: center;
-  border-radius: var(--radius-sm);
-}
-.move-confirm .move-name { font-weight: 700; color: var(--accent); font-size: 15px; }
-.move-confirm .move-info { color: var(--text-secondary); font-size: 12px; margin: 4px 0; }
-.move-confirm .move-desc { color: var(--text-muted); font-size: 12px; font-style: italic; border-top: 1px solid var(--border); padding-top: 6px; margin-top: 6px; }
 
 #actions {
   padding: 10px 0;
@@ -360,13 +1182,13 @@ body {
 .legend-icon { color: var(--accent); font-weight: bold; }
 
 .map-info-panel {
-  background: var(--surface);
+  background: var(--map-canvas);
   border: 1px solid var(--border);
-  padding: 10px;
+  padding: 12px;
   border-radius: var(--radius-sm);
 }
 
-.map-info-section { margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.map-info-section { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
 .map-info-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
 .world-map-shell { display: flex; flex-direction: column; gap: 8px; }
@@ -376,17 +1198,18 @@ body {
   justify-content: space-between;
   gap: 12px;
   align-items: flex-start;
-  padding: 12px 16px;
-  background: var(--surface);
+  padding: 14px 18px;
+  background: linear-gradient(135deg, var(--surface) 0%, var(--terrain-town-bg) 100%);
   border: 1px solid var(--border);
+  border-left: 4px solid var(--terrain-town);
   border-radius: var(--radius-sm);
 }
 
-.world-map-heading { color: var(--text-primary); font-size: 16px; font-weight: 700; }
-.world-map-subtitle { color: var(--text-muted); font-size: 12px; margin-top: 2px; }
+.world-map-heading { color: var(--text-primary); font-size: 17px; font-weight: 800; letter-spacing: 0.5px; }
+.world-map-subtitle { color: var(--text-muted); font-size: 12px; margin-top: 3px; }
 .world-map-summary { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; max-width: 45%; }
 
-.target-badge { color: var(--warning); border-color: var(--warning); }
+.target-badge { color: var(--warning); border-color: var(--warning); background: var(--warning-bg); font-weight: 700; }
 
 .world-map-stage-wrap { overflow: auto; padding: 10px 20px 16px; }
 
@@ -394,9 +1217,10 @@ body {
   position: relative;
   margin: 0 auto;
   border: 1px solid var(--border);
-  background: var(--surface);
+  background: var(--map-canvas);
   border-radius: var(--radius-sm);
   min-width: 1000px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6);
 }
 
 .world-map-stage.is-sevii { min-width: 900px; }
@@ -405,24 +1229,34 @@ body {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px);
+    linear-gradient(var(--map-canvas-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--map-canvas-grid) 1px, transparent 1px);
   background-size: 50px 50px;
-  opacity: 0.5;
+  opacity: 0.7;
   pointer-events: none;
 }
 
 .map-link {
   position: absolute;
-  height: 4px;
+  height: 3px;
   transform-origin: 0 50%;
-  background: var(--border);
+  background: var(--map-link);
   border-radius: 999px;
   z-index: 1;
+  background-image: repeating-linear-gradient(90deg, var(--map-link) 0 6px, transparent 6px 10px);
+  background-size: 10px 3px;
+  background-repeat: repeat-x;
+  background-color: transparent;
 }
 
-.map-link.is-current-path { background: var(--accent); }
-.map-link.is-target-path { background: var(--warning); }
+.map-link.is-current-path {
+  background-image: repeating-linear-gradient(90deg, var(--map-link-current) 0 6px, transparent 6px 10px);
+  height: 4px;
+}
+.map-link.is-target-path {
+  background-image: repeating-linear-gradient(90deg, var(--map-link-target) 0 6px, transparent 6px 10px);
+  height: 4px;
+}
 
 .map-node {
   position: absolute;
@@ -442,42 +1276,47 @@ body {
   justify-content: center;
   gap: 5px;
   min-width: 44px;
-  min-height: 32px;
+  min-height: 36px;
   padding: 6px 16px;
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   background: var(--surface);
   border-radius: 999px;
-  color: var(--text-primary);
+  color: #fff;
   font-size: 15px;
-  font-weight: 600;
-  box-shadow: var(--shadow-sm);
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.3);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.map-node-glyph { font-size: 18px; line-height: 1; font-weight: 700; }
+.map-node-glyph { font-size: 17px; line-height: 1; font-weight: 700; }
 
 .map-node-badge {
   font-size: 10px;
   padding: 1px 6px;
   border-radius: 999px;
   border: 1px solid var(--border);
+  background: var(--surface);
+  font-weight: 700;
 }
 
-.map-node-badge.open { color: var(--warning); border-color: var(--warning); }
-.map-node-badge.cleared { color: var(--success); }
+.map-node-badge.open { color: var(--warning); border-color: var(--warning); background: var(--warning-bg); }
+.map-node-badge.cleared { color: var(--success); border-color: var(--success); background: var(--success-bg); }
 
 .map-node-label {
-  margin-top: 5px;
+  margin-top: 6px;
   font-size: 13px;
   line-height: 1.2;
   color: var(--text-secondary);
   white-space: nowrap;
   position: relative;
   transform: translate(var(--label-nudge-x, 0), var(--label-nudge-y, 0));
-  padding: 3px 8px;
-  border-radius: 4px;
-  background: var(--surface);
+  padding: 3px 9px;
+  border-radius: 5px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(2px);
   border: 1px solid var(--border);
   z-index: 3;
+  font-weight: 600;
 }
 
 .map-node.label-left .map-node-label { transform: translate(calc(-68px + var(--label-nudge-x, 0px)), var(--label-nudge-y, 0px)); text-align: right; }
@@ -485,44 +1324,78 @@ body {
 .map-node.label-above .map-node-label { order: -1; margin-top: 0; margin-bottom: 5px; transform: translate(var(--label-nudge-x, 0px), calc(-2px + var(--label-nudge-y, 0px))); }
 .map-node.label-below .map-node-label { margin-top: 6px; }
 
+/* 地形色填充：道路（青绿）与水道（天蓝）为小节点 */
 .map-node.node-route .map-node-core,
 .map-node.node-water .map-node-core {
-  min-width: 30px;
-  min-height: 22px;
-  padding: 0 6px;
-  border-color: var(--border);
-  color: var(--accent);
-  background: var(--accent-subtle);
+  min-width: 32px;
+  min-height: 26px;
+  padding: 0 8px;
+  border-width: 2px;
+  font-size: 13px;
+}
+.map-node.node-route .map-node-core {
+  background: var(--terrain-route);
+  border-color: var(--terrain-route);
+}
+.map-node.node-water .map-node-core {
+  background: var(--terrain-water);
+  border-color: var(--terrain-water);
 }
 
 .map-node.node-route .map-node-label,
-.map-node.node-water .map-node-label { color: var(--text-muted); font-size: 11px; }
+.map-node.node-water .map-node-label { color: var(--text-muted); font-size: 11px; font-weight: 600; }
 
+/* 城镇（珊瑚）与洞穴（灰紫）为大节点 */
 .map-node.node-town .map-node-core, .map-node.node-cave .map-node-core { min-width: 52px; }
 
+.map-node.node-town .map-node-core {
+  background: var(--terrain-town);
+  border-color: var(--terrain-town);
+}
+.map-node.node-cave .map-node-core {
+  background: var(--terrain-cave);
+  border-color: var(--terrain-cave);
+}
+
 .map-node.node-town .map-node-label {
-  color: var(--accent);
+  color: var(--terrain-town);
   font-size: 14px;
   font-weight: 700;
-  background: var(--accent-subtle);
+  background: var(--terrain-town-bg);
+  border-color: var(--terrain-town);
+}
+
+.map-node.node-cave .map-node-label {
+  color: var(--terrain-cave);
+  font-weight: 700;
+  background: var(--terrain-cave-bg);
+  border-color: var(--terrain-cave);
 }
 
 .map-node.node-town.gym-open .map-node-label, .map-node.node-town.gym-cleared .map-node-label { margin-top: 7px; }
 
-.map-node.is-target .map-node-label, .map-node.node-cave .map-node-label { color: var(--text-primary); }
+.map-node.is-target .map-node-label { color: var(--text-primary); }
 
+/* 当前位置：脉冲光晕 */
 .map-node.is-current .map-node-core {
-  color: #fff;
-  background: var(--accent);
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.20), 0 0 0 7px rgba(59,130,246,0.10), 0 2px 6px rgba(59,130,246,0.3);
+  animation: mapNodePulse 2s ease-in-out infinite;
 }
 
+@keyframes mapNodePulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(59,130,246,0.20), 0 0 0 7px rgba(59,130,246,0.10), 0 2px 6px rgba(59,130,246,0.3); }
+  50% { box-shadow: 0 0 0 4px rgba(59,130,246,0.28), 0 0 0 10px rgba(59,130,246,0.12), 0 2px 8px rgba(59,130,246,0.4); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-node.is-current .map-node-core { animation: none; }
+}
+
+/* 目标位置：橙色光环 */
 .map-node.is-target .map-node-core {
-  color: #fff;
-  background: var(--warning);
   border-color: var(--warning);
-  box-shadow: 0 0 0 3px rgba(245,158,11,0.15);
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.25), 0 0 0 6px rgba(245,158,11,0.12);
 }
 
 .map-node.is-neighbor .map-node-label { color: var(--text-secondary); }
@@ -534,24 +1407,37 @@ body {
 
 .legend-swatch {
   display: inline-block;
-  width: 12px; height: 12px;
+  width: 14px; height: 14px;
   border-radius: 999px;
-  border: 1px solid transparent;
+  border: 2px solid transparent;
 }
 
-.legend-swatch.current { background: var(--accent); }
-.legend-swatch.target { background: var(--warning); }
-.legend-swatch.neighbor { background: var(--accent-subtle); border-color: var(--accent); }
+.legend-swatch.current { background: var(--accent); border-color: var(--accent); }
+.legend-swatch.target { background: var(--warning); border-color: var(--warning); }
+.legend-swatch.neighbor { background: var(--surface); border-color: var(--border); }
 .legend-swatch.gym-open { background: var(--warning-bg); border-color: var(--warning); }
 .legend-swatch.gym-cleared { background: var(--success-bg); border-color: var(--success); }
+.legend-swatch.terrain-town { background: var(--terrain-town); border-color: var(--terrain-town); }
+.legend-swatch.terrain-route { background: var(--terrain-route); border-color: var(--terrain-route); }
+.legend-swatch.terrain-cave { background: var(--terrain-cave); border-color: var(--terrain-cave); }
+.legend-swatch.terrain-water { background: var(--terrain-water); border-color: var(--terrain-water); }
 
-.map-info-title { color: var(--text-primary); font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-.map-info-content { color: var(--text-secondary); font-size: 13px; line-height: 1.6; }
+.legend-divider {
+  display: inline-block;
+  width: 1px;
+  height: 16px;
+  background: var(--border);
+  margin: 0 4px;
+  vertical-align: middle;
+}
 
-.gym-badge { margin-right: 8px; }
+.map-info-title { color: var(--text-primary); font-size: 13px; font-weight: 800; margin-bottom: 5px; letter-spacing: 0.3px; }
+.map-info-content { color: var(--text-secondary); font-size: 12px; line-height: 1.6; }
+
+.gym-badge { margin-right: 6px; font-size: 11px; font-weight: 600; }
 .gym-badge.completed { color: var(--success); }
 
-.pokemon-area { margin-bottom: 2px; }
+.pokemon-area { margin-bottom: 3px; font-size: 12px; }
 
 /* HP bar */
 .hp-bar-container { display: flex; align-items: center; gap: 10px; margin: 6px 0; }
@@ -625,7 +1511,7 @@ body {
   max-height: 88vh;
   overflow-y: auto;
   padding: 14px;
-  background: var(--surface);
+  background: var(--map-canvas);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
@@ -643,13 +1529,13 @@ body {
   align-items: center;
   justify-content: space-between;
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 2px solid var(--terrain-town);
   margin-bottom: 4px;
 }
 
 .quest-progress-label {
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text-primary);
   display: flex;
   align-items: center;
@@ -658,49 +1544,55 @@ body {
 
 .quest-progress-count {
   font-size: 12px;
-  color: var(--text-muted);
-  background: var(--surface-hover);
-  padding: 2px 8px;
+  color: var(--terrain-town);
+  background: var(--terrain-town-bg);
+  padding: 3px 10px;
   border-radius: 99px;
+  font-weight: 700;
+  font-family: var(--font-mono);
 }
 
 .quest-section-title {
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   margin-top: 6px;
   margin-bottom: 4px;
 }
 
 .quest-item {
   padding: 12px 14px;
-  background: var(--surface-hover);
+  background: var(--surface);
   border-radius: var(--radius-sm);
   border-left: 3px solid var(--border);
   transition: all 0.15s ease;
   margin-bottom: 4px;
+  box-shadow: var(--shadow-sm);
 }
 
 .quest-item.active {
-  border-left-color: var(--accent);
-  background: var(--accent-subtle);
+  border-left-color: var(--terrain-town);
+  background: var(--terrain-town-bg);
+  box-shadow: 0 2px 6px rgba(239,107,90,0.12);
 }
 
 .quest-item.completed {
-  border-left-color: var(--success);
-  opacity: 0.65;
+  border-left-color: var(--terrain-route);
+  opacity: 0.7;
+  background: var(--terrain-route-bg);
 }
 
 .quest-item.completed .quest-name {
-  text-decoration: line-color: var(--border);
+  text-decoration: line-through;
+  text-decoration-color: var(--border);
   color: var(--text-muted);
 }
 
 .quest-name {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 2px;
   display: flex;
@@ -716,9 +1608,9 @@ body {
 
 .quest-guidance {
   font-size: 12px;
-  color: var(--accent);
+  color: var(--terrain-town);
   margin-top: 4px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .quest-badge {
@@ -734,18 +1626,19 @@ body {
 }
 
 .quest-badge.done {
-  background: var(--success-bg);
-  color: var(--success);
+  background: var(--terrain-route);
+  color: #fff;
 }
 
 .quest-badge.current {
-  background: var(--accent);
+  background: var(--terrain-town);
   color: #fff;
 }
 
 .quest-badge.pending {
   background: var(--surface-hover);
   color: var(--text-muted);
+  border: 1px solid var(--border);
 }
 
 .quest-section-divider {
@@ -767,6 +1660,133 @@ body {
   border-radius: var(--radius-sm);
 }
 
+/* 侧边栏迷你彩色地图 */
+.mini-map {
+  margin-bottom: 8px;
+}
+
+.mini-map-canvas {
+  position: relative;
+  width: 100%;
+  padding-top: 70%;
+  background: var(--map-canvas);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6);
+}
+
+.mini-map-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--map-canvas-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--map-canvas-grid) 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.mini-link {
+  position: absolute;
+  height: 2px;
+  transform-origin: 0 50%;
+  background-image: repeating-linear-gradient(90deg, var(--map-link) 0 4px, transparent 4px 7px);
+  background-size: 7px 2px;
+  background-repeat: repeat-x;
+  background-color: transparent;
+  z-index: 1;
+}
+
+.mini-link.is-current {
+  background-image: repeating-linear-gradient(90deg, var(--map-link-current) 0 4px, transparent 4px 7px);
+  height: 2.5px;
+}
+.mini-link.is-target {
+  background-image: repeating-linear-gradient(90deg, var(--map-link-target) 0 4px, transparent 4px 7px);
+  height: 2.5px;
+}
+
+.mini-node {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3);
+  border: 2px solid #fff;
+}
+
+.mini-node.type-town { background: var(--terrain-town); width: 12px; height: 12px; }
+.mini-node.type-cave { background: var(--terrain-cave); width: 10px; height: 10px; }
+
+.mini-node.gym-open { box-shadow: 0 0 0 2px var(--warning), 0 1px 2px rgba(0,0,0,0.15); }
+.mini-node.gym-cleared { box-shadow: 0 0 0 2px var(--success), 0 1px 2px rgba(0,0,0,0.15); }
+
+.mini-node.is-current {
+  background: var(--accent);
+  border-color: #fff;
+  width: 14px;
+  height: 14px;
+  animation: miniNodePulse 1.8s ease-in-out infinite;
+}
+
+@keyframes miniNodePulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(59,130,246,0.3), 0 0 0 6px rgba(59,130,246,0.12); }
+  50% { box-shadow: 0 0 0 4px rgba(59,130,246,0.4), 0 0 0 9px rgba(59,130,246,0.15); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mini-node.is-current { animation: none; }
+}
+
+.mini-node.is-target {
+  background: var(--warning);
+  border-color: #fff;
+  width: 13px;
+  height: 13px;
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.25);
+}
+
+.mini-node.is-neighbor {
+  border-color: var(--accent);
+}
+
+.mini-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 6px 4px 2px;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.mini-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.mini-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid #fff;
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.mini-dot.town { background: var(--terrain-town); }
+.mini-dot.cave { background: var(--terrain-cave); }
+.mini-dot.current { background: var(--accent); }
+.mini-dot.target { background: var(--warning); }
+
+.mini-map-info {
+  text-align: center;
+  margin-bottom: 6px;
+}
+
 .info-badge {
   display: inline-flex;
   align-items: center;
@@ -784,8 +1804,10 @@ body {
 
 @media (max-width: 750px) {
   body { padding: 12px 8px; }
-  #app { font-size: 13px; }
-  #main-wrap { flex-direction: column; }
+  #app { font-size: 13px; width: 100%; }
+  #main { flex: 1 1 auto; width: auto; }
+  #main-wrap { flex-direction: column; gap: 12px; }
+  #team-panel { display: none; }
   #map-panel { display: none; }
   .map-expanded #map-panel { width: 100%; min-width: unset; max-height: 60vh; }
   .map-expanded #main { flex: 1; }
@@ -850,16 +1872,16 @@ body {
   .panel-toggle {
     text-align: center;
     padding: 8px;
-    background: var(--accent-subtle);
-    border: 1px solid var(--accent);
+    background: var(--terrain-town-bg);
+    border: 1px solid var(--terrain-town);
     border-radius: var(--radius-sm);
     font-size: 12px;
-    font-weight: 600;
-    color: var(--accent);
+    font-weight: 700;
+    color: var(--terrain-town);
     cursor: pointer;
     margin-bottom: 8px;
   }
-  .panel-toggle:hover { background: var(--accent); color: #fff; }
+  .panel-toggle:hover { background: var(--terrain-town); color: #fff; }
   .panel-content { display: none; }
 }
 

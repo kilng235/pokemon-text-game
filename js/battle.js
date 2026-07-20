@@ -120,6 +120,7 @@ function startBattle(type, extra, enemyTeam) {
     turn: 'player', subState: 'main',
     ran: false, captured: false, battleMsg: '',
     lastEnemyHp: enemyTeam[0].hp, lastPlayerHp: lp ? lp.hp : 0,
+    captureFails: 0,
   }
   const name = enemyTeam[0].name
 
@@ -337,7 +338,10 @@ function calcDamage(atkPkm, defPkm, move) {
   else if (eff === 0) msg += ' 对对手没有效果…'
   else if (move.power === 0) msg = `${atkPkm.name} 使用了 ${move.name}！`
   // 普通命中音效（效果拔群/不理想由消息关键字另行触发）
-  if (window.AU && eff > 0.5 && eff < 2 && damage > 0) AU.sfx('hit')
+  if (window.AU && eff > 0.5 && eff < 2 && damage > 0) {
+    if (window.AU.sfxByType) AU.sfxByType(move.type)
+    else AU.sfx('hit')
+  }
   addLog(msg)
   return { damage, effectiveness: eff, missed: false }
 }
@@ -361,8 +365,18 @@ function playerAttack(moveIndex, skipTurnCheck) {
   b.lastPlayerHp = pkm.hp
   const result = calcDamage(pkm, b.enemy, move)
 
+  // 攻击动画：玩家宝可梦冲锋
+  const playerEl = document.querySelector('.sprite-container.player')
+  const enemyEl = document.querySelector('.sprite-container.enemy')
+  if (playerEl) {
+    playerEl.classList.add('fx-attack-player')
+    setTimeout(() => playerEl.classList.remove('fx-attack-player'), 600)
+  }
+
   if (result.missed) {
     b.battleMsg = '没有命中！'
+    if (window.FX && enemyEl) FX.showDamage(enemyEl, 0, 'miss')
+    if (window.AU) AU.sfx('miss')
     if (skipTurnCheck) { b.turn = 'player'; render(); return }
     b.turn = 'enemy'; setTimeout(enemyTurn, 500); return
   }
@@ -370,6 +384,10 @@ function playerAttack(moveIndex, skipTurnCheck) {
   // Apply status effects (sleep/paralyze/poison/burn)
   if (result.effectiveness > 0 && move.effect && ['sleep','paralyze','poison','burn','confuse','disable'].includes(move.effect)) {
     handleStatusEffect(b.enemy, move.effect)
+    if (window.FX && enemyEl) {
+      const statusKey = move.effect === 'confuse' ? 'confuse' : move.effect
+      setTimeout(() => FX.playStatus(enemyEl, statusKey), 350)
+    }
   }
 
   // Apply debuff effects
@@ -380,14 +398,27 @@ function playerAttack(moveIndex, skipTurnCheck) {
   // Apply self-buff effects
   if (['atkUp','defUp','spAtkUp','spDefUp','speedUp','evasionUp','atkUpDefUp','atkUpSpeedUp','atkUpSpAtkUp','defUpSpDefUp','spAtkUpSpDefUpSpeedUp','recover','recoverAll','leechSeed'].includes(move.effect)) {
     applySelfBuff(move, pkm, b.enemy)
+    if (window.FX && playerEl && (move.effect === 'recover' || move.effect === 'recoverAll')) {
+      FX.playHeal(playerEl)
+    }
   }
 
   // 0威力状态技能：立即渲染显示效果，然后进入敌方回合
   if (move.power === 0) {
     b.battleMsg = `使用了 ${move.name}！`
+    if (window.FX && enemyEl) FX.playMove(move, enemyEl, { isPlayer: true })
     render()
     if (skipTurnCheck) { b.turn = 'player'; return }
     b.turn = 'enemy'; setTimeout(enemyTurn, 800); return
+  }
+
+  // 命中后播放招式特效
+  if (window.FX && enemyEl) {
+    setTimeout(() => {
+      FX.playMove(move, enemyEl, { isPlayer: true })
+      const dmgKind = result.effectiveness >= 2 ? 'crit' : ''
+      if (result.damage > 0) FX.showDamage(enemyEl, result.damage, dmgKind)
+    }, 200)
   }
 
   // Apply drain effect
@@ -395,16 +426,24 @@ function playerAttack(moveIndex, skipTurnCheck) {
     const heal = Math.max(1, result.damage)
     pkm.hp = Math.min(pkm.maxHp, pkm.hp + heal)
     addLog(`回复了 ${heal} HP！`)
+    if (window.FX && playerEl) {
+      setTimeout(() => {
+        FX.showDamage(playerEl, heal, 'heal')
+        FX.playHeal(playerEl)
+      }, 600)
+    }
   }
 
   b.enemy.hp -= result.damage
-  if (result.effectiveness >= 2) b.battleMsg = '效果拔群！'
+  if (result.effectiveness >= 2) { b.battleMsg = '效果拔群！'; if (window.AU) AU.sfx('superEffective') }
   else if (result.effectiveness === 0) b.battleMsg = '没有效果…'
-  else if (result.effectiveness < 1) b.battleMsg = '效果不太好…'
+  else if (result.effectiveness < 1) { b.battleMsg = '效果不太好…'; if (window.AU) AU.sfx('notEffective') }
   else b.battleMsg = `使用了 ${move.name}！`
   if (b.enemy.hp <= 0) {
     b.enemy.hp = 0; b.enemy.fainted = true
     addLog(`${b.enemy.name} 倒下了！`)
+    if (window.FX && enemyEl) setTimeout(() => FX.playFaint(enemyEl), 400)
+    if (window.AU) AU.sfx('faint')
     b.enemyIndex++
     if (b.enemyIndex < b.enemyTeam.length) {
       b.enemy = b.enemyTeam[b.enemyIndex]; b.enemy.hp = b.enemy.maxHp; b.enemy.status = null
@@ -414,7 +453,7 @@ function playerAttack(moveIndex, skipTurnCheck) {
       else if (b.type === 'gym') { prefix = `${b.extra.data[1]} 派出了 `; msg = `${b.extra.data[1]}：哼！` }
       else if (b.type === 'elite') { prefix = `${b.extra.name} 派出了 `; msg = `${b.extra.name}：还没完！` }
       else if (b.type === 'rival') { prefix = `${b.extra.name} 派出了 `; msg = `${b.extra.name}：还没完呢！` }
-      else if (b.type === 'story') { prefix = `${b.extra.name} 派出了 `; msg = `${b.extra.name}：你等着！` }
+      else if (b.type === 'story' || b.type === 'legendary') { prefix = `${b.extra.name} 派出了 `; msg = `${b.extra.name}：你等着！` }
       else prefix = '野生的 '
       addLog(`${prefix}${b.enemy.name}！`)
       b.battleMsg = msg || ''
@@ -426,7 +465,7 @@ function playerAttack(moveIndex, skipTurnCheck) {
   if (skipTurnCheck) {
     b.turn = 'player'; render(); return
   }
-  b.turn = 'enemy'; setTimeout(enemyTurn, 500)
+  b.turn = 'enemy'; setTimeout(enemyTurn, 700)
 }
 
 function battleVictory() {
@@ -449,13 +488,18 @@ function battleVictory() {
     if (!G.player.trainersDefeated.includes(t.id)) G.player.trainersDefeated.push(t.id)
     addMoney(t.money || 100)
     msg = `★ 击败了 ${t.name}！获得 ¥${t.money || 100}`
-  } else if (b.type === 'story') {
+  } else if (b.type === 'story' || b.type === 'legendary') {
     if (b.extra.onFinish) {
       const r = b.extra.onFinish(); if (r) msg = r
     }
   }
   addLog(msg)
   addLog(`获得 ${totalExp} 点经验值！`)
+  if (window.AU) AU.sfx('victory')
+  if (window.FX) {
+    const enemyEl = document.querySelector('.sprite-container.enemy')
+    if (enemyEl) FX.flash('#FFD700', 400)
+  }
   const active = getActivePokemon()
   if (active) {
     for (const ep of b.enemyTeam) {
@@ -541,13 +585,29 @@ function syncEnemyAttack() {
 
   b.lastEnemyHp = b.enemy.hp
   b.lastPlayerHp = pkm.hp
+  const playerEl = document.querySelector('.sprite-container.player')
+  const enemyEl = document.querySelector('.sprite-container.enemy')
+  if (enemyEl) {
+    enemyEl.classList.add('fx-attack-enemy')
+    setTimeout(() => enemyEl.classList.remove('fx-attack-enemy'), 600)
+  }
   const result = calcDamage(b.enemy, pkm, move)
-  if (result.missed) { b.battleMsg = `${b.enemy.name} 的 ${move.name} 没有命中！`; return true }
+  if (result.missed) {
+    b.battleMsg = `${b.enemy.name} 的 ${move.name} 没有命中！`
+    if (window.FX && playerEl) FX.showDamage(playerEl, 0, 'miss')
+    return true
+  }
 
   if (move.effect === 'drain' && result.damage > 0) {
     const heal = Math.max(1, result.damage)
     b.enemy.hp = Math.min(b.enemy.maxHp, b.enemy.hp + heal)
     addLog(`${b.enemy.name} 吸取了 ${heal} HP！`)
+    if (window.FX && enemyEl) {
+      setTimeout(() => {
+        FX.showDamage(enemyEl, heal, 'heal')
+        FX.playHeal(enemyEl)
+      }, 600)
+    }
   }
 
   if (result.effectiveness >= 2) b.battleMsg = '效果拔群！'
@@ -555,10 +615,20 @@ function syncEnemyAttack() {
   else if (result.effectiveness < 1) b.battleMsg = '效果不太好…'
   else b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
 
+  if (window.FX && playerEl) {
+    setTimeout(() => {
+      FX.playMove(move, playerEl, { isPlayer: false })
+      const dmgKind = result.effectiveness >= 2 ? 'crit' : ''
+      if (result.damage > 0) FX.showDamage(playerEl, result.damage, dmgKind)
+    }, 200)
+  }
+
   pkm.hp -= result.damage
   if (pkm.hp <= 0) {
     pkm.hp = 0; pkm.fainted = true
     addLog(`${pkm.name} 倒下了！`)
+    if (window.FX && playerEl) setTimeout(() => FX.playFaint(playerEl), 400)
+    if (window.AU) AU.sfx('faint')
     const next = getActivePokemon()
     if (next) { addLog(`派出 ${next.name}！`); b.subState = 'main' }
     else {
@@ -588,10 +658,22 @@ function enemyTurn() {
   const move = usable[Math.floor(Math.random() * usable.length)]
   move.currentPp--
 
+  const playerEl = document.querySelector('.sprite-container.player')
+  const enemyEl = document.querySelector('.sprite-container.enemy')
+  // 敌方冲锋动画
+  if (enemyEl) {
+    enemyEl.classList.add('fx-attack-enemy')
+    setTimeout(() => enemyEl.classList.remove('fx-attack-enemy'), 600)
+  }
+
   if (move.effect && ['sleep','paralyze','poison','burn','confuse','disable'].includes(move.effect)) {
     const eff = getEffectiveness(move.type, pkm.types)
     if (eff > 0) handleStatusEffect(pkm, move.effect)
     b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
+    if (window.FX && playerEl) {
+      const statusKey = move.effect === 'confuse' ? 'confuse' : move.effect
+      setTimeout(() => FX.playStatus(playerEl, statusKey), 350)
+    }
     b.turn = 'player'; render(); return
   }
 
@@ -606,26 +688,51 @@ function enemyTurn() {
   if (move.effect && ['atkUp','defUp','spAtkUp','spDefUp','speedUp','evasionUp','atkUpDefUp','atkUpSpeedUp','atkUpSpAtkUp','defUpSpDefUp','spAtkUpSpDefUpSpeedUp','recover','recoverAll','leechSeed'].includes(move.effect)) {
     applySelfBuff(move, b.enemy, pkm)
     b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
+    if (window.FX && enemyEl && (move.effect === 'recover' || move.effect === 'recoverAll')) {
+      FX.playHeal(enemyEl)
+    }
     b.turn = 'player'; render(); return
   }
 
   const result = calcDamage(b.enemy, pkm, move)
-  if (result.missed) { b.battleMsg = `${b.enemy.name} 的 ${move.name} 没有命中！`; b.turn = 'player'; render(); return }
+  if (result.missed) {
+    b.battleMsg = `${b.enemy.name} 的 ${move.name} 没有命中！`
+    if (window.FX && playerEl) FX.showDamage(playerEl, 0, 'miss')
+    if (window.AU) AU.sfx('miss')
+    b.turn = 'player'; render(); return
+  }
+
+  // 招式特效
+  if (window.FX && playerEl) {
+    setTimeout(() => {
+      FX.playMove(move, playerEl, { isPlayer: false })
+      const dmgKind = result.effectiveness >= 2 ? 'crit' : ''
+      if (result.damage > 0) FX.showDamage(playerEl, result.damage, dmgKind)
+    }, 200)
+  }
 
   if (move.effect === 'drain' && result.damage > 0) {
     const heal = Math.max(1, result.damage)
     b.enemy.hp = Math.min(b.enemy.maxHp, b.enemy.hp + heal)
     addLog(`${b.enemy.name} 吸取了 ${heal} HP！`)
+    if (window.FX && enemyEl) {
+      setTimeout(() => {
+        FX.showDamage(enemyEl, heal, 'heal')
+        FX.playHeal(enemyEl)
+      }, 600)
+    }
   }
 
-  if (result.effectiveness >= 2) b.battleMsg = '效果拔群！'
+  if (result.effectiveness >= 2) { b.battleMsg = '效果拔群！'; if (window.AU) AU.sfx('superEffective') }
   else if (result.effectiveness === 0) b.battleMsg = '没有效果…'
-  else if (result.effectiveness < 1) b.battleMsg = '效果不太好…'
+  else if (result.effectiveness < 1) { b.battleMsg = '效果不太好…'; if (window.AU) AU.sfx('notEffective') }
   else b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
   pkm.hp -= result.damage
   if (pkm.hp <= 0) {
     pkm.hp = 0; pkm.fainted = true
     addLog(`${pkm.name} 倒下了！`)
+    if (window.FX && playerEl) setTimeout(() => FX.playFaint(playerEl), 400)
+    if (window.AU) AU.sfx('faint')
     const next = getActivePokemon()
     if (next) { addLog(`派出 ${next.name}！`); b.subState = 'main' }
     else {
@@ -634,7 +741,7 @@ function enemyTurn() {
       G.battle = null; saveGame(); render(); return
     }
   }
-  b.turn = 'player'; render()
+  b.turn = 'player'; setTimeout(render, 500)
 }
 
 function handlePlayerDefeat(b) {
@@ -664,6 +771,35 @@ function findNearestCenter() {
   return 'pallet'
 }
 
+// 捕捉成功率计算（0~1，上限 0.99 保留紧张感）
+// 五因子：捕获率(rate/255) × 球修正 × HP残血因子 × 等级因子 × 异常状态因子
+//   - HP 残血越多越接近 1（原版公式： (3*maxHp - 2*hp) / (3*maxHp) ）
+//   - 等级：Lv.5 及以下 = 1.0；之后每级 -1%，最低 0.4（低等级更易捕捉）
+//   - 异常：睡眠 ×2，麻痹/中毒/灼伤 ×1.5（原版 Gen1 加成）
+function getCaptureChance(enemy, ballKey) {
+  const base = getPokemonData(enemy.id)
+  const rate = base ? base[9] : 255
+  const item = ITEMS[ballKey] || ITEMS.pokeball
+  const ballBonus = item.catchRate || 1
+  const hp = Math.max(0, enemy.hp)
+  const maxHp = Math.max(1, enemy.maxHp)
+  const hpFactor = (3 * maxHp - 2 * hp) / (3 * maxHp)
+  const levelFactor = Math.max(0.4, 1 - Math.max(0, enemy.level - 5) * 0.01)
+  let statusFactor = 1
+  if (enemy.status && enemy.status.type) {
+    if (enemy.status.type === 'sleep') statusFactor = 2
+    else if (['paralyze','poison','burn'].includes(enemy.status.type)) statusFactor = 1.5
+  }
+  return Math.min(0.99, (rate / 255) * ballBonus * hpFactor * levelFactor * statusFactor)
+}
+
+// 同一只野生在同场战斗中每次捕捉失败，下次基础概率 +12% 累加，封顶 0.99
+// 战斗结束/换场自动重置（G.battle 重新初始化时 captureFails 归零）
+function getEffectiveCaptureChance(enemy, ballKey, fails) {
+  const base = getCaptureChance(enemy, ballKey)
+  return Math.min(0.99, base + (fails || 0) * 0.12)
+}
+
 function tryCapture() {
   const b = G.battle; if (!b || !b.enemy) return
   if (b.type !== 'wild') { addLog('不能在训练家对战中使用精灵球！'); return }
@@ -672,21 +808,32 @@ function tryCapture() {
   if (ball === 'safariBall' && G.player.position !== 'safariZone') { addLog('狩猎球只能在狩猎地带使用！'); return }
   G.player.items[ball]--
   const item = ITEMS[ball]
-  const base = getPokemonData(b.enemy.id)
-  const rate = base ? base[8] : 255
-  const a = Math.floor((3 * b.enemy.maxHp - 2 * Math.max(0, b.enemy.hp)) * rate / (3 * b.enemy.maxHp))
-  const chance = Math.min(1, (a * item.catchRate) / 255)
-  addLog(`你丢出了 ${item.name}！`)
+  const fails = b.captureFails || 0
+  const chance = getEffectiveCaptureChance(b.enemy, ball, fails)
+  const pct = Math.round(chance * 100)
+  const bonusNote = fails > 0 ? `（含连失补偿 +${fails * 12}%）` : ''
+  addLog(`你丢出了 ${item.name}！（捕捉率约 ${pct}%${bonusNote}）`)
+  if (window.AU) AU.sfx('ballThrow')
   b.battleMsg = '1… 2… 3…'
-  if (Math.random() < chance) {
-    b.battleMsg = `成功捕捉了 ${b.enemy.name}！`
-    addLog(`★ 成功捕捉了 ${b.enemy.name}！`)
-    if (G.player.pokemon.length < 6) G.player.pokemon.push(b.enemy)
-    else { G.player.pc.push(b.enemy); addLog(`${b.enemy.name} 被传送到了电脑中。`) }
-    b.enemy = null; G.battle = null; saveGame(); render()
-  } else {
-    addLog(`${b.enemy.name} 挣脱了！`); b.turn = 'enemy'; setTimeout(enemyTurn, 500)
-  }
+  const enemyEl = document.querySelector('.sprite-container.enemy')
+  if (window.FX && enemyEl) FX.playCapture(enemyEl, true)
+  setTimeout(() => {
+    if (Math.random() < chance) {
+      b.battleMsg = `成功捕捉了 ${b.enemy.name}！`
+      addLog(`★ 成功捕捉了 ${b.enemy.name}！`)
+      if (window.AU) AU.sfx('capture')
+      if (window.FX && enemyEl) FX.flash('#FFD700', 400)
+      if (G.player.pokemon.length < 6) G.player.pokemon.push(b.enemy)
+      else { G.player.pc.push(b.enemy); addLog(`${b.enemy.name} 被传送到了电脑中。`) }
+      b.enemy = null; G.battle = null; saveGame(); render()
+    } else {
+      b.captureFails = fails + 1
+      const nextChance = Math.round(getEffectiveCaptureChance(b.enemy, ball, b.captureFails) * 100)
+      addLog(`${b.enemy.name} 挣脱了！下次捕捉率约 ${nextChance}%`)
+      if (window.AU) AU.sfx('captureFail')
+      b.turn = 'enemy'; setTimeout(enemyTurn, 500)
+    }
+  }, 900)
 }
 
 function tryFlee() {

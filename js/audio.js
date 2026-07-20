@@ -154,6 +154,86 @@
       note(220, 0, 0.05, 'square', 0.3);
       noise(0, 0.08, 0.2);
     },
+    // 按属性分类的攻击音效
+    hitFire: function () {
+      note(523, 0, 0.08, 'sawtooth', 0.3);
+      noise(0.04, 0.18, 0.25);
+      note(330, 0.12, 0.1, 'sawtooth', 0.2);
+    },
+    hitWater: function () {
+      slide(880, 440, 0, 0.18, 'sine', 0.3);
+      note(220, 0.16, 0.12, 'sine', 0.25);
+    },
+    hitGrass: function () {
+      note(660, 0, 0.06, 'triangle', 0.25);
+      note(880, 0.06, 0.06, 'triangle', 0.22);
+      note(990, 0.12, 0.08, 'triangle', 0.2);
+    },
+    hitElectric: function () {
+      note(1568, 0, 0.04, 'square', 0.3);
+      note(2093, 0.04, 0.04, 'square', 0.25);
+      note(1318, 0.08, 0.08, 'square', 0.25);
+      noise(0.08, 0.06, 0.15);
+    },
+    hitIce: function () {
+      note(1760, 0, 0.06, 'triangle', 0.3);
+      note(1568, 0.06, 0.06, 'triangle', 0.25);
+      note(1318, 0.12, 0.1, 'triangle', 0.2);
+      noise(0.16, 0.1, 0.1);
+    },
+    hitFighting: function () {
+      note(110, 0, 0.08, 'square', 0.35);
+      noise(0, 0.12, 0.3);
+      note(146, 0.1, 0.06, 'square', 0.25);
+    },
+    hitPoison: function () {
+      note(220, 0, 0.12, 'sawtooth', 0.25);
+      note(196, 0.1, 0.1, 'sawtooth', 0.2);
+    },
+    hitGround: function () {
+      note(80, 0, 0.18, 'sawtooth', 0.35);
+      noise(0, 0.18, 0.35);
+      note(98, 0.18, 0.1, 'sawtooth', 0.25);
+    },
+    hitPsychic: function () {
+      slide(880, 1760, 0, 0.18, 'sine', 0.28);
+      note(1760, 0.18, 0.15, 'sine', 0.25);
+    },
+    hitRock: function () {
+      note(110, 0, 0.1, 'square', 0.3);
+      noise(0.08, 0.15, 0.3);
+      note(146, 0.16, 0.06, 'square', 0.2);
+    },
+    hitGhost: function () {
+      slide(220, 110, 0, 0.3, 'sine', 0.28);
+      note(110, 0.3, 0.15, 'sine', 0.2);
+    },
+    hitBug: function () {
+      note(880, 0, 0.04, 'square', 0.2);
+      note(740, 0.05, 0.04, 'square', 0.2);
+      note(880, 0.1, 0.04, 'square', 0.2);
+      note(740, 0.15, 0.04, 'square', 0.2);
+    },
+    hitDragon: function () {
+      note(110, 0, 0.15, 'sawtooth', 0.32);
+      note(146, 0.15, 0.12, 'sawtooth', 0.28);
+      noise(0.2, 0.15, 0.25);
+    },
+    hitSteel: function () {
+      note(2093, 0, 0.05, 'square', 0.3);
+      note(1760, 0.05, 0.05, 'square', 0.25);
+      note(1568, 0.1, 0.08, 'square', 0.2);
+      noise(0.1, 0.06, 0.15);
+    },
+    hitFlying: function () {
+      slide(440, 880, 0, 0.18, 'sine', 0.28);
+      noise(0.18, 0.1, 0.2);
+    },
+    hitFairy: function () {
+      note(1318, 0, 0.08, 'sine', 0.28);
+      note(1568, 0.08, 0.08, 'sine', 0.25);
+      note(1760, 0.16, 0.12, 'sine', 0.22);
+    },
     superEffective: function () {
       // 效果拔群
       note(880, 0, 0.08, 'square', 0.3);
@@ -358,6 +438,21 @@
     if (fn) fn();
   }
 
+  // 根据招式属性播放对应命中音效
+  function sfxByType(type) {
+    if (!soundOn) return;
+    resume();
+    const map = {
+      '火': 'hitFire', '水': 'hitWater', '草': 'hitGrass', '电': 'hitElectric',
+      '冰': 'hitIce', '格斗': 'hitFighting', '毒': 'hitPoison', '地面': 'hitGround',
+      '超能': 'hitPsychic', '岩石': 'hitRock', '幽灵': 'hitGhost', '虫': 'hitBug',
+      '龙': 'hitDragon', '钢': 'hitSteel', '飞行': 'hitFlying', '妖精': 'hitFairy',
+      '普通': 'hit', '恶': 'hitGhost',
+    };
+    const fn = SFX[map[type] || 'hit'];
+    if (fn) fn();
+  }
+
   function toggleSound() {
     soundOn = !soundOn;
     applyVolume();
@@ -431,6 +526,7 @@
     resume: resume,
     playClick: playClick,
     sfx: sfx,
+    sfxByType: sfxByType,
     setBgm: setBgm,
     stopBgm: stopBgm,
     setVolume: setVolume,

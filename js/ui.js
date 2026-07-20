@@ -1,11 +1,21 @@
 const $ = id => document.getElementById(id)
 
-function spriteHTML(id, isShiny, extraClass) {
+// 动画精灵 URL（PokeAPI showdown 动画 GIF）
+function spriteSrc(id, isShiny, animated) {
+  if (animated === false) {
+    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${isShiny ? 'shiny/' : ''}${id}.png`
+  }
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${isShiny ? 'shiny/' : ''}${id}.gif`
+}
+
+function spriteHTML(id, isShiny, extraClass, opts) {
+  const animated = !opts || opts.animated !== false
   const shinyClass = isShiny ? ' shiny' : ''
   const shinyStars = isShiny ? '<div class="shiny-stars"><span></span><span></span><span></span></div>' : ''
   const cls = extraClass || ''
-  const src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${isShiny ? 'shiny/' : ''}${id}.png`
-  return `<div class="sprite-container${shinyClass}${cls ? ' ' + cls : ''}">${shinyStars}<div class="sprite-shadow"></div><img class="sprite-img" src="${src}" onerror="this.style.display='none'" loading="lazy"></div>`
+  const gif = spriteSrc(id, isShiny, true)
+  const png = spriteSrc(id, isShiny, false)
+  return `<div class="sprite-container${shinyClass}${cls ? ' ' + cls : ''}">${shinyStars}<div class="sprite-shadow"></div><img class="sprite-img" src="${gif}" data-png="${png}" onerror="if(this.dataset.fallback!=='1'){this.dataset.fallback='1';this.src=this.dataset.png}else{this.style.display='none'}" loading="lazy"></div>`
 }
 
 function render() {
@@ -21,6 +31,7 @@ function render() {
   if (G.pendingMoveLearn && G.pendingMoveLearn.length > 0) {
     renderMoveLearn()
     try { renderMap() } catch(e) { console.warn('map:',e) }
+    renderSidebarTeam()
     renderLog()
     return
   }
@@ -37,6 +48,7 @@ function render() {
   else if (v === 'worldMap') renderWorldMap()
   else if (v === 'choice') renderChoice()
   try { renderMap() } catch(e) { console.warn('map:',e) }
+  renderSidebarTeam()
   renderLog()
   // 根据当前场景切换 BGM
   if (window.AU && typeof updateBgmForView === 'function') updateBgmForView()
@@ -117,14 +129,16 @@ function renderChoose() {
   for (const id of [4,7,1]) {
     const p = getPokemonData(id)
     if (!p) continue
+    const types = p[2].split(',')
+    const typeBadges = types.map(t => `<span class="type-badge" style="background:${FX.typeBg(t)}">${t}</span>`).join('')
     grid.innerHTML += `
       <div class="choose-card">
         <div class="sprite-container">
           <div class="sprite-shadow"></div>
-          <img class="sprite-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png" onerror="this.style.display='none'" loading="lazy">
+          <img class="sprite-img" src="${spriteSrc(id, false, true)}" data-png="${spriteSrc(id, false, false)}" onerror="if(this.dataset.fallback!=='1'){this.dataset.fallback='1';this.src=this.dataset.png}else{this.style.display='none'}" loading="lazy">
         </div>
         <div class="pkm-name">${p[1]}</div>
-        <div class="pkm-types">${p[2].replace(',',' / ')}</div>
+        <div class="pkm-types">${typeBadges}</div>
         <div class="pkm-stat">HP:${p[3]} 攻:${p[4]} 防:${p[5]}</div>
         <div class="pkm-stat">特攻:${p[6]} 特防:${p[7]} 速:${p[8]}</div>
         <button class="btn" onclick="selectStarter(${id})">选择 ${p[1]}</button>
@@ -200,7 +214,7 @@ function renderBattle() {
   const b = G.battle
   if (!b || !b.enemy) { G.view = 'explore'; render(); return }
   const pkm = getActivePokemon()
-  
+
   // HP条渲染函数
   const renderHpBar = (pokemon, isEnemy = false) => {
     if (!pokemon) return '<div class="hp-bar-container"><div class="hp-text">倒下了</div></div>'
@@ -214,7 +228,7 @@ function renderBattle() {
       hpClass += ' hp-medium'
       textClass += ' hp-medium'
     }
-    
+
     // 检测HP变化并添加波动动画
     const lastHpKey = isEnemy ? 'lastEnemyHp' : 'lastPlayerHp'
     if (!b[lastHpKey] && b[lastHpKey] !== 0) b[lastHpKey] = pokemon.hp
@@ -222,57 +236,110 @@ function renderBattle() {
       hpClass += ' hp-damaged'
     }
     b[lastHpKey] = pokemon.hp
-    
+
+    // 状态徽章
+    let statusBadge = ''
+    if (pokemon.status && pokemon.status.type) {
+      const map = { sleep: '睡眠 ZZZ', paralyze: '麻痹 PAR', poison: '中毒 PSN', burn: '灼伤 BRN' }
+      const label = map[pokemon.status.type]
+      if (label) statusBadge = `<span class="status-badge status-${pokemon.status.type}">${label}</span>`
+    }
+    if (pokemon.confused) statusBadge += `<span class="status-badge status-confuse">混乱 CNF</span>`
+
     return `<div class="hp-bar-container">
       <div class="hp-bar-wrapper">
         <div class="${hpClass}" style="width:${pct}%"></div>
       </div>
       <div class="${textClass}">${pokemon.hp}/${pokemon.maxHp}</div>
+      ${statusBadge ? `<div class="status-badges">${statusBadge}</div>` : ''}
     </div>`
   }
-  
+
   const hitEnemyClass = b.enemy.hp < (b.lastEnemyHp || b.enemy.maxHp) ? ' hit' : ''
   const hitPlayerClass = pkm && pkm.hp < (b.lastPlayerHp || pkm.maxHp) ? ' hit' : ''
   const faintedEnemy = b.enemy.hp <= 0 || b.enemy.fainted ? ' fainted' : ''
   const faintedPlayer = pkm && (pkm.hp <= 0 || pkm.fainted) ? ' fainted' : ''
 
+  // 属性徽章
+  const typeBadge = (t) => `<span class="type-badge" style="background:${FX.typeBg(t)}">${t}</span>`
+  const enemyTypes = b.enemy.types.map(typeBadge).join('')
+  const playerTypes = pkm ? pkm.types.map(typeBadge).join('') : ''
+
+  // 战斗场景类型（背景）
+  const area = LOCATIONS[G.player.position]
+  const areaType = area ? area[2] : 'route'
+  let bgClass = 'battle-bg-route'
+  if (areaType === 'cave') bgClass = 'battle-bg-cave'
+  else if (areaType === 'water') bgClass = 'battle-bg-water'
+  else if (areaType === 'town') bgClass = 'battle-bg-town'
+
   const main = $('main')
   main.innerHTML = `
-    <div class="battle-enemy">
-      ${spriteHTML(b.enemy.id, b.enemy.isShiny, `enemy${hitEnemyClass}${faintedEnemy}`)}
-      <span class="pkm-name">${b.enemy.name}${b.enemy.isShiny ? ' <span class="shiny-badge">✨</span>' : ''}${b.enemy.isElite ? ' <span class="elite-badge">精英</span>' : ''}</span>
-      <span class="pkm-level">Lv.${b.enemy.level}</span>
-      <span class="pkm-types">${b.enemy.types.join('/')}</span>
-      ${renderHpBar(b.enemy, true)}
+    <div class="battle-stage ${bgClass}" id="battle-stage">
+      <div class="battle-layer battle-sky"></div>
+      <div class="battle-layer battle-clouds"><i></i><i></i><i></i></div>
+      <div class="battle-layer battle-ground"></div>
+      <div class="battle-arena">
+        <div class="battle-enemy-side">
+          <div class="enemy-info-card">
+            <div class="info-row">
+              <span class="pkm-name">${b.enemy.name}${b.enemy.isShiny ? ' <span class="shiny-badge">✨</span>' : ''}${b.enemy.isElite ? ' <span class="elite-badge">精英</span>' : ''}</span>
+              <span class="pkm-level">Lv.${b.enemy.level}</span>
+            </div>
+            <div class="info-row">${enemyTypes}</div>
+            ${renderHpBar(b.enemy, true)}
+          </div>
+          <div class="enemy-platform">
+            ${spriteHTML(b.enemy.id, b.enemy.isShiny, `enemy${hitEnemyClass}${faintedEnemy}`, {animated: true})}
+          </div>
+        </div>
+        <div class="battle-center">
+          ${b.battleMsg ? `<div class="battle-msg">${b.battleMsg}</div>` : `<div class="battle-divider">━━ ⚔ ━━</div>`}
+        </div>
+        <div class="battle-player-side">
+          <div class="player-platform">
+            ${pkm ? spriteHTML(pkm.id, pkm.isShiny, `player${hitPlayerClass}${faintedPlayer}`, {animated: true}) : ''}
+          </div>
+          <div class="player-info-card">
+            <div class="info-row">
+              <span class="pkm-name">${pkm ? pkm.name + (pkm.isShiny ? ' <span class="shiny-badge">✨</span>' : '') : '---'}</span>
+              <span class="pkm-level">${pkm ? 'Lv.'+pkm.level : ''}</span>
+            </div>
+            <div class="info-row">${playerTypes}</div>
+            ${renderHpBar(pkm, false)}
+            ${pkm ? `<div class="exp-row"><span class="exp-label">EXP</span><div class="exp-bar"><div class="exp-bar-fill" style="width:${Math.min(100, pkm.exp/pkm.nextLevel*100)}%"></div></div><span class="exp-text">${pkm.exp}/${pkm.nextLevel}</span></div>` : ''}
+          </div>
+        </div>
+      </div>
+      <div class="battle-status">#${b.enemyIndex+1}/${b.enemyTeam.length} ${b.type==='gym'?'🏛 '+b.extra.data[1]:b.type==='elite'?'👑 四天王 '+b.extra.name:b.type==='story'?'💀 '+b.extra.name:b.type==='rival'?'💢 '+b.extra.name:'🌿 野生'}</div>
+      <div class="battle-scanlines"></div>
     </div>
-    ${b.battleMsg ? `<div class="battle-msg">${b.battleMsg}</div>` : `<div class="battle-divider">━━ V.S. ━━</div>`}
-    <div class="battle-player">
-      ${pkm ? spriteHTML(pkm.id, pkm.isShiny, `player${hitPlayerClass}${faintedPlayer}`) : ''}
-      <span class="pkm-name">${pkm ? pkm.name + (pkm.isShiny ? ' <span class="shiny-badge">✨</span>' : '') : '---'}</span>
-      <span class="pkm-level">${pkm ? 'Lv.'+pkm.level : ''}</span>
-      <span class="pkm-types">${pkm ? pkm.types.join('/') : ''}</span>
-      ${renderHpBar(pkm, false)}
-      ${pkm ? `<div class="exp-row">EXP: ${pkm.exp}/${pkm.nextLevel}</div>` : ''}
-    </div>
-    <div class="battle-status">#${b.enemyIndex+1}/${b.enemyTeam.length} ${b.type==='gym'?'🏛'+b.extra.data[1]:b.type==='elite'?'👑四天王':b.type==='story'?'💀'+b.extra.name:b.type==='rival'?'💢'+b.extra.name:'🌿野生'}</div>
   `
   const actions = $('actions')
   if (b.subState === 'main') {
     actions.innerHTML = `
-      <button class="btn" onclick="battleSub('attack')">⚔ 攻击</button>
-      <button class="btn" onclick="battleSub('switch')">🔄 换宠</button>
-      <button class="btn" onclick="battleSub('item')">🎒 道具</button>
-      ${b.type === 'wild' ? '<button class="btn" onclick="tryFlee()">🏃 逃跑</button>' : ''}
+      <button class="btn btn-action btn-attack" onclick="battleSub('attack')">⚔ 攻击</button>
+      <button class="btn btn-action btn-switch" onclick="battleSub('switch')">🔄 换宠</button>
+      <button class="btn btn-action btn-item" onclick="battleSub('item')">🎒 道具</button>
+      ${b.type === 'wild' ? '<button class="btn btn-action btn-flee" onclick="tryFlee()">🏃 逃跑</button>' : ''}
     `
   } else if (b.subState === 'attack') {
     if (!pkm) { actions.innerHTML = '<button class="btn" onclick="battleSub(\'switch\')">换宠</button>'; return }
-    let html = ''
-    for (let i = 0; i < pkm.moves.length; i++) {
+    let html = '<div class="moves-grid">'
+    for (let i = 0; i < 4; i++) {
       const m = pkm.moves[i]
+      if (!m) { html += '<div class="move-slot empty"></div>'; continue }
       const d = m.currentPp <= 0 ? 'disabled' : ''
-      html += `<button class="btn ${d}" onclick="battleSub('selectMove',${i})">${m.name}[${m.type}] 威:${m.power} PP:${m.currentPp}/${m.pp}</button>`
+      const bg = FX.typeBg(m.type)
+      const cat = m.power === 0 ? '变化' : (['火','水','草','电','冰','超能','幽灵','龙','恶'].includes(m.type) ? '特殊' : '物理')
+      html += `<button class="btn move-slot ${d}" style="--move-bg:${bg}" onclick="battleSub('selectMove',${i})">
+        <span class="move-name">${m.name}</span>
+        <span class="move-type">${typeBadge(m.type)}</span>
+        <span class="move-stats">${cat} · 威${m.power === 0 ? '—' : m.power} · PP ${m.currentPp}/${m.pp}</span>
+      </button>`
     }
-    html += '<button class="btn" onclick="battleSub(\'main\')">↩ 返回</button>'
+    html += '</div>'
+    html += '<button class="btn btn-back" onclick="battleSub(\'main\')">↩ 返回</button>'
     actions.innerHTML = html
   } else if (b.subState === 'selectMove') {
     const moveIndex = b.selectedMove
@@ -280,46 +347,86 @@ function renderBattle() {
     if (!m) { b.subState = 'attack'; return }
     G.view = 'battle'
 
+    const bg = FX.typeBg(m.type)
+    const cat = m.power === 0 ? '变化' : (['火','水','草','电','冰','超能','幽灵','龙','恶'].includes(m.type) ? '特殊' : '物理')
+
     main.innerHTML = `
-      <div class="battle-enemy">
-        ${spriteHTML(b.enemy.id, b.enemy.isShiny, `enemy${faintedEnemy}`)}
-        <span class="pkm-name">${b.enemy.name}${b.enemy.isShiny ? ' <span class="shiny-badge">✨</span>' : ''}</span>
-        <span class="pkm-level">Lv.${b.enemy.level}</span>
-        <span class="pkm-types">${b.enemy.types.join('/')}</span>
-        ${renderHpBar(b.enemy, true)}
-      </div>
-      ${b.battleMsg ? `<div class="battle-msg">${b.battleMsg}</div>` : `<div class="battle-divider">━━ V.S. ━━</div>`}
-      <div class="battle-player">
-        ${pkm ? spriteHTML(pkm.id, pkm.isShiny, `player${faintedPlayer}`) : ''}
-        <span class="pkm-name">${pkm ? pkm.name + (pkm.isShiny ? ' <span class="shiny-badge">✨</span>' : '') : '---'}</span>
-        <span class="pkm-level">${pkm ? 'Lv.'+pkm.level : ''}</span>
-        <span class="pkm-types">${pkm ? pkm.types.join('/') : ''}</span>
-        ${renderHpBar(pkm, false)}
-        ${pkm ? `<div class="exp-row">EXP: ${pkm.exp}/${pkm.nextLevel}</div>` : ''}
-      </div>
-      <div class="battle-status">#${b.enemyIndex+1}/${b.enemyTeam.length} ${b.type==='gym'?'🏛'+b.extra.data[1]:b.type==='elite'?'👑四天王':b.type==='story'?'💀'+b.extra.name:b.type==='rival'?'💢'+b.extra.name:'🌿野生'}</div>
-      <div class="move-confirm">
-        <div class="move-name">${m.name}</div>
-        <div class="move-info">[${m.type}] 威力:${m.power} PP:${m.currentPp}/${m.pp}</div>
-        <div class="move-desc">${m.desc}</div>
+      <div class="battle-stage ${bgClass}" id="battle-stage">
+        <div class="battle-layer battle-sky"></div>
+        <div class="battle-layer battle-clouds"><i></i><i></i><i></i></div>
+        <div class="battle-layer battle-ground"></div>
+        <div class="battle-arena">
+          <div class="battle-enemy-side">
+            <div class="enemy-info-card">
+              <div class="info-row">
+                <span class="pkm-name">${b.enemy.name}${b.enemy.isShiny ? ' <span class="shiny-badge">✨</span>' : ''}</span>
+                <span class="pkm-level">Lv.${b.enemy.level}</span>
+              </div>
+              <div class="info-row">${enemyTypes}</div>
+              ${renderHpBar(b.enemy, true)}
+            </div>
+            <div class="enemy-platform">
+              ${spriteHTML(b.enemy.id, b.enemy.isShiny, `enemy${faintedEnemy}`, {animated: true})}
+            </div>
+          </div>
+          <div class="battle-center">
+            ${b.battleMsg ? `<div class="battle-msg">${b.battleMsg}</div>` : `<div class="battle-divider">━━ ⚔ ━━</div>`}
+          </div>
+          <div class="battle-player-side">
+            <div class="player-platform">
+              ${pkm ? spriteHTML(pkm.id, pkm.isShiny, `player${faintedPlayer}`, {animated: true}) : ''}
+            </div>
+            <div class="player-info-card">
+              <div class="info-row">
+                <span class="pkm-name">${pkm ? pkm.name + (pkm.isShiny ? ' <span class="shiny-badge">✨</span>' : '') : '---'}</span>
+                <span class="pkm-level">${pkm ? 'Lv.'+pkm.level : ''}</span>
+              </div>
+              <div class="info-row">${playerTypes}</div>
+              ${renderHpBar(pkm, false)}
+              ${pkm ? `<div class="exp-row"><span class="exp-label">EXP</span><div class="exp-bar"><div class="exp-bar-fill" style="width:${Math.min(100, pkm.exp/pkm.nextLevel*100)}%"></div></div><span class="exp-text">${pkm.exp}/${pkm.nextLevel}</span></div>` : ''}
+            </div>
+          </div>
+        </div>
+        <div class="battle-status">#${b.enemyIndex+1}/${b.enemyTeam.length} ${b.type==='gym'?'🏛 '+b.extra.data[1]:b.type==='elite'?'👑 四天王 '+b.extra.name:b.type==='story'?'💀 '+b.extra.name:b.type==='rival'?'💢 '+b.extra.name:'🌿 野生'}</div>
+        <div class="move-confirm" style="--move-bg:${bg}">
+          <div class="move-confirm-name">${m.name} ${typeBadge(m.type)}</div>
+          <div class="move-confirm-stats">${cat} · 威力 ${m.power === 0 ? '—' : m.power} · PP ${m.currentPp}/${m.pp}</div>
+          <div class="move-confirm-desc">${m.desc}</div>
+        </div>
+        <div class="battle-scanlines"></div>
       </div>
     `
     actions.innerHTML = `
-      <button class="btn" onclick="confirmMove()">✅ 确认</button>
-      <button class="btn" onclick="cancelMove()">✖ 取消</button>
+      <button class="btn btn-confirm" onclick="confirmMove()">✅ 确认使用</button>
+      <button class="btn btn-back" onclick="cancelMove()">✖ 返回</button>
     `
   } else if (b.subState === 'switch') {
-    let html = ''
+    let html = '<div class="switch-grid">'
     for (let i = 0; i < G.player.pokemon.length; i++) {
       const p = G.player.pokemon[i]
       const a = p === getActivePokemon()
       const ok = !p.fainted && p.hp > 0 && !a
-      html += `<button class="btn ${ok?'':'disabled'}" onclick="${ok?`switchPokemon(${i})`:''}">${p.name} Lv.${p.level}${a?'[战中]':''}${p.fainted?'[濒死]':''}</button>`
+      const pct = Math.max(0, Math.min(100, Math.floor(p.hp / Math.max(1, p.maxHp) * 100)))
+      let hpColor = 'var(--success)'
+      if (pct <= 25) hpColor = 'var(--danger)'
+      else if (pct <= 50) hpColor = 'var(--warning)'
+      html += `<button class="btn switch-slot ${ok?'':'disabled'}" onclick="${ok?`switchPokemon(${i})`:''}">
+        <div class="switch-head">
+          <img class="switch-sprite" src="${spriteSrc(p.id, p.isShiny, false)}" onerror="this.style.display='none'" loading="lazy">
+          <span class="switch-name">${p.name}</span>
+          <span class="switch-lv">Lv.${p.level}</span>
+          ${a?'<span class="switch-active">战中</span>':''}
+          ${p.fainted?'<span class="switch-faint">濒死</span>':''}
+        </div>
+        <div class="switch-hp"><div class="switch-hp-bar" style="width:${pct}%;background:${hpColor};"></div></div>
+        <div class="switch-hp-text">${p.hp}/${p.maxHp}</div>
+      </button>`
     }
-    html += '<button class="btn" onclick="battleSub(\'main\')">↩ 返回</button>'
+    html += '</div>'
+    html += '<button class="btn btn-back" onclick="battleSub(\'main\')">↩ 返回</button>'
     actions.innerHTML = html
   } else if (b.subState === 'item') {
-    let html = ''
+    let html = '<div class="item-grid">'
     let hasItems = false
     for (const [key, val] of Object.entries(ITEMS)) {
       if (val.type === 'key' || val.type === 'safari') continue
@@ -327,10 +434,15 @@ function renderBattle() {
       if (c <= 0) continue
       hasItems = true
       const label = val.heal && !val.catchRate ? `${val.name} x${c} (回复${val.heal === 999 ? '满' : val.heal + 'HP'})` : `${val.name} x${c}`
-      html += `<button class="btn" onclick="useItemInBattle('${key}')">${label}</button>`
+      const icon = val.catchRate ? '🔴' : val.heal ? '💊' : '📦'
+      html += `<button class="btn item-slot" onclick="useItemInBattle('${key}')">
+        <span class="item-icon">${icon}</span>
+        <span class="item-label">${label}</span>
+      </button>`
     }
-    if (!hasItems) html += '<div style="color:#006a1a;padding:8px;">没有可用的道具</div>'
-    html += '<button class="btn" onclick="battleSub(\'main\')">↩ 返回</button>'
+    if (!hasItems) html += '<div style="color:#666;padding:8px;grid-column:1/-1;">没有可用的道具</div>'
+    html += '</div>'
+    html += '<button class="btn btn-back" onclick="battleSub(\'main\')">↩ 返回</button>'
     actions.innerHTML = html
   }
 }
@@ -443,21 +555,22 @@ function renderPokemon() {
     if (p) {
       const hb = '#'.repeat(Math.max(1,Math.floor(p.hp/Math.max(1,p.maxHp)*8)))+'-'.repeat(8-Math.max(1,Math.floor(p.hp/Math.max(1,p.maxHp)*8)))
       const rememberedCount = (p.relearnMoves || []).length
+      const typeBadges = p.types.map(t => `<span class="type-badge" style="background:${FX.typeBg(t)}">${t}</span>`).join(' ')
       list.innerHTML += `<div class="pkm-card${p.isShiny ? ' shiny-card' : ''}" onclick="openPokemonManager(${i})" style="cursor:pointer;">
           <div style="display:flex;align-items:center;gap:10px;">
             <div class="sprite-container small${p.isShiny ? ' shiny' : ''}" style="margin:0;flex-shrink:0;${p.fainted ? ' filter:grayscale(1);opacity:0.5;' : ''}" onclick="event.stopPropagation()">
               ${p.isShiny ? '<div class="shiny-stars"><span></span><span></span><span></span></div>' : ''}
               <div class="sprite-shadow"></div>
-              <img class="sprite-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.isShiny ? 'shiny/' : ''}${p.id}.png" onerror="this.style.display='none'" loading="lazy">
+              <img class="sprite-img" src="${spriteSrc(p.id, p.isShiny, true)}" data-png="${spriteSrc(p.id, p.isShiny, false)}" onerror="if(this.dataset.fallback!=='1'){this.dataset.fallback='1';this.src=this.dataset.png}else{this.style.display='none'}" loading="lazy">
             </div>
             <div style="flex:1;min-width:0;">
               <div class="pkm-name">${p.name}${p.isShiny ? ' <span class="shiny-badge">✨</span>' : ''} <span class="pkm-level">Lv.${p.level}</span></div>
-              <div class="pkm-types">${p.types.join(' / ')} ${p.gender ? '<span style="color:'+(p.gender==='♀'?'#e05080':'#5090e0')+'">'+p.gender+'</span>' : ''}${p.nature ? ' ['+p.nature[0]+']' : ''}${p.ability ? ' ['+p.ability.name+']' : ''}</div>
+              <div class="pkm-types">${typeBadges} ${p.gender ? '<span style="color:'+(p.gender==='♀'?'#e05080':'#5090e0')+'">'+p.gender+'</span>' : ''}${p.nature ? ' ['+p.nature[0]+']' : ''}${p.ability ? ' ['+p.ability.name+']' : ''}</div>
               <div>HP: ${hb} ${p.hp}/${p.maxHp}${p.fainted?' 已失去战斗能力':''}</div>
               <div class="pkm-exp">EXP: ${p.exp}/${p.nextLevel}${rememberedCount > 0 ? ` | 可换回技能:${rememberedCount}` : ''}</div>
             </div>
           </div>
-          <div class="pkm-moves">${p.moves.map(m=>`${m.name}[${m.type}] 威力:${m.power} PP:${m.currentPp}/${m.pp}`).join(' | ')}</div>
+          <div class="pkm-moves">${p.moves.map(m=>`<span class="type-badge" style="background:${FX.typeBg(m.type)}">${m.name}</span> 威${m.power===0?'-':m.power}`).join(' ')}</div>
           <div class="pkm-iv">个体: H${p.ivs.hp} A${p.ivs.atk} D${p.ivs.def} SA${p.ivs.spa} SD${p.ivs.spd} S${p.ivs.spe}</div>
           <div class="pkm-ev">努力: H${p.evs.hp} A${p.evs.atk} D${p.evs.def} SA${p.evs.spa} SD${p.evs.spd} S${p.evs.spe}</div>
           <div class="pkm-exp" style="margin-top:4px;color:var(--accent);">点击这只宝可梦可整理技能</div>
@@ -475,13 +588,15 @@ function renderPokedex() {
     const p = getPokemonData(G.pokedexDetail)
     if (!p) { G.pokedexDetail = null; renderPokedex(); return }
     const seen = G.player.seen.includes(p[0])
-    const evoInfo = p[11] ? `→ Lv.${p[11][0]} ${getPokemonData(p[11][1])?.[1] || '???'}` : '最终形态'
+    const evoInfo = p[11] ? `-> Lv.${p[11][0]} ${getPokemonData(p[11][1])?.[1] || '???'}` : '最终形态'
     const isShinySeen = G.player.shinySeen.includes(p[0])
+    const types = seen ? p[2].split(',') : []
+    const typeBadges = types.map(t => `<span class="type-badge" style="background:${FX.typeBg(t)}">${t}</span>`).join(' ')
     main.innerHTML = `
       <p class="section-title">📖 #${String(p[0]).padStart(2,'0')} ${seen ? p[1] : '???'}${isShinySeen ? ' <span class="shiny-badge">✨</span>' : ''}</p>
         <div class="pkm-card${isShinySeen ? ' shiny-card' : ''}" style="border-color:var(--accent);">
-        ${seen ? spriteHTML(p[0], isShinySeen) : ''}
-        <div class="pkm-types">${seen ? p[2].replace(',',' / ') : '???'}</div>
+        ${seen ? spriteHTML(p[0], isShinySeen, 'large') : ''}
+        <div class="pkm-types">${typeBadges || '???'}</div>
         <hr style="border-color:#003a10;margin:6px 0;">
         <div class="pkm-stat">HP: ${seen ? p[3] : '???'}</div>
         <div class="pkm-stat">攻击: ${seen ? p[4] : '???'}</div>
@@ -502,10 +617,12 @@ function renderPokedex() {
     for (const p of POKEMON) {
       const seen = G.player.seen.includes(p[0])
       const isShinySeen = G.player.shinySeen.includes(p[0])
+      const types = seen ? p[2].split(',') : []
+      const typeBadges = types.map(t => `<span class="type-badge" style="background:${FX.typeBg(t)}">${t}</span>`).join(' ')
       grid.innerHTML += `<div class="pkm-card${seen?'':' unseen'}${isShinySeen?' shiny-card':''}" onclick="${seen?`G.pokedexDetail=${p[0]};render()`:''}" style="cursor:${seen?'pointer':'default'};${seen?'':'opacity:0.45;'}">
         <div class="pkm-name">#${String(p[0]).padStart(2,'0')} ${seen ? p[1] : '???'}${isShinySeen ? ' <span class="shiny-badge">✨</span>' : ''}</div>
-        ${seen ? `<div class="sprite-container small${isShinySeen ? ' shiny' : ''}" style="min-height:48px;margin:2px 0;">${isShinySeen ? '<div class="shiny-stars"><span></span><span></span><span></span></div>' : ''}<div class="sprite-shadow"></div><img class="sprite-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${isShinySeen ? 'shiny/' : ''}${p[0]}.png" onerror="this.style.display='none'" loading="lazy"></div>` : ''}
-        <div class="pkm-types">${seen ? p[2].replace(',',' / ') : '???'}</div>
+        ${seen ? `<div class="sprite-container small${isShinySeen ? ' shiny' : ''}" style="min-height:48px;margin:2px 0;">${isShinySeen ? '<div class="shiny-stars"><span></span><span></span><span></span></div>' : ''}<div class="sprite-shadow"></div><img class="sprite-img" src="${spriteSrc(p[0], isShinySeen, true)}" data-png="${spriteSrc(p[0], isShinySeen, false)}" onerror="if(this.dataset.fallback!=='1'){this.dataset.fallback='1';this.src=this.dataset.png}else{this.style.display='none'}" loading="lazy"></div>` : ''}
+        <div class="pkm-types">${typeBadges || '???'}</div>
       </div>`
     }
   }
@@ -550,6 +667,88 @@ function renderMap() {
   // 在 worldMap 视图下，map-panel 由 renderWorldMap() 管理
   if (G.view === 'worldMap') return
   panel.innerHTML = ''
+}
+
+// 侧边栏队伍显示：
+// - 在 start/choose/worldMap 视图下不显示
+// - 其余视图展示 6 个槽位（精灵紧凑卡：迷你头像+ Lv + HP条 + 状态）
+// - 点击：战斗中且可上场 = switchPokemon；其他情况 = 打开技能整理
+function renderSidebarTeam() {
+  const panel = $('team-panel')
+  if (!panel) return
+  const v = G.view
+  const team = G.player.pokemon || []
+  // 未选御三家 / 起始界面 / 大地图视图：清空不显示
+  if (v === 'start' || v === 'choose' || v === 'worldMap' || team.length === 0) {
+    panel.innerHTML = ''
+    return
+  }
+
+  const active = getActivePokemon()
+  const inBattle = !!G.battle && v === 'battle'
+  const usableCount = team.filter(p => isPokemonUsable(p)).length
+
+  let html = '<div class="team-panel-card">'
+  html += '<div class="team-panel-header">'
+  html += '<span class="team-panel-label">👥 队伍</span>'
+  html += `<span class="team-panel-count">${team.length}/6</span>`
+  html += '</div>'
+
+  html += '<div class="team-list">'
+  for (let i = 0; i < 6; i++) {
+    const p = team[i]
+    if (!p) {
+      html += '<div class="team-item empty"><span class="team-empty-slot">— 空位 —</span></div>'
+      continue
+    }
+    const isActive = p === active
+    const fainted = p.fainted || p.hp <= 0
+    const pct = Math.max(0, Math.min(100, Math.floor(p.hp / Math.max(1, p.maxHp) * 100)))
+    let hpColor = 'var(--success)'
+    if (pct <= 25) hpColor = 'var(--danger)'
+    else if (pct <= 50) hpColor = 'var(--warning)'
+    let statusBadge = ''
+    if (p.status && p.status.type) statusBadge = `<span class="team-status team-status-${p.status.type}" title="${p.status.type}">●</span>`
+    const cls = ['team-item']
+    if (isActive) cls.push('is-active')
+    if (fainted) cls.push('is-fainted')
+
+    // action 决定点击行为
+    let action = `openPokemonManager(${i})`
+    if (inBattle && !isActive && !fainted) action = `switchPokemon(${i})`
+
+    const src = spriteSrc(p.id, p.isShiny, false) // 侧边栏用静态图省资源
+    html += `<div class="${cls.join(' ')}" onclick="${action}">
+      <div class="team-sprite">${p.isShiny ? '<span class="team-shiny-star" title="闪光">✨</span>' : ''}<img src="${src}" onerror="this.style.visibility='hidden'" loading="lazy" alt="${p.name}"></div>
+      <div class="team-info">
+        <div class="team-name-row">
+          <span class="team-name">${p.name}</span>
+          <span class="team-lv">Lv.${p.level}</span>
+          ${statusBadge}
+        </div>
+        <div class="team-types">${p.types.map(t => `<span class="team-type-badge" style="background:${FX.typeBg(t)}">${t}</span>`).join('')}</div>
+        <div class="team-hp-row">
+          <div class="team-hp-bar"><div class="team-hp-bar-fill" style="width:${pct}%;background:${hpColor};"></div></div>
+          <span class="team-hp-text">${p.hp}/${p.maxHp}${fainted ? ' · 濒死' : ''}</span>
+        </div>
+      </div>
+      ${isActive ? '<span class="team-active-tag" title="首发">★</span>' : ''}
+    </div>`
+  }
+  html += '</div>'
+
+  // 概要
+  const totalHpMax = team.reduce((s, p) => s + (p ? p.maxHp : 0), 0)
+  const totalHpCur = team.reduce((s, p) => s + (p ? p.hp : 0), 0)
+  const totalPct = totalHpMax > 0 ? Math.round(totalHpCur / totalHpMax * 100) : 0
+  html += '<div class="team-summary">'
+  html += `<span class="team-summary-item" title="可战斗 / 总数">${usableCount}/${team.length}</span>`
+  html += `<span class="team-summary-item" title="全队 HP">❤ ${totalPct}%</span>`
+  html += `<span class="team-summary-item" title="金钱">💰${G.player.money}</span>`
+  html += '</div>'
+
+  html += '</div>'
+  panel.innerHTML = html
 }
 
 function renderLog() {

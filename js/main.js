@@ -121,6 +121,10 @@ function challengeGym(leaderId) {
     addLog('紫苑镇的宝可梦之塔似乎有些异常……先去紫苑镇看看吧。')
     render(); return
   }
+  if (leaderId === 'blaine' && !G.storyFlags.cinnabarGymDone) {
+    addLog('红莲道馆的大门紧锁着。听说红莲镇上的宝可梦屋里有一把秘密钥匙……')
+    render(); return
+  }
   if (startGymBattle(leaderId, townKey)) {
     G.view = 'battle'; render()
   } else {
@@ -142,7 +146,7 @@ function tryWildEncounter(fromTravel) {
   // 检查是否有未击败的训练家
   const trainers = getTrainersForArea(G.player.position)
   const undefeated = trainers.filter(t => !G.player.trainersDefeated.includes(t.id))
-  if (undefeated.length > 0 && Math.random() < 0.3) {
+  if (undefeated.length > 0 && Math.random() < 0.217) {
     const t = undefeated[Math.floor(Math.random() * undefeated.length)]
     if (startTrainerBattle(t)) { G.view = 'battle'; render(); return }
   }
@@ -224,6 +228,21 @@ function finishDialogue() {
   G.view = 'explore'; render()
 }
 
+// 剧情事件链式触发：当前事件 onFinish 完成后，若同地点仍有可触发事件，
+// 自动进入下一段对话（用于小茂前置战 → 主线事件 这类串联）
+function chainNextStoryEvent(locationId, delay = 700) {
+  setTimeout(() => {
+    const nextKey = checkStoryTrigger(locationId)
+    if (!nextKey) { G.view = 'explore'; render(); return }
+    const ev = STORY_EVENTS[nextKey]
+    G.dialogue = {
+      eventKey: nextKey, lines: ev.dialogue, index: 0,
+      battle: ev.battle !== null, choices: ev.choices, canSkip: false,
+    }
+    G.view = 'dialogue'; saveGame(); render()
+  }, delay)
+}
+
 function makeChoice(choiceIndex) {
   const d = G.dialogue
   if (!d || !d.choices || !d.eventKey) return
@@ -290,8 +309,12 @@ function useItemFromBag(key) { useItem(key); render() }
 
 function switchPokemon(index) {
   const p = G.player.pokemon[index]
-  if (!p || p.fainted || p.hp <= 0 || p === getActivePokemon()) return
-  addLog(`回来吧！${getActivePokemon()?.name||'---'}！`); addLog(`上吧！${p.name}！`)
+  if (!p || p.fainted || p.hp <= 0) { addLog(`${p ? p.name : '这只'}无法上场！`); render(); return }
+  const cur = getActivePokemon()
+  if (p === cur) { addLog(`${p.name} 已经在场上！`); render(); return }
+  if (!setActivePokemon(index)) { addLog('换宠失败！'); render(); return }
+  addLog(`回来吧！${cur?.name||'---'}！`); addLog(`上吧！${p.name}！`)
+  if (window.AU) AU.sfx('select')
   if (G.battle) { G.battle.turn = 'enemy'; G.battle.subState = 'main'; setTimeout(enemyTurn,500) }
   render()
 }

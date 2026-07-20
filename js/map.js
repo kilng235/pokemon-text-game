@@ -249,11 +249,12 @@ const LOCATIONS = {
     { common:{ids:[116,118,223],lv:[38,46],w:55}, uncommon:{ids:[117,119,224],lv:[42,50],w:30}, rare:{ids:[350],lv:[46,55],w:15} }],
   island6: ['战怪岛','古代遗迹所在的谜之岛屿。','town',true,false,['island5_route5','island6_ruins','island6_route6'],
     { common:{ids:[355,352,200],lv:[40,48],w:50}, uncommon:{ids:[356,354,201],lv:[44,52],w:35}, rare:{ids:[302,292],lv:[48,58],w:15} }],
-  island6_ruins: ['遗迹谷','刻满神秘图案的古代遗迹。','cave',false,false,['island6'],
+  island6_ruins: ['谜之遗迹','Dotted Hole —— 刻满古老文字的战怪岛遗迹。','cave',false,false,['island6'],
     { common:{ids:[353,355,201],lv:[42,50],w:50}, uncommon:{ids:[354,356,292],lv:[46,55],w:35}, rare:{ids:[386],lv:[55,70],w:15} }],
+  island7_birth: ['Birth Island','空无一物的神秘三角小岛。','cave',false,false,['island7']],
   island6_route6: ['战怪岛水路','连接七岛的最后水路。','water',false,false,['island6','island7'],
     { common:{ids:[278,118,223],lv:[42,50],w:55}, uncommon:{ids:[279,119,224],lv:[46,54],w:30}, rare:{ids:[131,230],lv:[50,60],w:15} }],
-  island7: ['绝壁岛','训练家之塔所在的最终岛屿。','route',true,false,['island6_route6','island7_tower'],
+  island7: ['绝壁岛','训练家之塔所在的最终岛屿。','route',true,false,['island6_route6','island7_tower','island7_birth'],
     { common:{ids:[278,276,207],lv:[44,52],w:50}, uncommon:{ids:[277,214,217],lv:[48,56],w:35}, rare:{ids:[330,373],lv:[52,62],w:15} }],
   island7_tower: ['训练家之塔','强者云集的对战高塔。','cave',false,false,['island7'],
     { common:{ids:[68,214,57],lv:[48,56],w:50}, uncommon:{ids:[64,65,68],lv:[52,60],w:35}, rare:{ids:[149],lv:[58,68],w:15} }],
@@ -288,8 +289,8 @@ const LINK_LABELS = {
   island3:  { island2_route2:'高岗林间路', island3_forest:'树果森林', island3_route3:'绿色岛水路' },
   island4:  { island3_route3:'绿色岛水路', island4_cave:'冰霜洞穴' },
   island5:  { island4_route4:'冰霜岛水路', island5_rocket:'火箭队仓库', island5_route5:'群兰岛水路' },
-  island6:  { island5_route5:'群兰岛水路', island6_ruins:'遗迹谷', island6_route6:'战怪岛水路' },
-  island7:  { island6_route6:'战怪岛水路', island7_tower:'训练家之塔' },
+  island6:  { island5_route5:'群兰岛水路', island6_ruins:'谜之遗迹', island6_route6:'战怪岛水路' },
+  island7:  { island6_route6:'战怪岛水路', island7_tower:'训练家之塔', island7_birth:'Birth Island' },
 }
 
 function getLocation(id) { return LOCATIONS[id] }
@@ -360,6 +361,7 @@ const MAP_COORDS = {
   island6_route6:{x:56, y:30, icon:'~' },
   island7:      { x:58, y:32, icon:'🗼' },
   island7_tower:{ x:60, y:32, icon:'🏯' },
+  island7_birth:{ x:66, y:34, icon:'🔺' },
 }
 
 // 侧边栏紧凑型地图（探索模式使用）
@@ -401,8 +403,8 @@ for (const region of Object.values(MAP_REGION_CONFIGS)) {
 const QUEST_TARGET_LOCATIONS = {
   choose_starter: 'pallet',
   first_rival: 'pallet',
-  go_cerulean: 'cerulean',
-  get_package: 'cerulean',
+  go_viridian: 'viridian',
+  get_package: 'viridian',
   deliver_package: 'pallet',
   get_pokedex: 'pallet',
   go_pewter: 'pewter',
@@ -425,8 +427,13 @@ const QUEST_TARGET_LOCATIONS = {
   final_rival: 'route22',
   elite_four: 'indigo',
   sevii_arrival: 'island1',
+  sevii_lostelle: 'island3_forest',
+  sevii_mt_ember: 'island1_mtember',
+  sevii_dotted_hole: 'island6_ruins',
   sevii_rocket: 'island5_rocket',
-  sevii_ruins: 'island6_ruins',
+  sevii_celio: 'island1',
+  sevii_icefall: 'island4_cave',
+  sevii_birth: 'island7_birth',
   sevii_tower: 'island7_tower',
 }
 
@@ -469,76 +476,87 @@ const MAP_LABEL_OVERRIDES = {
   island4_route4: '冰霜岛水路',
   island5_rocket: '火箭队仓库',
   island5_route5: '群兰岛水路',
-  island6_ruins: '遗迹谷',
+  island6_ruins: '谜之遗迹',
   island6_route6: '战怪岛水路',
   island7_tower: '训练家之塔',
+  island7_birth: 'Birth Island',
 }
 
 const MAP_STAGE_LAYOUTS = {
   kanto: {
-    pallet: {x:10, y:62},
-    route1: {x:8, y:50},
-    viridian: {x:28, y:38},
-    route2: {x:32, y:28},
-    viridianForest:{x:30, y:46},
-    route22: {x:44, y:20},
-    pewter: {x:24, y:22},
-    route3: {x:14, y:28},
-    mtMoon: {x:20, y:32},
-    route4: {x:42, y:34},
-    cerulean: {x:50, y:22},
-    route24: {x:58, y:14},
-    billHouse: {x:68, y:8},
-    ceruleanCave: {x:64, y:22},
-    saffron: {x:50, y:42},
-    route5: {x:52, y:30},
-    route8: {x:46, y:50},
-    celadon: {x:32, y:54},
-    rocketHideout: {x:22, y:60},
-    route7: {x:40, y:48},
-    lavender: {x:62, y:58},
-    vermilion: {x:70, y:38},
-    route6: {x:58, y:42},
-    route9: {x:56, y:30},
-    powerPlant: {x:68, y:44},
-    route10: {x:66, y:52},
-    ssAnne: {x:84, y:38},
-    route11: {x:78, y:46},
-    route12: {x:72, y:62},
-    route16: {x:10, y:70},
-    route17: {x:20, y:76},
-    fuchsia: {x:44, y:78},
-    route15: {x:56, y:78},
-    safariZone: {x:62, y:86},
-    route21: {x:10, y:74},
-    cinnabar: {x:12, y:86},
-    route20: {x:6, y:92},
-    seafoamIslands:{x:6, y:96},
-    pokemonMansion:{x:4, y:86},
-    victoryRoad: {x:36, y:18},
-    route23: {x:50, y:14},
-    indigo: {x:50, y:5},
+    // ─── 北部：联盟 ───
+    indigo:         {x:55, y:4},
+    route23:        {x:55, y:11},
+    victoryRoad:    {x:40, y:12},
+    // ─── 东北角：正辉 / 华蓝 ───
+    billHouse:      {x:82, y:8},
+    route24:        {x:72, y:16},
+    cerulean:       {x:62, y:22},
+    ceruleanCave:   {x:80, y:22},
+    // ─── 西北角：深灰 ───
+    pewter:         {x:28, y:22},
+    route3:         {x:12, y:24},
+    mtMoon:         {x:18, y:32},
+    route4:         {x:42, y:30},   // 月见山↔华蓝
+    route22:        {x:46, y:24},
+    // ─── 西部纵向走廊：真新→常青→常青森林 ───
+    route2:         {x:36, y:28},
+    viridian:       {x:36, y:38},
+    viridianForest: {x:28, y:46},
+    route1:         {x:16, y:52},
+    pallet:         {x:22, y:64},
+    // ─── 金黄枢纽（4 路交汇）───
+    saffron:        {x:50, y:42},
+    route5:         {x:60, y:32},   // 华蓝↔金黄，东偏
+    route9:         {x:70, y:30},   // 华蓝↔10号路，更东
+    route7:         {x:40, y:48},   // 朝彩虹（与 viridianForest 错开 x）
+    route8:         {x:62, y:48},   // 朝紫苑，东移避开 saffron
+    route6:         {x:50, y:54},   // 南下枯叶，从 saffron 正下方延伸
+    // ─── 东南枢纽：枯叶 / 紫苑 / 电力 ───
+    vermilion:      {x:50, y:62},   // 从 (70,38) 移到 saffron 正南
+    ssAnne:         {x:64, y:62},
+    route11:        {x:66, y:70},
+    route12:        {x:74, y:68},
+    lavender:       {x:78, y:58},
+    powerPlant:     {x:88, y:46},   // 远离 vermilion，移到 NE 角
+    route10:        {x:86, y:54},   // 与 powerPlant 接续，东移避开 lavender
+    // ─── 彩虹市 / 火箭基地 ───
+    celadon:        {x:24, y:54},
+    rocketHideout:  {x:10, y:60},
+    // ─── 自行车道 / 浅红 ───
+    route16:        {x:8, y:66},
+    route17:        {x:14, y:78},
+    fuchsia:        {x:30, y:84},
+    route15:        {x:46, y:84},
+    safariZone:     {x:58, y:88},
+    // ─── 西南：红莲 / 双子岛 ───
+    route21:        {x:8, y:74},
+    cinnabar:       {x:14, y:88},
+    route20:        {x:6, y:90},
+    seafoamIslands: {x:6, y:98},
+    pokemonMansion: {x:2, y:84},
   },
   sevii: {
-    island1: { x: 49, y: 9 },
-    island1_route1: { x: 49, y: 18 },
-    island1_mtember: { x: 68, y: 8 },
-    island2: { x: 49, y: 28 },
-    island2_route2: { x: 49, y: 38 },
-    island3: { x: 49, y: 48 },
-    island3_forest: { x: 68, y: 48 },
-    island3_route3: { x: 33, y: 57 },
-    island4: { x: 49, y: 66 },
-    island4_cave: { x: 68, y: 66 },
-    island4_route4: { x: 33, y: 75 },
-    island5: { x: 49, y: 83 },
-    island5_rocket: { x: 69, y: 83 },
-    island5_route5: { x: 33, y: 91 },
-    island6: { x: 49, y: 91 },
-    island6_ruins: { x: 69, y: 91 },
-    island6_route6: { x: 33, y: 97 },
-    island7: { x: 49, y: 99 },
-    island7_tower: { x: 69, y: 99 },
+    island1:         { x: 49, y: 9 },
+    island1_route1:  { x: 49, y: 18 },
+    island1_mtember: { x: 70, y: 8 },
+    island2:         { x: 49, y: 28 },
+    island2_route2:  { x: 49, y: 38 },
+    island3:         { x: 49, y: 48 },
+    island3_forest:  { x: 70, y: 48 },
+    island3_route3:  { x: 30, y: 57 },
+    island4:         { x: 49, y: 66 },
+    island4_cave:    { x: 72, y: 66 },
+    island4_route4:  { x: 30, y: 75 },
+    island5:         { x: 49, y: 83 },
+    island5_rocket:  { x: 72, y: 83 },
+    island5_route5:  { x: 28, y: 91 },
+    island6:         { x: 49, y: 91 },
+    island6_ruins:   { x: 72, y: 91 },
+    island6_route6:  { x: 38, y: 97 },
+    island7:         { x: 49, y: 99 },
+    island7_tower:   { x: 72, y: 99 },
+    island7_birth:   { x: 86, y: 99 },
   },
 }
 
@@ -554,35 +572,39 @@ const MAP_LABEL_DIRECTION_OVERRIDES = {
     indigo: 'label-below',
     // 南部边缘 → 标签朝上
     seafoamIslands: 'label-above',
-    route20: 'label-right',
-    // 西部走廊 x≤16 垂直排列 → 标签朝右
+    // 西部走廊 → 标签朝右
     pallet: 'label-right',
     route1: 'label-right',
     route16: 'label-right',
     route21: 'label-right',
     cinnabar: 'label-right',
     pokemonMansion: 'label-right',
-    // 中部枢纽避免重叠
+    // 中部枢纽
     cerulean: 'label-above',
     saffron: 'label-left',
     vermilion: 'label-right',
-    lavender: 'label-right',
+    lavender: 'label-left',
     rocketHideout: 'label-right',
     // 道路标签避让
-    route5: 'label-left',
-    route6: 'label-left',
-    route7: 'label-left',
-    route8: 'label-left',
+    route4: 'label-below',
+    route5: 'label-right',
+    route6: 'label-right',
+    route7: 'label-below',
+    route8: 'label-above',
     route9: 'label-left',
     route10: 'label-right',
-    route12: 'label-above',
+    route11: 'label-below',
+    route12: 'label-right',
     route15: 'label-below',
+    route17: 'label-right',
+    route20: 'label-right',
     ssAnne: 'label-right',
-    powerPlant: 'label-right',
+    powerPlant: 'label-below',
     ceruleanCave: 'label-right',
-    victoryRoad: 'label-above',
-    route22: 'label-left',
+    route22: 'label-below',
     route23: 'label-left',
+    route24: 'label-right',
+    victoryRoad: 'label-above',
     fuchsia: 'label-below',
     safariZone: 'label-right',
     viridianForest: 'label-right',
@@ -724,6 +746,11 @@ function renderExpandedMapLegend() {
       <span class="legend-item"><span class="legend-swatch neighbor"></span> 可直接前往</span>
       <span class="legend-item"><span class="legend-swatch gym-open"></span> 未通关道馆</span>
       <span class="legend-item"><span class="legend-swatch gym-cleared"></span> 已通关道馆</span>
+      <span class="legend-divider"></span>
+      <span class="legend-item"><span class="legend-swatch terrain-town"></span> 城镇</span>
+      <span class="legend-item"><span class="legend-swatch terrain-route"></span> 道路</span>
+      <span class="legend-item"><span class="legend-swatch terrain-cave"></span> 洞穴</span>
+      <span class="legend-item"><span class="legend-swatch terrain-water"></span> 水道</span>
     </div>
   `
 }
@@ -827,81 +854,87 @@ function renderSidebarMap() {
   const loc = LOCATIONS[pos]
   const pkmLevel = G.player.pokemon.length > 0 ? Math.max(...G.player.pokemon.map(p => p.level)) : 1
   const badge = G.player.badge
+  const targetId = getQuestTargetLocationId()
 
-  // 小网格 (48列 x 20行)
-  const W = 48, H = 20
-  const grid = Array.from({length:H}, () => Array(W).fill(' '))
-
-  // 边框
-  for (let x = 0; x < W; x++) { grid[0][x] = '═'; grid[H-1][x] = '═' }
-  for (let y = 0; y < H; y++) { grid[y][0] = '║'; grid[y][W-1] = '║' }
-  grid[0][0] = '╔'; grid[0][W-1] = '╗'; grid[H-1][0] = '╚'; grid[H-1][W-1] = '╝'
-
-  // 标题
-  const title = ' 关都 '
-  const titleX = Math.floor((W - title.length) / 2)
-  for (let i = 0; i < title.length; i++) grid[1][titleX + i] = title[i]
-
-  // 简化的连接线（只保留主干）
-  const connLines = [
-    [28,14,28,12],[28,12,28,10],[28,10,22,10],[28,10,24,10],
-    [22,8,18,6],[18,6,14,6],[14,6,22,6],[22,6,30,6],
-    [30,6,38,6],[38,6,32,8],[32,8,28,8],[28,8,20,8],
-    [28,8,16,12],[28,8,36,12],[36,12,42,12],[36,12,20,12],
-    [12,12,12,14],[20,12,24,12],[24,12,38,16],[38,16,38,18],
-    [28,14,18,18],[6,18,4,18],
+  // 侧边栏迷你地图：只画关都关键节点（城镇 + 特殊地点），百分比坐标定位
+  const miniNodes = [
+    { id:'pallet',     x:46, y:78, type:'town' },
+    { id:'viridian',   x:46, y:55, type:'town' },
+    { id:'pewter',     x:30, y:30, type:'town' },
+    { id:'cerulean',   x:62, y:30, type:'town' },
+    { id:'vermilion',  x:68, y:62, type:'town' },
+    { id:'lavender',   x:34, y:62, type:'town' },
+    { id:'celadon',    x:20, y:62, type:'town' },
+    { id:'saffron',    x:46, y:46, type:'town' },
+    { id:'fuchsia',    x:62, y:82, type:'town' },
+    { id:'cinnabar',   x:12, y:90, type:'town' },
+    { id:'indigo',     x:82, y:20, type:'town' },
+    { id:'mtMoon',     x:38, y:30, type:'cave' },
+    { id:'victoryRoad',x:74, y:30, type:'cave' },
   ]
-  // 缩放坐标到小网格（关都范围: x[0~52], y[0~24] → 映射到 2~46, 2~18）
-  const scaleX = (x) => Math.max(1, Math.min(W-2, 1 + Math.floor(x * (W-4) / 52)))
-  const scaleY = (y) => Math.max(1, Math.min(H-2, 1 + Math.floor(y * (H-4) / 24)))
 
-  for (const [x1,y1,x2,y2] of connLines) {
-    const sx1=scaleX(x1), sx2=scaleX(x2), sy1=scaleY(y1), sy2=scaleY(y2)
-    if (sy1 === sy2) {
-      for (let x = Math.min(sx1,sx2); x <= Math.max(sx1,sx2); x++) {
-        if (grid[sy1][x] === ' ') grid[sy1][x] = '─'
-      }
-    } else if (sx1 === sx2) {
-      for (let y = Math.min(sy1,sy2); y <= Math.max(sy1,sy2); y++) {
-        if (grid[y][sx1] === ' ') grid[y][sx1] = '│'
-      }
-    }
-  }
-
-  // 关键地点的图标
-  const keyPoints = [
-    ['pallet',28,14,'🏠'], ['viridian',28,10,'🏙'], ['pewter',18,6,'T'],
-    ['cerulean',38,6,'T'], ['vermillion',42,12,'⚓'], ['lavender',20,12,'T'],
-    ['celadon',12,12,'🎰'], ['saffron',28,8,'🏢'], ['fuchsia',38,16,'T'],
-    ['cinnabar',6,18,'🌋'], ['indigo',50,4,'👑'],
+  // 简化连线（主干道）
+  const miniLinks = [
+    ['pallet','viridian'],['viridian','pewter'],['viridian','saffron'],
+    ['pewter','mtMoon'],['mtMoon','cerulean'],['cerulean','saffron'],
+    ['saffron','celadon'],['saffron','lavender'],['saffron','vermilion'],
+    ['lavender','celadon'],['lavender','fuchsia'],['vermilion','fuchsia'],
+    ['cinnabar','pallet'],['victoryRoad','indigo'],['victoryRoad','cerulean'],
   ]
-  for (const [id, ox, oy, icon] of keyPoints) {
-    const x = scaleX(ox), y = scaleY(oy)
-    let display = icon
-    if (id === pos) display = '★'
-    else if (LOCATIONS[id] && LOCATIONS[id][4]) {
-      const gymData = GYM_LEADERS[LOCATIONS[id][4]]
-      display = gymData && gymData[4] <= badge ? '✔' : '!'
-    }
-    grid[y][x] = display
+
+  const neighborSet = new Set(loc && loc[5] ? loc[5] : [])
+
+  // 连线（百分比宽度近似：画布宽高比约 1.4:1，y 方向缩放补偿）
+  let linksHtml = ''
+  for (const [a, b] of miniLinks) {
+    const na = miniNodes.find(n => n.id === a)
+    const nb = miniNodes.find(n => n.id === b)
+    if (!na || !nb) continue
+    const dx = nb.x - na.x, dy = nb.y - na.y
+    const len = Math.sqrt(dx*dx + (dy/0.7)*(dy/0.7))
+    const angle = Math.atan2(dy, dx) * 180 / Math.PI
+    const cls = (a === pos || b === pos) ? 'mini-link is-current' :
+                (targetId && (a === targetId || b === targetId)) ? 'mini-link is-target' : 'mini-link'
+    linksHtml += `<span class="${cls}" style="left:${na.x}%;top:${na.y}%;width:${len}%;transform:rotate(${angle}deg);"></span>`
   }
 
-  // 当前城镇用高亮标记
-  if (loc && loc[2] === 'town') {
-    const coord = MAP_COORDS[pos]
-    if (coord) {
-      const x = scaleX(coord.x), y = scaleY(coord.y)
-      grid[y][x] = '★'
-    }
+  // 节点
+  let nodesHtml = ''
+  for (const n of miniNodes) {
+    const nloc = LOCATIONS[n.id]
+    if (!nloc) continue
+    const isCurrent = n.id === pos
+    const isTarget = n.id === targetId
+    const isNeighbor = neighborSet.has(n.id)
+    const hasGym = nloc[4]
+    const gymCleared = hasGym && GYM_LEADERS[nloc[4]] && GYM_LEADERS[nloc[4]][4] <= badge
+
+    const classes = ['mini-node', `type-${n.type}`]
+    if (isCurrent) classes.push('is-current')
+    if (isTarget) classes.push('is-target')
+    if (isNeighbor) classes.push('is-neighbor')
+    if (hasGym) classes.push(gymCleared ? 'gym-cleared' : 'gym-open')
+
+    const label = nloc[0]
+    nodesHtml += `<span class="${classes.join(' ')}" style="left:${n.x}%;top:${n.y}%;" title="${label}"></span>`
   }
 
-  // 生成 HTML
-  let html = '<pre class="sidebar-map">'
-  for (let y = 0; y < H; y++) html += grid[y].join('') + '\n'
-  html += '</pre>'
+  let html = `<div class="mini-map">
+    <div class="mini-map-canvas">
+      <div class="mini-map-grid"></div>
+      ${linksHtml}
+      ${nodesHtml}
+    </div>
+    <div class="mini-map-legend">
+      <span class="mini-legend-item"><span class="mini-dot town"></span>城镇</span>
+      <span class="mini-legend-item"><span class="mini-dot cave"></span>洞穴</span>
+      <span class="mini-legend-item"><span class="mini-dot current"></span>当前</span>
+      <span class="mini-legend-item"><span class="mini-dot target"></span>目标</span>
+    </div>
+  </div>`
 
   // 信息条
-  html += `<div style="text-align:center;font-size:11px;color:#006a1a;margin-bottom:6px;">`
+  html += `<div class="mini-map-info">`
   html += `<span class="info-badge">${loc ? loc[0] : '???'}</span>`
   html += `<span class="info-badge">Lv.${pkmLevel}</span>`
   html += `<span class="info-badge">徽章${badge}/8</span>`

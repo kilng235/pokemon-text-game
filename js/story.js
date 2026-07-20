@@ -17,10 +17,31 @@ const STORY_EVENTS = {
     },
   },
 
+  // 小茂 #3.5 - 紫苑宝可梦塔前（前置战）
+  rivalLavender: {
+    location: 'lavender',
+    condition: () => G.storyFlags.mtMoonDone && !G.storyFlags.rivalLavenderDone && !G.storyFlags.lavenderDone,
+    dialogue: [
+      { speaker: '', text: '你刚踏入紫苑镇，一个熟悉的身影从墓碑后闪出——' },
+      { speaker: '小茂', text: '你怎么也来紫苑了？' },
+      { speaker: '小茂', text: '听说宝可梦之塔在闹鬼，不过我可不信那些。' },
+      { speaker: '小茂', text: '先跟我打一场吧，热热身！' },
+    ],
+    battle: { name: '小茂', team: [[93,20], [92,22], [133,22]] },
+    battleType: 'rival',
+    onFinish: () => {
+      G.storyFlags.rivalLavenderDone = true
+      G.player.money += 500
+      const pos = G.player.position
+      chainNextStoryEvent(pos, 800)
+      return '击败了小茂！获得 ¥500！小茂摆摆手走了，你向宝可梦之塔走去……'
+    },
+  },
+
   // 紫苑镇 - 灵骨塔火箭队
   lavenderTower: {
     location: 'lavender',
-    condition: () => G.storyFlags.mtMoonDone && !G.storyFlags.lavenderDone,
+    condition: () => G.storyFlags.mtMoonDone && G.storyFlags.rivalLavenderDone && !G.storyFlags.lavenderDone,
     dialogue: [
       { speaker: '路人', text: '宝可梦之塔里闹鬼……有人看到幽灵出没。' },
       { speaker: '', text: '你鼓起勇气走进宝可梦之塔……' },
@@ -34,10 +55,32 @@ const STORY_EVENTS = {
     },
   },
 
+  // 小茂 #5.5 - 希鲁夫公司楼层（前置战）
+  rivalSilph: {
+    location: 'saffron',
+    condition: () => G.storyFlags.lavenderDone && !G.storyFlags.rivalSilphDone && !G.storyFlags.silphDone && G.player.badge >= 4,
+    dialogue: [
+      { speaker: '', text: '金黄市的希鲁夫公司总部被火箭队占领，你冲了进去……' },
+      { speaker: '', text: '刚上到楼层，电梯门开了，迎面竟是小茂。' },
+      { speaker: '小茂', text: '哼，又见面了。' },
+      { speaker: '小茂', text: '我是来抢功劳的——啊不，是来救员工的！' },
+      { speaker: '小茂', text: '不过既然碰上了，先打一场再说！' },
+    ],
+    battle: { name: '小茂', team: [[64,36], [65,38], [133,38]] },
+    battleType: 'rival',
+    onFinish: () => {
+      G.storyFlags.rivalSilphDone = true
+      G.player.money += 900
+      const pos = G.player.position
+      chainNextStoryEvent(pos, 800)
+      return '击败了小茂！获得 ¥900！小茂撇撇嘴："算你厉害，里面那个干部交给你了！"'
+    },
+  },
+
   // 金黄市 - 希鲁夫公司
   silphCo: {
     location: 'saffron',
-    condition: () => G.storyFlags.lavenderDone && !G.storyFlags.silphDone && G.player.badge >= 4,
+    condition: () => G.storyFlags.lavenderDone && G.storyFlags.rivalSilphDone && !G.storyFlags.silphDone && G.player.badge >= 4,
     dialogue: [
       { speaker: '希鲁夫员工', text: '火箭队占领了整栋大楼！请帮帮我们！' },
       { speaker: '', text: '你冲进了希鲁夫公司总部……' },
@@ -54,7 +97,7 @@ const STORY_EVENTS = {
   // 小茂 #1 - 22号道路（初遇）
   rivalRoute22_1: {
     location: 'route22',
-    condition: () => !G.storyFlags.rivalRoute22_1 && !G.storyFlags.firstRivalDone && G.player.badge === 0,
+    condition: () => !G.storyFlags.rivalRoute22_1 && G.player.badge === 0,
     dialogue: [
       { speaker: '小茂', text: '哟！你也要出发旅行了？' },
       { speaker: '小茂', text: '我可是大木博士的孙子！跟你这种家伙可不一样！' },
@@ -181,10 +224,30 @@ const STORY_EVENTS = {
     },
   },
 
+  // 小茂 #2.5 - 圣安奴号甲板（前置战）
+  rivalSsAnne: {
+    location: 'ssAnne',
+    condition: () => G.storyFlags.billDone && !G.storyFlags.rivalSsAnneDone && !G.storyFlags.ssAnneDone,
+    dialogue: [
+      { speaker: '', text: '你刚登上圣安奴号，甲板上一个熟悉的身影拦住了你……' },
+      { speaker: '小茂', text: '哟！没想到在这儿碰到我吧？' },
+      { speaker: '小茂', text: '船上这么多训练家，我可是最强的！让我证明给你看！' },
+    ],
+    battle: { name: '小茂', team: [[16,18], [19,18], [133,18]] },
+    battleType: 'rival',
+    onFinish: () => {
+      G.storyFlags.rivalSsAnneDone = true
+      G.player.money += 350
+      const pos = G.player.position
+      chainNextStoryEvent(pos, 800)
+      return '击败了小茂！获得 ¥350！小茂悻悻地跑开了，你继续向船长室走去……'
+    },
+  },
+
   // 圣安奴号 - 船长的挑战
   ssAnne: {
     location: 'ssAnne',
-    condition: () => G.storyFlags.billDone && !G.storyFlags.ssAnneDone,
+    condition: () => G.storyFlags.billDone && G.storyFlags.rivalSsAnneDone && !G.storyFlags.ssAnneDone,
     dialogue: [
       { speaker: '', text: '你登上了圣安奴号！' },
       { speaker: '', text: '甲板上正在举行盛大的宴会，到处都是训练家。' },
@@ -237,9 +300,9 @@ const STORY_EVENTS = {
     onFinish: null,
   },
 
-  // 华蓝市 — 领取包裹
+  // 常青市 — 领取包裹
   getPackage: {
-    location: 'cerulean',
+    location: 'viridian',
     condition: () => !G.storyFlags.gotPackage,
     dialogue: [
       { speaker: '店员', text: '你好！你是大木博士派来的吧？' },
@@ -429,78 +492,187 @@ const STORY_EVENTS = {
     },
   },
 
-  // 脐眼岛 — 七之岛初印象
+  // 脐眼岛 — Celio 介绍 + Lostelle 委托
   seviiArrival: {
     location: 'island1',
     condition: () => G.storyFlags.championDefeated && !G.storyFlags.seviiArrivalDone,
     dialogue: [
-      { speaker: '', text: '渡轮缓缓靠岸，你踏上了脐眼岛。' },
-      { speaker: '', text: '这里就是七之岛——关都南部的群岛。' },
-      { speaker: '岛民', text: '欢迎来到七之岛！你是从关都来的训练家吧？' },
-      { speaker: '岛民', text: '最近这里出现了很多火箭队残党……你要小心啊。' },
-      { speaker: '岛民', text: '据说他们在那边的群兰岛建立了新的据点。' },
-      { speaker: '', text: '看来冒险还没有结束——七之岛上还有新的挑战在等着你！' },
+      { speaker: '', text: '渡轮缓缓靠岸，你踏上了脐眼岛——七之岛的大门。' },
+      { speaker: '', text: '一位戴着眼镜的青年迎了上来。' },
+      { speaker: 'Celio', text: '你好！我叫 Celio，是宝可梦网络中心的管理员。' },
+      { speaker: 'Celio', text: '关都的联盟冠军啊……久仰大名。' },
+      { speaker: 'Celio', text: '不瞒你说，七之岛最近被火箭队残党搞得鸡犬不宁……' },
+      { speaker: 'Celio', text: '在我研究网络之余，能拜托你一件事吗？' },
+      { speaker: 'Celio', text: '三之岛森林里有个叫 Lostelle 的小女孩失踪了，她父亲非常着急。' },
+      { speaker: 'Celio', text: '请你先去三之岛的树果森林找找她吧！' },
     ],
     battle: null,
     onFinish: () => {
       G.storyFlags.seviiArrivalDone = true
-      return '踏上七之岛！新的冒险开始了！'
+      return 'Celio 拜托你去找寻失踪的小女孩 Lostelle。先去三之岛的树果森林看看吧。'
     },
   },
 
-  // 群兰岛火箭队仓库 — 残党之战
+  // 三之岛树果森林 — 救出 Lostelle
+  seviiLostelle: {
+    location: 'island3_forest',
+    condition: () => G.storyFlags.seviiArrivalDone && !G.storyFlags.seviiLostelleDone,
+    dialogue: [
+      { speaker: '', text: '你走进茂密的树果森林，远处传来哭声……' },
+      { speaker: 'Lostelle', text: '呜呜呜……救救我……' },
+      { speaker: '火箭队残党', text: '哼哼，小丫头别想跑！' },
+      { speaker: '', text: '一个火箭队残党正拽着小女孩！' },
+      { speaker: '火箭队残党', text: '哟，又来一个找死的？一起收拾了！' },
+    ],
+    battle: { name: '火箭队残党', team: [[22,30], [109,30]] },
+    battleType: 'story',
+    onFinish: () => {
+      G.storyFlags.seviiLostelleDone = true
+      G.player.money += 600
+      return '救出 Lostelle！她父亲送来 ¥600 谢礼。Celio 传来消息——希望你去脐眼岛北部的 Ember 山找一块红宝石……'
+    },
+  },
+
+  // Ember 山 — 火箭队挖红宝石
+  seviiMtEmber: {
+    location: 'island1_mtember',
+    condition: () => G.storyFlags.seviiLostelleDone && !G.storyFlags.seviiMtEmberDone,
+    dialogue: [
+      { speaker: '', text: '你来到 Ember 山的火山口，远处传来挖凿声……' },
+      { speaker: '火箭队残党', text: '快挖！这底下肯定有红宝石！' },
+      { speaker: '火箭队残党', text: '谁？！竟然追到这里来了！' },
+      { speaker: '火箭队残党', text: '别想拿走红宝石！上吧！' },
+    ],
+    battle: { name: '火箭队残党', team: [[66,40], [128,40]] },
+    battleType: 'story',
+    onFinish: () => {
+      G.storyFlags.seviiMtEmberDone = true
+      G.player.items.rubyPlate = (G.player.items.rubyPlate || 0) + 1
+      G.player.money += 700
+      return '击败火箭队残党！在火山洞穴深处找到了「红宝石」！Celio 让你继续寻找传说中的「蓝宝石」——据说藏在战怪岛的谜之遗迹里……'
+    },
+  },
+
+  // 谜之遗迹（Dotted Hole） — 取得蓝宝石
+  seviiDottedHole: {
+    location: 'island6_ruins',
+    condition: () => G.storyFlags.seviiMtEmberDone && !G.storyFlags.seviiDottedHoleDone,
+    dialogue: [
+      { speaker: '', text: '你来到战怪岛的谜之遗迹，入口刻着一行小字——' },
+      { speaker: '石碑文字', text: '「LET ME GO」——迷宫以语言为钥。' },
+      { speaker: '', text: '你按顺序念出文字，地板缓缓移开，露出一条暗道……' },
+      { speaker: '', text: '遗迹之底，一颗发着幽光的蓝色宝石静静悬浮在空中。' },
+      { speaker: '', text: '你伸手取下「蓝宝石」——' },
+      { speaker: '火箭队干部', text: '哈！多谢你帮我们打开了陷阱！' },
+      { speaker: '火箭队干部', text: '蓝宝石归我们了！想拿回来，就到群兰岛的仓库来吧！' },
+      { speaker: '', text: '火箭队干部抢走蓝宝石，扬长而去……' },
+    ],
+    battle: null,
+    onFinish: () => {
+      G.storyFlags.seviiDottedHoleDone = true
+      G.player.money += 500
+      return '蓝宝石被火箭队干部抢走了！必须到群兰岛的火箭队仓库把它夺回来！'
+    },
+  },
+
+  // 群兰岛火箭队仓库 — 夺回蓝宝石
   seviiRocketWarehouse: {
     location: 'island5_rocket',
-    condition: () => G.storyFlags.seviiArrivalDone && !G.storyFlags.seviiRocketDone,
+    condition: () => G.storyFlags.seviiDottedHoleDone && !G.storyFlags.seviiRocketDone,
     dialogue: [
-      { speaker: '', text: '你发现了火箭队的秘密仓库！' },
-      { speaker: '火箭队干部', text: '什么人？！' },
-      { speaker: '火箭队干部', text: '……又是你！从关都追到这里来了吗？！' },
-      { speaker: '火箭队干部', text: '也好！就在这里做个了断！' },
+      { speaker: '', text: '你用谜之遗迹的暗语破解了仓库的密码门……' },
+      { speaker: '', text: '里面盘踞着火箭队残党的精英。' },
+      { speaker: '火箭队精英', text: '你又来了……这次不会再让你活着离开！' },
+      { speaker: '火箭队精英', text: '就让这只恶魔系宝可梦送你上路！' },
     ],
     battle: { name: '火箭队精英', team: [[229,44], [262,45], [248,48]] },
     battleType: 'story',
     onFinish: () => {
       G.storyFlags.seviiRocketDone = true
+      G.player.items.sapphirePlate = (G.player.items.sapphirePlate || 0) + 1
       G.player.money += 2000
-      return '击败了七之岛的火箭队残党！获得 ¥2000！'
+      return '击败了火箭队精英！夺回「蓝宝石」！Celio 在脐眼岛等你交付红蓝宝石……'
     },
   },
 
-  // 遗迹谷 — 代欧奇希斯
-  seviiRuins: {
-    location: 'island6_ruins',
-    condition: () => G.storyFlags.seviiRocketDone && !G.storyFlags.seviiRuinsDone,
+  // 脐眼岛 — Celio 交付红蓝宝石，开通全岛网络
+  seviiCelio: {
+    location: 'island1',
+    condition: () => G.storyFlags.seviiRocketDone && !G.storyFlags.seviiCelioDone,
     dialogue: [
-      { speaker: '', text: '遗迹深处的墙壁上刻满了神秘的符号……' },
-      { speaker: '', text: '你感到空气中弥漫着一种不属于这个世界的气息。' },
-      { speaker: '', text: '突然，一道光芒从遗迹中心爆发！' },
-      { speaker: '???', text: '…………' },
-      { speaker: '', text: '来自宇宙的宝可梦——代欧奇希斯出现了！' },
+      { speaker: '', text: '你回到脐眼岛，把红宝石和蓝宝石交给 Celio。' },
+      { speaker: 'Celio', text: '太好了！这就是传说中的两颗宝石……' },
+      { speaker: 'Celio', text: '让我接入网络中心……调试……' },
+      { speaker: '', text: '——嗡嗡——机器启动——指示灯依次亮起——' },
+      { speaker: 'Celio', text: '成功了！七之岛全岛网络正式开通！' },
+      { speaker: 'Celio', text: '现在你可以自由来往各个小岛了。' },
+      { speaker: 'Celio', text: '听说四之岛的冰霜洞穴、绝壁岛外海的小岛都有奇怪动静，去看看吧！' },
+    ],
+    battle: null,
+    onFinish: () => {
+      G.storyFlags.seviiCelioDone = true
+      addLog('★ 七之岛全岛网络开通！可以自由来往各岛了。')
+      return 'Celio 开通了全岛网络！现在可以去更远的岛屿探索了。'
+    },
+  },
+
+  // 冰霜洞穴 — 科拿事件
+  seviiIcefall: {
+    location: 'island4_cave',
+    condition: () => G.storyFlags.seviiCelioDone && !G.storyFlags.seviiIcefallDone,
+    dialogue: [
+      { speaker: '', text: '你走进冰霜洞穴深处，寒气刺骨……' },
+      { speaker: '', text: '远处传来打斗声，一个穿白衣的女性正与火箭队残党缠斗。' },
+      { speaker: '科拿', text: '呃……你们这群家伙真不怕死！' },
+      { speaker: '火箭队残党', text: '哼，四天王又怎么样？今天我们要让你知道厉害！' },
+      { speaker: '科拿', text: '哦？这位训练家是来帮我的？正好，一起上！' },
+    ],
+    battle: { name: '火箭队残党', team: [[169,45], [248,46]] },
+    battleType: 'story',
+    onFinish: () => {
+      G.storyFlags.seviiIcefallDone = true
+      G.player.money += 1000
+      addLog('科拿：谢谢你，训练家。听说绝壁岛附近有座神秘小岛，叫 Birth Island……')
+      return '协助科拿击退了火箭队残党！科拿提到绝壁岛外海有一座叫 Birth Island 的神秘小岛……'
+    },
+  },
+
+  // Birth Island — 代欧奇希斯
+  seviiBirth: {
+    location: 'island7_birth',
+    condition: () => G.storyFlags.seviiIcefallDone && !G.storyFlags.seviiBirthDone,
+    dialogue: [
+      { speaker: '', text: '你登上了 Birth Island——一座空无一物的小岛。' },
+      { speaker: '', text: '岛中央立着一个黑色的三角形石碑。' },
+      { speaker: '', text: '你试着靠近石碑，它突然发出刺眼的光芒……' },
+      { speaker: '', text: '石碑缓缓旋转，化为一只来自宇宙的宝可梦！' },
+      { speaker: '', text: '代欧奇希斯出现了！' },
     ],
     battle: { name: '代欧奇希斯', team: [[386,60]] },
     battleType: 'legendary',
     onFinish: () => {
-      G.storyFlags.seviiRuinsDone = true
-      return '击败了代欧奇希斯！遗迹的光芒渐渐消散……'
+      G.storyFlags.seviiBirthDone = true
+      return '击败了来自宇宙的代欧奇希斯！你可以用精灵球捕捉它！'
     },
   },
 
   // 训练家之塔 — 最终挑战
   seviiTower: {
     location: 'island7_tower',
-    condition: () => G.storyFlags.seviiRuinsDone && !G.storyFlags.seviiTowerDone,
+    condition: () => G.storyFlags.seviiBirthDone && !G.storyFlags.seviiTowerDone,
     dialogue: [
       { speaker: '', text: '训练家之塔——七之岛的顶点！' },
       { speaker: '', text: '传说只有最强的训练家才能登顶。' },
-      { speaker: '', text: '你感受到塔顶传来的强大气息……' },
-      { speaker: '', text: '登顶吧！证明你是真正的宝可梦大师！' },
+      { speaker: '塔主', text: '欢迎，关都的冠军。' },
+      { speaker: '塔主', text: '要想登顶训练家之塔，先过我这关！' },
+      { speaker: '塔主', text: '来吧！展示你真正的实力！' },
     ],
-    battle: null,
+    battle: { name: '训练家之塔塔主', team: [[149,55], [131,55]] },
+    battleType: 'story',
     onFinish: () => {
       G.storyFlags.seviiTowerDone = true
       addLog('★ 你征服了七之岛！真正的宝可梦大师的旅程才刚刚开始……')
-      return '★ 完成了七之岛的所有挑战！你是真正的宝可梦大师！'
+      return '★ 登顶训练家之塔！完成了七之岛的全部挑战！你是真正的宝可梦大师！'
     },
   },
 

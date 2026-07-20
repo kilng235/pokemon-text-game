@@ -30,7 +30,7 @@ function createInitialState() {
       items: { pokeball: 10, potion: 5 },
       badge: 0, position: 'pallet', money: 500,
       seen: [], shinySeen: [], trainersDefeated: [],
-      shinyChain: 0,
+      shinyChain: 0, activeIndex: 0,
     },
     battle: null, bagView: 'use', pokedexDetail: null,
     storyFlags: {},
@@ -67,6 +67,7 @@ function loadGame() {
       if (!G.player.trainersDefeated) G.player.trainersDefeated = []
       if (!G.player.shinySeen) G.player.shinySeen = []
       if (G.player.shinyChain === undefined) G.player.shinyChain = 0
+      if (G.player.activeIndex === undefined) G.player.activeIndex = 0
       if (!G.storyFlags) G.storyFlags = {}
       if (!G.quests) G.quests = { current: 'choose_starter', completed: [] }
       if (G.showBigMap === undefined) G.showBigMap = false
@@ -260,6 +261,15 @@ function addExp(pokemon, exp) {
     pokemon.hp = Math.min(pokemon.hp + Math.floor(pokemon.maxHp / 6), pokemon.maxHp)
     pokemon.nextLevel = calcExpToLevel(pokemon.level)
     addLog(`${pokemon.name} 升到了 Lv.${pokemon.level}！`)
+    if (window.AU) AU.sfx('levelUp')
+    if (window.FX) {
+      const el = document.querySelector('.sprite-container.player')
+      if (el) {
+        el.classList.add('fx-levelup')
+        FX.flash('#FFD700', 300)
+        setTimeout(() => el.classList.remove('fx-levelup'), 1000)
+      }
+    }
 
     // 检查是否有新技能可学
     if (pokemon.moveList) {
@@ -284,6 +294,16 @@ function addExp(pokemon, exp) {
       const evoTo = base[11][1]; const evoData = getPokemonData(evoTo)
       if (evoData) {
         addLog(`咦？${pokemon.name} 开始发光了！`)
+        // 进化动画触发（UI 层监听此标记）
+        G.evolutionPending = { fromId: pokemon.id, toId: evoData[0], fromName: pokemon.name, toName: evoData[1] }
+        if (window.AU) AU.sfx('evolve')
+        if (window.FX) {
+          const el = document.querySelector('.sprite-container.player') || document.querySelector('.sprite-container')
+          if (el) {
+            el.classList.add('fx-evolving')
+            setTimeout(() => el.classList.remove('fx-evolving'), 2000)
+          }
+        }
         pokemon.id = evoData[0]; pokemon.name = evoData[1]; pokemon.types = evoData[2].split(',')
         pokemon.moves = getMovesForLevel(evoData[12] || [1], pokemon.level).map(mid => {
           const m = getMoveData(mid)
@@ -292,6 +312,7 @@ function addExp(pokemon, exp) {
         pokemon.moveList = evoData[12] || null
         recalcStats(pokemon)
         addLog(`★ ${pokemon.name} 进化了！`); evolved = true
+        setTimeout(() => { G.evolutionPending = null }, 2500)
       }
     }
   }
@@ -300,7 +321,26 @@ function addExp(pokemon, exp) {
 
 function isPokemonUsable(p) { return p && !p.fainted && p.hp > 0 }
 function allFainted() { return G.player.pokemon.every(p => p.fainted || p.hp <= 0) }
-function getActivePokemon() { return G.player.pokemon.find(p => isPokemonUsable(p)) }
+function getActivePokemon() {
+  const team = G.player.pokemon || []
+  // 优先使用 activeIndex 指向的宝可梦（如果它还能战斗）
+  const ai = G.player.activeIndex
+  if (ai != null && team[ai] && isPokemonUsable(team[ai])) return team[ai]
+  // 否则回退到第一个可用的，并更新 activeIndex
+  const first = team.find(p => isPokemonUsable(p))
+  if (first) {
+    G.player.activeIndex = team.indexOf(first)
+    return first
+  }
+  return undefined
+}
+function setActivePokemon(index) {
+  const team = G.player.pokemon || []
+  if (index < 0 || index >= team.length) return false
+  if (!isPokemonUsable(team[index])) return false
+  G.player.activeIndex = index
+  return true
+}
 
 function healAll() {
   for (const p of G.player.pokemon) {
