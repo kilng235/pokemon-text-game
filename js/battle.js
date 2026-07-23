@@ -121,6 +121,7 @@ function startBattle(type, extra, enemyTeam) {
     ran: false, captured: false, battleMsg: '',
     lastEnemyHp: enemyTeam[0].hp, lastPlayerHp: lp ? lp.hp : 0,
     captureFails: 0,
+    lock: false,
   }
   const name = enemyTeam[0].name
 
@@ -348,9 +349,11 @@ function calcDamage(atkPkm, defPkm, move) {
 
 function playerAttack(moveIndex, skipTurnCheck) {
   const b = G.battle; if (!b) return
+  if (b.lock && !skipTurnCheck) return
   if (!skipTurnCheck && b.turn !== 'player') return
   const pkm = getActivePokemon(); if (!pkm) return
 
+  b.lock = true
   // Check player status
   if (pkm.status && checkStatusSkip(pkm)) {
     b.turn = 'enemy'; b.battleMsg = `${pkm.name} 无法行动……`
@@ -377,7 +380,7 @@ function playerAttack(moveIndex, skipTurnCheck) {
     b.battleMsg = '没有命中！'
     if (window.FX && enemyEl) FX.showDamage(enemyEl, 0, 'miss')
     if (window.AU) AU.sfx('miss')
-    if (skipTurnCheck) { b.turn = 'player'; render(); return }
+    if (skipTurnCheck) { b.lock = false; b.turn = 'player'; render(); return }
     b.turn = 'enemy'; setTimeout(enemyTurn, 500); return
   }
 
@@ -408,7 +411,7 @@ function playerAttack(moveIndex, skipTurnCheck) {
     b.battleMsg = `使用了 ${move.name}！`
     if (window.FX && enemyEl) FX.playMove(move, enemyEl, { isPlayer: true })
     render()
-    if (skipTurnCheck) { b.turn = 'player'; return }
+    if (skipTurnCheck) { b.lock = false; b.turn = 'player'; return }
     b.turn = 'enemy'; setTimeout(enemyTurn, 800); return
   }
 
@@ -457,13 +460,13 @@ function playerAttack(moveIndex, skipTurnCheck) {
       else prefix = '野生的 '
       addLog(`${prefix}${b.enemy.name}！`)
       b.battleMsg = msg || ''
-      b.turn = 'player'; return
+      b.lock = false; b.turn = 'player'; return
     } else {
       battleVictory(); return
     }
   }
   if (skipTurnCheck) {
-    b.turn = 'player'; render(); return
+    b.lock = false; b.turn = 'player'; render(); return
   }
   b.turn = 'enemy'; setTimeout(enemyTurn, 700)
 }
@@ -642,6 +645,7 @@ function syncEnemyAttack() {
 
 function enemyTurn() {
   const b = G.battle; if (!b || !b.enemy || b.enemy.fainted) return
+  b.lock = false
   const pkm = getActivePokemon(); if (!pkm) {
     addLog('你没有能战斗的宝可梦了！')
     handlePlayerDefeat(b)
@@ -802,6 +806,7 @@ function getEffectiveCaptureChance(enemy, ballKey, fails) {
 
 function tryCapture() {
   const b = G.battle; if (!b || !b.enemy) return
+  if (b.lock) return
   if (b.type !== 'wild') { addLog('不能在训练家对战中使用精灵球！'); return }
   let ball = G.bagView === 'superball' ? 'superball' : G.bagView === 'ultraball' ? 'ultraball' : G.bagView === 'safariBall' ? 'safariBall' : 'pokeball'
   if (!G.player.items[ball] || G.player.items[ball] <= 0) { addLog('没有这个球了！'); return }
@@ -815,9 +820,11 @@ function tryCapture() {
   addLog(`你丢出了 ${item.name}！（捕捉率约 ${pct}%${bonusNote}）`)
   if (window.AU) AU.sfx('ballThrow')
   b.battleMsg = '1… 2… 3…'
+  b.lock = true
   const enemyEl = document.querySelector('.sprite-container.enemy')
   if (window.FX && enemyEl) FX.playCapture(enemyEl, true)
   setTimeout(() => {
+    if (!G.battle) return
     if (Math.random() < chance) {
       b.battleMsg = `成功捕捉了 ${b.enemy.name}！`
       addLog(`★ 成功捕捉了 ${b.enemy.name}！`)
@@ -827,6 +834,7 @@ function tryCapture() {
       else { G.player.pc.push(b.enemy); addLog(`${b.enemy.name} 被传送到了电脑中。`) }
       b.enemy = null; G.battle = null; saveGame(); render()
     } else {
+      b.lock = false
       b.captureFails = fails + 1
       const nextChance = Math.round(getEffectiveCaptureChance(b.enemy, ball, b.captureFails) * 100)
       addLog(`${b.enemy.name} 挣脱了！下次捕捉率约 ${nextChance}%`)
@@ -838,14 +846,16 @@ function tryCapture() {
 
 function tryFlee() {
   const b = G.battle; if (!b || (b.type !== 'wild')) { addLog('不能逃跑！'); return }
+  if (b.lock) return
   const pkm = getActivePokemon(); if (!pkm) return
   const chance = Math.min(0.9, 0.5 + (pkm.spe - b.enemy.spe) / 200)
   if (Math.random() < chance) { addLog('成功逃跑了！'); G.battle = null; saveGame(); render() }
-  else { b.battleMsg = '无法逃脱！'; addLog('逃跑失败！'); b.turn = 'enemy'; setTimeout(enemyTurn, 500) }
+  else { b.lock = true; b.battleMsg = '无法逃脱！'; addLog('逃跑失败！'); b.turn = 'enemy'; setTimeout(enemyTurn, 500) }
 }
 
 function useItem(itemKey) {
   const item = ITEMS[itemKey]; if (!item) return
+  if (G.battle && G.battle.lock) return
   if (!G.player.items[itemKey] || G.player.items[itemKey] <= 0) { addLog('没有这个道具了！'); return }
   if (item.catchRate && G.player.position === 'safariZone') {
     G.bagView = 'safariBall'; tryCapture(); render(); return
@@ -872,6 +882,7 @@ function useItem(itemKey) {
       addLog(`使用了 ${item.name}，${target.name} 回复了 ${heal}HP！`)
     }
     if (G.battle && G.battle.turn === 'player') {
+      G.battle.lock = true
       G.battle.turn = 'enemy'
       G.battle.subState = 'main'
       G.battle.battleMsg = `使用了 ${item.name}，${target.name} 的HP回复了！`

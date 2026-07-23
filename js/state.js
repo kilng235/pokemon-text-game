@@ -304,12 +304,28 @@ function addExp(pokemon, exp) {
             setTimeout(() => el.classList.remove('fx-evolving'), 2000)
           }
         }
+        const oldMoves = [...(pokemon.moves || [])]
+        const oldMoveIds = new Set(oldMoves.map(m => m.id))
         pokemon.id = evoData[0]; pokemon.name = evoData[1]; pokemon.types = evoData[2].split(',')
-        pokemon.moves = getMovesForLevel(evoData[12] || [1], pokemon.level).map(mid => {
-          const m = getMoveData(mid)
-          return m ? { id:mid, name:m[1], type:m[2], power:m[3], pp:m[4], currentPp:m[4] } : null
-        }).filter(Boolean)
         pokemon.moveList = evoData[12] || null
+        // 保留原有招式，不覆盖
+        pokemon.moves = oldMoves
+        // 检查进化形态在当前等级可学的新招式，触发待学习
+        if (evoData[12]) {
+          const newMoveIds = getNewMovesAtLevel(evoData[12], pokemon.level)
+          for (const mid of newMoveIds) {
+            if (oldMoveIds.has(mid)) continue
+            const mData = getMoveData(mid)
+            if (!mData) continue
+            G.pendingMoveLearn = G.pendingMoveLearn || []
+            G.pendingMoveLearn.push({
+              pokemonIndex: G.player.pokemon.indexOf(pokemon),
+              moveId: mid,
+              moveName: mData[1],
+            })
+            addLog(`${pokemon.name} 想要学习新技能「${mData[1]}」！`)
+          }
+        }
         recalcStats(pokemon)
         addLog(`★ ${pokemon.name} 进化了！`); evolved = true
         setTimeout(() => { G.evolutionPending = null }, 2500)

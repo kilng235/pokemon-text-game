@@ -269,6 +269,7 @@ function battleSub(state, moveIndex) {
 function confirmMove() {
   const b = G.battle
   if (!b || b.selectedMove === undefined) return
+  if (b.lock) return
   const idx = b.selectedMove
   b.selectedMove = undefined
   b.subState = 'main'
@@ -278,7 +279,7 @@ function confirmMove() {
 
   // Check player status first
   if (pkm.status && checkStatusSkip(pkm)) {
-    b.turn = 'enemy'; setTimeout(enemyTurn, 500); render(); return
+    b.lock = true; b.turn = 'enemy'; setTimeout(enemyTurn, 500); render(); return
   }
 
   // Speed-based turn order
@@ -315,7 +316,7 @@ function switchPokemon(index) {
   if (!setActivePokemon(index)) { addLog('换宠失败！'); render(); return }
   addLog(`回来吧！${cur?.name||'---'}！`); addLog(`上吧！${p.name}！`)
   if (window.AU) AU.sfx('select')
-  if (G.battle) { G.battle.turn = 'enemy'; G.battle.subState = 'main'; setTimeout(enemyTurn,500) }
+  if (G.battle) { G.battle.lock = true; G.battle.turn = 'enemy'; G.battle.subState = 'main'; setTimeout(enemyTurn,500) }
   render()
 }
 
