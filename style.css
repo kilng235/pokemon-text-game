@@ -604,11 +604,35 @@ body {
   border: 2px solid rgba(0,0,0,0.25);
   box-shadow: 0 2px 0 rgba(0,0,0,0.2);
 }
-.status-sleep { background: #8a7fff; }
-.status-paralyze { background: #F8D030; color: #333; }
-.status-poison { background: #A040A0; }
-.status-burn { background: #F08030; }
-.status-confuse { background: #F85888; }
+.status-sleep { background: #8a7fff; animation: statusPulseSleep 2s ease-in-out infinite; }
+.status-paralyze { background: #F8D030; color: #333; animation: statusFlickerParalyze 1.5s ease-in-out infinite; }
+.status-poison { background: #A040A0; animation: statusGlowPoison 2s ease-in-out infinite; }
+.status-burn { background: #F08030; animation: statusGlowBurn 1.8s ease-in-out infinite; }
+.status-confuse { background: #F85888; animation: statusWobbleConfuse 2.5s ease-in-out infinite; }
+
+/* 状态动画 */
+@keyframes statusPulseSleep {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+@keyframes statusFlickerParalyze {
+  0%, 100% { opacity: 1; }
+  30% { opacity: 0.4; }
+  60% { opacity: 1; }
+}
+@keyframes statusGlowPoison {
+  0%, 100% { box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+  50% { box-shadow: 0 2px 0 rgba(0,0,0,0.2), 0 0 8px #A040A0; }
+}
+@keyframes statusGlowBurn {
+  0%, 100% { box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+  50% { box-shadow: 0 2px 0 rgba(0,0,0,0.2), 0 0 8px #F08030; }
+}
+@keyframes statusWobbleConfuse {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
 
 /* ── 站台：像素椭圆战斗平台 ── */
 .enemy-platform, .player-platform {

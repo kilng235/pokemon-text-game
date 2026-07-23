@@ -240,11 +240,11 @@ function renderBattle() {
     // 状态徽章
     let statusBadge = ''
     if (pokemon.status && pokemon.status.type) {
-      const map = { sleep: '睡眠 ZZZ', paralyze: '麻痹 PAR', poison: '中毒 PSN', burn: '灼伤 BRN' }
+      const map = { sleep: '💤 睡眠', paralyze: '⚡ 麻痹', poison: '☠ 中毒', burn: '🔥 灼伤' }
       const label = map[pokemon.status.type]
       if (label) statusBadge = `<span class="status-badge status-${pokemon.status.type}">${label}</span>`
     }
-    if (pokemon.confused) statusBadge += `<span class="status-badge status-confuse">混乱 CNF</span>`
+    if (pokemon.confused) statusBadge += `<span class="status-badge status-confuse">❓ 混乱</span>`
 
     return `<div class="hp-bar-container">
       <div class="hp-bar-wrapper">
