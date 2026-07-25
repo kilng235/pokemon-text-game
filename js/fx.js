@@ -197,7 +197,7 @@
       p.style.setProperty('--dy', dy + 'px');
       p.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
       layer.appendChild(p);
-      setTimeout(() => { if (p.parentNode) p.parentNode.removeChild(p); }, 900 + Math.random() * 200);
+      trackTimer(setTimeout(() => { if (p.parentNode) p.parentNode.removeChild(p); }, 900 + Math.random() * 200));
     }
   }
 
@@ -276,6 +276,15 @@
     }, 800);
   }
 
+  const pendingTimers = [];
+  function trackTimer(t) { pendingTimers.push(t); }
+  function cleanup() {
+    pendingTimers.forEach(t => clearTimeout(t));
+    pendingTimers.length = 0;
+    const layer = getFxLayer();
+    if (layer) layer.innerHTML = '';
+  }
+
   window.FX = {
     TYPE_COLORS,
     TYPE_BG,
@@ -292,5 +301,7 @@
     playHeal,
     playCapture,
     getFxLayer,
+    cleanup,
+    trackTimer,
   };
 })();

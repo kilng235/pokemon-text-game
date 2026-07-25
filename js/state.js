@@ -362,7 +362,7 @@ function setActivePokemon(index) {
 function healAll() {
   for (const p of G.player.pokemon) {
     p.hp = p.maxHp; p.fainted = false; p.status = null
-    // Natural Cure: 交换/治疗后自动恢复
+    if (p.ability) p.ability.activated = false
     if (p.ability && p.ability.key === 'naturalCure') p.status = null
     if (p.tempDebuffs) p.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0, atk: 0, def: 0, spd: 0, spa: 0 }
     for (const m of p.moves) m.currentPp = m.pp

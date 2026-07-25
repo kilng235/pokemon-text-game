@@ -450,7 +450,7 @@ function playerAttack(moveIndex, skipTurnCheck) {
     b.enemyIndex++
     if (b.enemyIndex < b.enemyTeam.length) {
       b.enemy = b.enemyTeam[b.enemyIndex]; b.enemy.hp = b.enemy.maxHp; b.enemy.status = null
-      b.enemy.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0 }
+      b.enemy.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0, atk: 0, def: 0, spd: 0, spa: 0 }
       let prefix = '', msg = ''
       if (b.type === 'trainer') { prefix = `${b.extra.trainer.name} 派出了 `; msg = `${b.extra.trainer.name}：去吧！` }
       else if (b.type === 'gym') { prefix = `${b.extra.data[1]} 派出了 `; msg = `${b.extra.data[1]}：哼！` }
@@ -540,7 +540,7 @@ function battleVictory() {
   }
   updateQuest()
   for (const p of G.player.pokemon) {
-    if (p.tempDebuffs) p.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0 }
+    if (p.tempDebuffs) p.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0, atk: 0, def: 0, spd: 0, spa: 0 }
     // Natural Cure: 战斗结束后恢复异常状态
     if (p.ability && p.ability.key === 'naturalCure' && p.status) {
       p.status = null; addLog(`${p.name} 的特性[自然回复]恢复了异常状态！`)
@@ -848,7 +848,9 @@ function tryFlee() {
   const b = G.battle; if (!b || (b.type !== 'wild')) { addLog('不能逃跑！'); return }
   if (b.lock) return
   const pkm = getActivePokemon(); if (!pkm) return
-  const chance = Math.min(0.9, 0.5 + (pkm.spe - b.enemy.spe) / 200)
+  const pkmSpe = pkm.spe + (pkm.tempDebuffs?.spe || 0)
+  const enemySpe = b.enemy.spe + (b.enemy.tempDebuffs?.spe || 0)
+  const chance = Math.min(0.9, 0.5 + (pkmSpe - enemySpe) / 200)
   if (Math.random() < chance) { addLog('成功逃跑了！'); G.battle = null; saveGame(); render() }
   else { b.lock = true; b.battleMsg = '无法逃脱！'; addLog('逃跑失败！'); b.turn = 'enemy'; setTimeout(enemyTurn, 500) }
 }

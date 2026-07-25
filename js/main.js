@@ -432,6 +432,10 @@ function learnMoveDirect(pokemonIndex) {
   if (!pkm) return
   const mData = getMoveData(info.moveId)
   if (!mData) return
+  if (pkm.moves.length >= 4) {
+    addLog(`${pkm.name} 已经有4个技能了！请先遗忘一个技能。`)
+    return
+  }
   removeRelearnMoveById(pkm, info.moveId)
   pkm.moves.push(createMoveFromData(mData))
   addLog(`★ ${pkm.name} 学会了「${mData[1]}」！`)

@@ -372,7 +372,7 @@
       bgmTimer = null;
     }
     bgmNodes.forEach(function (n) {
-      try { n.stop(); } catch (e) {}
+      try { n.stop(); n.disconnect(); } catch (e) {}
     });
     bgmNodes = [];
     currentBgm = null;

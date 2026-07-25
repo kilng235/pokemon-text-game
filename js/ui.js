@@ -21,14 +21,16 @@ function spriteHTML(id, isShiny, extraClass, opts) {
   return `<div class="sprite-container${shinyClass}${cls ? ' ' + cls : ''}">${shinyStars}<div class="sprite-shadow"></div><img class="sprite-img" src="${gif}" alt="${altText}" data-png="${png}" onerror="if(this.dataset.fallback!=='1'){this.dataset.fallback='1';this.src=this.dataset.png}else{this.style.display='none'}" loading="lazy"></div>`
 }
 
-// 触发主区域淡入动画(下次 paint 移除 class 以便下次再触发)
+let lastFadeInTime = 0
 function enableFadeIn() {
+  const now = Date.now()
+  if (now - lastFadeInTime < 500) return
   const main = $('main')
   if (!main) return
   main.classList.remove('fade-in')
-  // 强制 reflow
   void main.offsetWidth
   main.classList.add('fade-in')
+  lastFadeInTime = now
 }
 
 function render() {
@@ -256,7 +258,7 @@ function renderBattle() {
     const lastHpKey = isEnemy ? 'lastEnemyHp' : 'lastPlayerHp'
     if (!b[lastHpKey] && b[lastHpKey] !== 0) b[lastHpKey] = pokemon.hp
     if (pokemon.hp < b[lastHpKey]) {
-      hpClass += ' hp-damaged'
+      hpClass = hpClass.replace(' hp-damaged', '') + ' hp-damaged'
     }
     b[lastHpKey] = pokemon.hp
 
@@ -528,6 +530,9 @@ function renderBag() {
 function renderPokemon() {
   const main = $('main')
   const manager = G.pokemonManager
+  if (manager && !G.player.pokemon[manager.pokemonIndex]) {
+    G.pokemonManager = null
+  }
   if (manager && G.player.pokemon[manager.pokemonIndex]) {
     const p = G.player.pokemon[manager.pokemonIndex]
     const remembered = p.relearnMoves || []
