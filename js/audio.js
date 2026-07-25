@@ -368,7 +368,7 @@
 
   function stopBgm() {
     if (bgmTimer) {
-      clearInterval(bgmTimer);
+      clearTimeout(bgmTimer);
       bgmTimer = null;
     }
     bgmNodes.forEach(function (n) {
@@ -421,7 +421,8 @@
       idx = (idx + 1) % track.notes.length;
     }
     step();
-    bgmTimer = setInterval(step, 200); // 每 200ms 检查推进
+    function scheduleNext() { bgmTimer = setTimeout(step, 200); }
+    scheduleNext();
   }
 
   // ---------- 对外接口 ----------

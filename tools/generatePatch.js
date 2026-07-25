@@ -60,17 +60,10 @@ for (let i = 0; i < lines.length; i++) {
   // 上面 type 字段用 lookup 比较复杂，改用更简单的方式
 }
 
-// 实际上更简单：直接用更精准的正则替换整个 POKEMON 行
-const newBlock = lines.join('\n')
-const finalSrc = before + newBlock + after
-fs.writeFileSync(OUT_PATCH, finalSrc)
-console.log(`✅ 输出: ${OUT_PATCH}`)
-console.log(`   文件大小: ${(finalSrc.length / 1024).toFixed(1)} KB`)
-
-// 用更简单的方法重新生成
 const newBlock2 = before + processPokemonBlock(pokemonBlock, newPokemon) + after
 fs.writeFileSync(OUT_PATCH, newBlock2)
-console.log(`✅ 输出 (v2): ${OUT_PATCH}`)
+console.log(`✅ 输出: ${OUT_PATCH}`)
+console.log(`   文件大小: ${(newBlock2.length / 1024).toFixed(1)} KB`)
 
 function processPokemonBlock(block, newPokemon) {
   const lines = block.split('\n')

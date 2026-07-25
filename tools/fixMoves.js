@@ -40,7 +40,7 @@ async function main() {
   const failed = new Set()
   for (const id of Object.keys(data)) {
     for (const m of data[id].moves) {
-      if (m.power === 0 && m.type === 'normal' && m.pp === 0) {
+      if (m.power === null && m.pp === 0) {
         failed.add(m.id)
       }
     }

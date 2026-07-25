@@ -4,7 +4,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const ROOT = '/workspace'
+const ROOT = path.join(__dirname, '..')
 const files = ['js/data.js', 'js/state.js', 'js/battle.js']
 let code = ''
 for (const f of files) {

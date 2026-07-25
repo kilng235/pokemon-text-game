@@ -30,7 +30,7 @@ function createInitialState() {
       items: { pokeball: 10, potion: 5 },
       badge: 0, position: 'pallet', money: 500,
       seen: [], shinySeen: [], trainersDefeated: [],
-      shinyChain: 0, activeIndex: 0,
+      visited: [], shinyChain: 0, activeIndex: 0,
     },
     battle: null, bagView: 'use', pokedexDetail: null,
     storyFlags: {},
@@ -65,6 +65,7 @@ function loadGame() {
       G = JSON.parse(raw)
       if (!G.player.seen) G.player.seen = []
       if (!G.player.trainersDefeated) G.player.trainersDefeated = []
+      if (!G.player.visited) G.player.visited = []
       if (!G.player.shinySeen) G.player.shinySeen = []
       if (G.player.shinyChain === undefined) G.player.shinyChain = 0
       if (G.player.activeIndex === undefined) G.player.activeIndex = 0
@@ -125,7 +126,7 @@ function getPokemonStats(id, level, ivs, evs, nature) {
   const ev = evs || { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
   const [,,,bhp,batk,bdef,bspa,bspd,bspe] = base
   const calcStat = (baseStat, ivVal, evVal, isHp) => {
-    const s = Math.floor((2 * baseStat + ivVal + Math.floor(Math.sqrt(evVal) / 4)) * level / 100)
+    const s = Math.floor((2 * baseStat + ivVal + Math.floor(evVal / 4)) * level / 100)
     return isHp ? s + level + 10 : s + 5
   }
   const raw = {

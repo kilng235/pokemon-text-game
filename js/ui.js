@@ -15,7 +15,20 @@ function spriteHTML(id, isShiny, extraClass, opts) {
   const cls = extraClass || ''
   const gif = spriteSrc(id, isShiny, true)
   const png = spriteSrc(id, isShiny, false)
-  return `<div class="sprite-container${shinyClass}${cls ? ' ' + cls : ''}">${shinyStars}<div class="sprite-shadow"></div><img class="sprite-img" src="${gif}" data-png="${png}" onerror="if(this.dataset.fallback!=='1'){this.dataset.fallback='1';this.src=this.dataset.png}else{this.style.display='none'}" loading="lazy"></div>`
+  const pData = typeof getPokemonData === 'function' ? getPokemonData(id) : null
+  const pName = pData ? pData[1] : `宝可梦#${id}`
+  const altText = isShiny ? `${pName}(闪光)` : pName
+  return `<div class="sprite-container${shinyClass}${cls ? ' ' + cls : ''}">${shinyStars}<div class="sprite-shadow"></div><img class="sprite-img" src="${gif}" alt="${altText}" data-png="${png}" onerror="if(this.dataset.fallback!=='1'){this.dataset.fallback='1';this.src=this.dataset.png}else{this.style.display='none'}" loading="lazy"></div>`
+}
+
+// 触发主区域淡入动画(下次 paint 移除 class 以便下次再触发)
+function enableFadeIn() {
+  const main = $('main')
+  if (!main) return
+  main.classList.remove('fade-in')
+  // 强制 reflow
+  void main.offsetWidth
+  main.classList.add('fade-in')
 }
 
 function render() {
@@ -26,7 +39,8 @@ function render() {
   const emptyBadges = Array(8 - G.player.badge).fill('<span class="badges" style="color:var(--border)">●</span>').join('')
   const sndIcon = G.soundEnabled ? '🔊' : '🔇'
   const musIcon = G.musicEnabled ? '🎵' : '🎶'
-  $('header').innerHTML = `<span>宝可梦文字版</span><span class="badges">${filledBadges}${emptyBadges}</span><span class="money">¥${G.player.money}</span><span class="audio-ctrl"><button class="audio-btn" onclick="toggleSound()" title="音效开关">${sndIcon}</button><button class="audio-btn" onclick="toggleMusic()" title="音乐开关">${musIcon}</button></span>`
+  const progressTag = G.player.visited ? `<span class="progress-tag">${G.player.visited.length}区域</span>` : ''
+  $('header').innerHTML = `<span>宝可梦文字版</span><span class="badges">${filledBadges}${emptyBadges}</span>${progressTag}<span class="money">¥${G.player.money}</span><span class="audio-ctrl"><button class="audio-btn" onclick="toggleSound()" title="音效开关" aria-label="音效开关">${sndIcon}</button><button class="audio-btn" onclick="toggleMusic()" title="音乐开关" aria-label="音乐开关">${musIcon}</button></span>`
   // 优先处理待学习的技能
   if (G.pendingMoveLearn && G.pendingMoveLearn.length > 0) {
     renderMoveLearn()
@@ -37,17 +51,24 @@ function render() {
   }
   if (v === 'start') renderStart()
   else if (v === 'choose') renderChoose()
-  else if (v === 'explore') renderExplore()
-  else if (v === 'battle') renderBattle()
-  else if (v === 'bag') renderBag()
-  else if (v === 'pokemon') renderPokemon()
-  else if (v === 'pokedex') renderPokedex()
-  else if (v === 'shop') renderShop()
-  else if (v === 'center') renderCenter()
+  else if (v === 'explore') { renderExplore(); enableFadeIn() }
+  else if (v === 'battle') { renderBattle(); enableFadeIn() }
+  else if (v === 'bag') { renderBag(); enableFadeIn() }
+  else if (v === 'pokemon') { renderPokemon(); enableFadeIn() }
+  else if (v === 'pokedex') { renderPokedex(); enableFadeIn() }
+  else if (v === 'shop') { renderShop(); enableFadeIn() }
+  else if (v === 'center') { renderCenter(); enableFadeIn() }
   else if (v === 'dialogue') renderDialogue()
   else if (v === 'worldMap') renderWorldMap()
   else if (v === 'choice') renderChoice()
-  try { renderMap() } catch(e) { console.warn('map:',e) }
+  // 探索/战斗/菜单场景在 #map-panel 渲染迷你地图
+  try {
+    if (v === 'explore' || v === 'battle' || v === 'bag' || v === 'pokemon' || v === 'pokedex' || v === 'shop' || v === 'center' || v === 'dialogue') {
+      renderSidebarMap()
+    } else {
+      renderMap()
+    }
+  } catch(e) { console.warn('map:',e) }
   renderSidebarTeam()
   renderLog()
   // 根据当前场景切换 BGM
@@ -114,7 +135,7 @@ function renderStart() {
       </div>
     </div>
   `
-  $('continueBtn').style.display = loadGame() ? '' : 'none'
+  $('continueBtn').style.display = G._hasSave ? '' : 'none'
   $('actions').innerHTML = ''
 }
 
@@ -200,6 +221,8 @@ function renderExplore() {
     html += `<div style="margin-top:8px;font-size:12px;color:#888;">✨ 闪光连锁: ${chain} 连 (概率: ${shinyPercent}%)</div>`
   }
   html += `</div>`
+  // 紧凑版道馆进度/等级推荐面板
+  if (typeof renderMapInfo === 'function') html += renderMapInfo()
   main.innerHTML = html
   $('actions').innerHTML = `
     <button class="btn" onclick="toggleMap()">🗺 地图</button>

@@ -30,7 +30,7 @@ function startNewGame() {
 }
 
 function continueGame() {
-  if (loadGame()) {
+  if (G._hasSave || loadGame()) {
     initQuests(); updateQuest()
     G.view = G.battle ? 'battle' : 'explore'; render()
   } else { addLog('没有找到存档。'); render() }
@@ -90,6 +90,9 @@ function travelTo(key) {
     render(); return
   }
   G.player.position = key
+  // 记录已访问区域(用于地图探索进度)
+  if (!G.player.visited) G.player.visited = []
+  if (!G.player.visited.includes(key)) G.player.visited.push(key)
   if (window.AU) AU.sfx('move')
   updateQuest()
   // 城镇剧情触发
@@ -105,7 +108,7 @@ function travelTo(key) {
   // 自动遇敌（非城镇）
   if (loc[2] !== 'town') {
     if (encounterTimer) clearTimeout(encounterTimer)
-    encounterTimer = setTimeout(() => { encounterTimer = null; tryWildEncounter(true) }, 200)
+    encounterTimer = setTimeout(() => { encounterTimer = null; if (G.view === 'explore') tryWildEncounter(true) }, 200)
   }
 }
 
@@ -169,13 +172,12 @@ function startDialogueBattle() {
     return
   }
   if (d.eventKey === 'firstRival') {
-    G.storyFlags.firstRivalDone = true
     const rivalEevee = createPokemon(133, 5, [1, 2, 77, 75])
     rivalEevee.atk = Math.floor(rivalEevee.atk * 0.6)
     rivalEevee.spa = Math.floor(rivalEevee.spa * 0.6)
     if (startBattle('rival', {
       name: '小茂',
-      onFinish: () => '首次击败小茂！获得 ¥200',
+      onFinish: () => { G.storyFlags.firstRivalDone = true; return '首次击败小茂！获得 ¥200' },
     }, [rivalEevee])) {
       G.view = 'battle'; render()
     } else {
@@ -534,8 +536,10 @@ function updateBgmForView() {
 document.addEventListener('DOMContentLoaded', () => {
   if (window.AU) AU.init()
   if (loadGame()) {
-    G.view = G.battle ? 'battle' : 'explore'
+    G._hasSave = true
     if (G.player.position === 'town') G.player.position = 'pallet'
+  } else {
+    G._hasSave = false
   }
   // 同步音频设置到引擎
   if (window.AU) {
