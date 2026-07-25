@@ -341,15 +341,19 @@ function renderBattle() {
     </div>
   `
   const actions = $('actions')
+  // 移除外层 move-confirm 覆盖层（如有）
+  const existingOverlay = document.getElementById('move-confirm-overlay')
+  if (existingOverlay) { existingOverlay.remove() }
+
   if (b.subState === 'main') {
     actions.innerHTML = `
-      <button class="btn btn-action btn-attack" onclick="battleSub('attack')">⚔ 攻击</button>
-      <button class="btn btn-action btn-switch" onclick="battleSub('switch')">🔄 换宠</button>
-      <button class="btn btn-action btn-item" onclick="battleSub('item')">🎒 道具</button>
-      ${b.type === 'wild' ? '<button class="btn btn-action btn-flee" onclick="tryFlee()">🏃 逃跑</button>' : ''}
+      <button class="btn btn-action btn-attack" tabindex="0" role="button" onclick="battleSub('attack')">⚔ 攻击</button>
+      <button class="btn btn-action btn-switch" tabindex="0" role="button" onclick="battleSub('switch')">🔄 换宠</button>
+      <button class="btn btn-action btn-item" tabindex="0" role="button" onclick="battleSub('item')">🎒 道具</button>
+      ${b.type === 'wild' ? '<button class="btn btn-action btn-flee" tabindex="0" role="button" onclick="tryFlee()">🏃 逃跑</button>' : ''}
     `
   } else if (b.subState === 'attack') {
-    if (!pkm) { actions.innerHTML = '<button class="btn" onclick="battleSub(\'switch\')">换宠</button>'; return }
+    if (!pkm) { actions.innerHTML = '<button class="btn" tabindex="0" role="button" onclick="battleSub(\'switch\')">换宠</button>'; return }
     let html = '<div class="moves-grid">'
     for (let i = 0; i < 4; i++) {
       const m = pkm.moves[i]
@@ -357,14 +361,14 @@ function renderBattle() {
       const d = m.currentPp <= 0 ? 'disabled' : ''
       const bg = FX.typeBg(m.type)
       const cat = m.power === 0 ? '变化' : (['火','水','草','电','冰','超能','幽灵','龙','恶'].includes(m.type) ? '特殊' : '物理')
-      html += `<button class="btn move-slot ${d}" style="--move-bg:${bg}" onclick="battleSub('selectMove',${i})">
+      html += `<button class="btn move-slot ${d}" style="--move-bg:${bg}" tabindex="0" role="button" onclick="battleSub('selectMove',${i})">
         <span class="move-name">${m.name}</span>
         <span class="move-type">${typeBadge(m.type)}</span>
         <span class="move-stats">${cat} · 威${m.power === 0 ? '—' : m.power} · PP ${m.currentPp}/${m.pp}</span>
       </button>`
     }
     html += '</div>'
-    html += '<button class="btn btn-back" onclick="battleSub(\'main\')">↩ 返回</button>'
+    html += '<button class="btn btn-back" tabindex="0" role="button" onclick="battleSub(\'main\')">↩ 返回</button>'
     actions.innerHTML = html
   } else if (b.subState === 'selectMove') {
     const moveIndex = b.selectedMove
@@ -375,55 +379,25 @@ function renderBattle() {
     const bg = FX.typeBg(m.type)
     const cat = m.power === 0 ? '变化' : (['火','水','草','电','冰','超能','幽灵','龙','恶'].includes(m.type) ? '特殊' : '物理')
 
-    main.innerHTML = `
-      <div class="battle-stage ${bgClass}" id="battle-stage">
-        <div class="battle-layer battle-sky"></div>
-        <div class="battle-layer battle-clouds"><i></i><i></i><i></i></div>
-        <div class="battle-layer battle-ground"></div>
-        <div class="battle-arena">
-          <div class="battle-enemy-side">
-            <div class="enemy-info-card">
-              <div class="info-row">
-                <span class="pkm-name">${b.enemy.name}${b.enemy.isShiny ? ' <span class="shiny-badge">✨</span>' : ''}</span>
-                <span class="pkm-level">Lv.${b.enemy.level}</span>
-              </div>
-              <div class="info-row">${enemyTypes}</div>
-              ${renderHpBar(b.enemy, true)}
-            </div>
-            <div class="enemy-platform">
-              ${spriteHTML(b.enemy.id, b.enemy.isShiny, `enemy${faintedEnemy}`, {animated: true})}
-            </div>
-          </div>
-          <div class="battle-center">
-            ${b.battleMsg ? `<div class="battle-msg">${b.battleMsg}</div>` : `<div class="battle-divider">━━ ⚔ ━━</div>`}
-          </div>
-          <div class="battle-player-side">
-            <div class="player-platform">
-              ${pkm ? spriteHTML(pkm.id, pkm.isShiny, `player${faintedPlayer}`, {animated: true}) : ''}
-            </div>
-            <div class="player-info-card">
-              <div class="info-row">
-                <span class="pkm-name">${pkm ? pkm.name + (pkm.isShiny ? ' <span class="shiny-badge">✨</span>' : '') : '---'}</span>
-                <span class="pkm-level">${pkm ? 'Lv.'+pkm.level : ''}</span>
-              </div>
-              <div class="info-row">${playerTypes}</div>
-              ${renderHpBar(pkm, false)}
-              ${pkm ? `<div class="exp-row"><span class="exp-label">EXP</span><div class="exp-bar"><div class="exp-bar-fill" style="width:${Math.min(100, pkm.exp/pkm.nextLevel*100)}%"></div></div><span class="exp-text">${pkm.exp}/${pkm.nextLevel}</span></div>` : ''}
-            </div>
-          </div>
-        </div>
-        <div class="battle-status">#${b.enemyIndex+1}/${b.enemyTeam.length} ${b.type==='gym'?'🏛 '+b.extra.data[1]:b.type==='elite'?'👑 四天王 '+b.extra.name:b.type==='story'?'💀 '+b.extra.name:b.type==='rival'?'💢 '+b.extra.name:'🌿 野生'}</div>
-        <div class="move-confirm" style="--move-bg:${bg}">
-          <div class="move-confirm-name">${m.name} ${typeBadge(m.type)}</div>
-          <div class="move-confirm-stats">${cat} · 威力 ${m.power === 0 ? '—' : m.power} · PP ${m.currentPp}/${m.pp}</div>
-          <div class="move-confirm-desc">${m.desc}</div>
-        </div>
-        <div class="battle-scanlines"></div>
-      </div>
-    `
+    // 只更新 actions 区域和动态添加 move-confirm 覆盖层，不重写整个战斗舞台
+    let moveConfirm = document.getElementById('move-confirm-overlay')
+    if (!moveConfirm) {
+      moveConfirm = document.createElement('div')
+      moveConfirm.id = 'move-confirm-overlay'
+      moveConfirm.className = 'move-confirm-overlay'
+      const stage = document.getElementById('battle-stage')
+      if (stage) stage.appendChild(moveConfirm)
+    }
+    moveConfirm.innerHTML = `<div class="move-confirm" style="--move-bg:${bg}">
+      <div class="move-confirm-name">${m.name} ${typeBadge(m.type)}</div>
+      <div class="move-confirm-stats">${cat} · 威力 ${m.power === 0 ? '—' : m.power} · PP ${m.currentPp}/${m.pp}</div>
+      <div class="move-confirm-desc">${m.desc}</div>
+    </div>`
+    moveConfirm.style.display = 'block'
+
     actions.innerHTML = `
-      <button class="btn btn-confirm" onclick="confirmMove()">✅ 确认使用</button>
-      <button class="btn btn-back" onclick="cancelMove()">✖ 返回</button>
+      <button class="btn btn-confirm" tabindex="0" role="button" onclick="confirmMove()">✅ 确认使用</button>
+      <button class="btn btn-back" tabindex="0" role="button" onclick="cancelMove()">✖ 返回</button>
     `
   } else if (b.subState === 'switch') {
     let html = '<div class="switch-grid">'
@@ -782,5 +756,7 @@ function renderSidebarTeam() {
 function renderLog() {
   const logDiv = $('log')
   logDiv.innerHTML = G.logs.slice(-6).map(l => '> ' + l).join('<br>')
-  logDiv.scrollTop = logDiv.scrollHeight
+  requestAnimationFrame(() => {
+    logDiv.scrollTop = logDiv.scrollHeight
+  })
 }

@@ -537,6 +537,17 @@ function updateBgmForView() {
   }
 }
 
+// 错误边界：捕获未处理的 JS 错误并显示友好提示
+window.onerror = function(msg, url, lineNo, columnNo, error) {
+  const logDiv = document.getElementById('log')
+  if (logDiv) {
+    const errHtml = `<span style="color:var(--danger)">⚠ 发生错误: ${msg} (${lineNo}:${columnNo || 0})<br>请刷新页面重试。</span>`
+    logDiv.innerHTML = errHtml
+  }
+  console.error('Game error:', msg, url, lineNo, columnNo, error)
+  return false
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   if (window.AU) AU.init()
   if (loadGame()) {

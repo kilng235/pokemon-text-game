@@ -900,12 +900,14 @@ function renderSidebarMap() {
 
   // 节点
   let nodesHtml = ''
+  const visitedSet = new Set(G.player.visited || [])
   for (const n of miniNodes) {
     const nloc = LOCATIONS[n.id]
     if (!nloc) continue
     const isCurrent = n.id === pos
     const isTarget = n.id === targetId
     const isNeighbor = neighborSet.has(n.id)
+    const isVisited = visitedSet.has(n.id)
     const hasGym = nloc[4]
     const gymCleared = hasGym && GYM_LEADERS[nloc[4]] && GYM_LEADERS[nloc[4]][4] <= badge
 
@@ -913,6 +915,7 @@ function renderSidebarMap() {
     if (isCurrent) classes.push('is-current')
     if (isTarget) classes.push('is-target')
     if (isNeighbor) classes.push('is-neighbor')
+    if (isVisited && !isCurrent) classes.push('is-visited')
     if (hasGym) classes.push(gymCleared ? 'gym-cleared' : 'gym-open')
 
     const label = nloc[0]

@@ -157,10 +157,15 @@
     const stage = getStage();
     if (!stage) return;
     const cls = 'shake-' + (intensity || 'small');
+    // 监听动画结束后再移除 class，避免 reflow 竞争
+    function onEnd() {
+      stage.classList.remove(cls);
+      stage.removeEventListener('animationend', onEnd);
+    }
+    stage.addEventListener('animationend', onEnd);
     stage.classList.remove('shake-small', 'shake-medium', 'shake-large');
     void stage.offsetWidth; // reflow
     stage.classList.add(cls);
-    setTimeout(() => stage.classList.remove(cls), 500);
   }
   // === 闪光 ===
   function flash(color, duration) {
@@ -205,6 +210,17 @@
   function showDamage(target, amount, kind) {
     const layer = getFxLayer();
     if (!layer || !target) return;
+    // 移除同一目标已有的伤害数字，避免重叠
+    const existing = layer.querySelectorAll('.fx-damage');
+    for (let i = 0; i < existing.length; i++) {
+      const ex = existing[i];
+      const exRect = ex._targetRect;
+      if (!exRect) continue;
+      const tRect = target.getBoundingClientRect();
+      if (Math.abs(exRect.left - tRect.left) < 30 && Math.abs(exRect.top - tRect.top) < 30) {
+        if (ex.parentNode) ex.parentNode.removeChild(ex);
+      }
+    }
     const rect = target.getBoundingClientRect();
     const stageRect = layer.getBoundingClientRect();
     const el = document.createElement('div');
@@ -212,6 +228,7 @@
     el.textContent = kind === 'miss' ? '未命中' : (kind === 'heal' ? '+' : '-') + amount;
     el.style.left = (rect.left - stageRect.left + rect.width / 2) + 'px';
     el.style.top = (rect.top - stageRect.top + 20) + 'px';
+    el._targetRect = rect;
     layer.appendChild(el);
     setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 1100);
   }

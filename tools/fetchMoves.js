@@ -13,7 +13,10 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)) }
 
 async function fetchJson(url, retries = 0) {
   try {
-    const resp = await fetch(url)
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 30000)
+    const resp = await fetch(url, { signal: controller.signal })
+    clearTimeout(timeout)
     if (resp.status === 429 || resp.status >= 500) {
       if (retries < MAX_RETRIES) {
         await sleep(1000 * (retries + 1))
@@ -23,6 +26,9 @@ async function fetchJson(url, retries = 0) {
     if (!resp.ok) throw new Error(`HTTP ${resp.status} ${url}`)
     return await resp.json()
   } catch (e) {
+    if (e.name === 'AbortError') {
+      console.error(`  ⏱️ 请求超时(30s): ${url}`)
+    }
     if (retries < MAX_RETRIES) {
       await sleep(1000 * (retries + 1))
       return fetchJson(url, retries + 1)

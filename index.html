@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <meta name="version" content="1.2.0">
   <title>宝可梦文字版</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,16 +11,20 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="app" class="">
-    <div id="header">★ 宝可梦文字版</div>
-    <div id="main-wrap">
-      <div id="main"></div>
-      <div id="team-panel"></div>
-      <div id="map-panel">🗺 地图加载中...</div>
-    </div>
-    <div id="actions"></div>
-    <div id="log">> 加载中...</div>
-  </div>
+   <div id="app" class="">
+     <div id="loading-screen">
+       <div class="loading-spinner"></div>
+       <p class="loading-text">正在加载宝可梦世界...</p>
+     </div>
+     <header id="header" role="banner">★ 宝可梦文字版</header>
+     <div id="main-wrap">
+       <main id="main" role="main"></main>
+       <aside id="team-panel" role="complementary" aria-label="队伍状态"></aside>
+       <aside id="map-panel" role="complementary" aria-label="迷你地图">🗺 地图加载中...</aside>
+     </div>
+     <nav id="actions" role="navigation" aria-label="操作"></nav>
+     <div id="log" role="log" aria-live="polite" aria-atomic="false">> 加载中...</div>
+   </div>
   <script src="js/data.js"></script>
   <script src="js/map.js"></script>
   <script src="js/story.js"></script>

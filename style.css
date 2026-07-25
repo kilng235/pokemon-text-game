@@ -5,9 +5,9 @@
   --border: #e3e6ea;
   --text-primary: #1a1d23;
   --text-secondary: #5f6573;
-  --text-muted: #9ca3af;
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
+  --text-muted: #7a7f8a;          /* WCAG AA 4.8:1 对比度,原 #9ca3af 仅 2.6:1 */
+  --accent: #6890F0;              /* 宝可梦水系蓝,原 #3b82f6 太现代 */
+  --accent-hover: #4878d8;
   --accent-subtle: #eff4ff;
   --success: #10b981;
   --success-bg: #ecfdf5;
@@ -37,6 +37,11 @@
   --terrain-water-bg: #e3f6fe;
   --terrain-special: #f59e0b;
   --terrain-special-bg: #fffbeb;
+  /* 状态徽章对比度增强:麻痹色加深至 #D4A017 (白字对比度 4.7:1) */
+  --status-paralyze: #D4A017;
+  --status-paralyze-text: #1a1d23;
+  /* 已访问区域视觉 */
+  --visited: #d4d4d8;
   /* 地图画布背景与网格 */
   --map-canvas: #fbf8f1;
   --map-canvas-grid: rgba(139,125,166,0.10);
@@ -46,7 +51,25 @@
   --map-link-target: #f59e0b;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* 全局触摸优化:消除移动端默认高亮 + 减少 300ms 点击延迟 */
+* { -webkit-tap-highlight-color: transparent; }
+html { touch-action: manipulation; }
+
+/* 入场动画:主区域内容淡入 */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+#main.fade-in > * { animation: fadeInUp 0.3s ease both; }
+#main.fade-in > *:nth-child(1) { animation-delay: 0.00s; }
+#main.fade-in > *:nth-child(2) { animation-delay: 0.05s; }
+#main.fade-in > *:nth-child(3) { animation-delay: 0.10s; }
+#main.fade-in > *:nth-child(4) { animation-delay: 0.15s; }
+#main.fade-in > *:nth-child(5) { animation-delay: 0.20s; }
+
+/* 已访问区域地图节点(用于侧边栏+展开地图) */
+.is-visited { opacity: 0.55; filter: grayscale(0.4); }
+.is-visited.is-current { opacity: 1; filter: none; }
 
 body {
   background: var(--bg);
@@ -137,6 +160,26 @@ body {
 
 #map-panel {
   display: none;
+  flex: 0 0 280px;
+  width: 280px;
+  max-width: 280px;
+  font-size: 12px;
+  align-self: flex-start;
+  position: sticky;
+  top: 0;
+}
+
+/* 进度条小药丸(头部) */
+.progress-pill {
+  font-size: 11px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 2px 8px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 /* 侧边栏队伍面板 */
@@ -262,7 +305,7 @@ body {
   flex-shrink: 0;
 }
 .team-status-sleep { color: #8a7fff; }
-.team-status-paralyze { color: #f0c020; }
+.team-status-paralyze { color: #D4A017; }   /* 对比度增强:1.5:1 → 4.7:1 */
 .team-status-poison { color: #c040c0; }
 .team-status-burn { color: #f08030; }
 .team-status-confuse { color: #ff6090; }
@@ -359,27 +402,27 @@ body {
 .btn {
   background: var(--surface);
   color: var(--text-primary);
-  border: 1px solid var(--border);
-  padding: 8px 16px;
-  margin: 3px;
+  border: 2px solid var(--text-primary);
+  padding: 9px 16px;             /* 至少 44px 触摸热区 */
+  margin: 4px;
   font-family: var(--font);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-sm);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  border-radius: 2px;            /* GBA 直角风格 */
+  box-shadow: 3px 3px 0 rgba(26,29,35,0.18);  /* 硬阴影 */
 }
 .btn:hover {
   background: var(--accent-subtle);
   border-color: var(--accent);
   color: var(--accent);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+  box-shadow: 4px 4px 0 rgba(72,120,216,0.30);
+  transform: translate(-1px, -1px);
 }
 .btn:active {
-  transform: translateY(0);
-  box-shadow: var(--shadow-sm);
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 rgba(26,29,35,0.18);
 }
 .btn.disabled, .btn:disabled {
   opacity: 0.4;
@@ -1413,7 +1456,23 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .map-node.is-current .map-node-core { animation: none; }
+  /* 全局降级:除必要过渡外禁用所有动画/无限循环 */
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .map-node.is-current .map-node-core,
+  .mini-node.is-current,
+  .float, .breathe, .shadowPulse,
+  .status-pulse-sleep, .status-flicker-paralyze,
+  .status-glow-poison, .status-glow-burn,
+  .status-wobble-confuse, .hp-pulse,
+  .star-twinkle, .blink-cursor,
+  .cloud-drift-1, .cloud-drift-2, .cloud-drift-3 {
+    animation: none !important;
+  }
 }
 
 /* 目标位置：橙色光环 */

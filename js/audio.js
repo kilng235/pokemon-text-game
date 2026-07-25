@@ -30,6 +30,10 @@
   let musicOn = true;
   let volume = 0.4;
 
+  // 音效节流：记录上次播放时间，避免快速连续合成
+  let lastSfxTime = 0;
+  const SFX_THROTTLE_MS = 60; // 同一帧内多次调用只播放第一次
+
   // ---------- 基础初始化 ----------
   function init() {
     if (ctx) return;
@@ -435,6 +439,9 @@
   function sfx(name) {
     if (!soundOn) return;
     resume();
+    const now = Date.now();
+    if (now - lastSfxTime < SFX_THROTTLE_MS) return;
+    lastSfxTime = now;
     const fn = SFX[name];
     if (fn) fn();
   }
@@ -499,24 +506,28 @@
   function playByMessage(msg) {
     if (!soundOn || !ctx) return;
     if (typeof msg !== 'string') return;
-    // 失败（先于"击败了"判定，避免被胜利音覆盖）
+    // 优先级1：战斗结果（胜利/失败）最先判定，避免被其他关键词覆盖
     if (msg.indexOf('被击败了') >= 0) { SFX.defeat(); return; }
-    // ★ 开头：进化/获得徽章/升级等高亮事件
+    if (msg.indexOf('获得了胜利') >= 0) { SFX.victory(); return; }
+    // 优先级2：高亮事件（进化/徽章/升级/捕捉）
     if (msg.indexOf('进化了') >= 0) { SFX.evolve(); return; }
     if (msg.indexOf('徽章') >= 0) { SFX.badge(); return; }
     if (msg.indexOf('升到了') >= 0) { SFX.levelUp(); return; }
     if (msg.indexOf('捕捉了') >= 0 || msg.indexOf('成功收服') >= 0) { SFX.capture(); return; }
     if (msg.indexOf('挣脱了') >= 0) { SFX.captureFail(); return; }
+    // 优先级3：宝可梦倒下
     if (msg.indexOf('倒下了') >= 0) { SFX.faint(); return; }
-    if (msg.indexOf('获得了胜利') >= 0 || msg.indexOf('击败了') >= 0) { SFX.victory(); return; }
+    // 优先级4：战斗反馈
     if (msg.indexOf('效果拔群') >= 0) { SFX.superEffective(); return; }
     if (msg.indexOf('效果不太好') >= 0) { SFX.notEffective(); return; }
     if (msg.indexOf('没有命中') >= 0) { SFX.miss(); return; }
     if (msg.indexOf('回复了') >= 0 || msg.indexOf('恢复了活力') >= 0) { SFX.heal(); return; }
+    // 优先级5：动作音效
     if (msg.indexOf('丢出了') >= 0) { SFX.ballThrow(); return; }
     if (msg.indexOf('出现了') >= 0) { SFX.encounter(); return; }
     if (msg.indexOf('购买了') >= 0) { SFX.buy(); return; }
     if (msg.indexOf('向你发起了挑战') >= 0 || msg.indexOf('派出了') >= 0) { SFX.battleStart(); return; }
+    // 优先级6：提示与反馈
     if (msg.indexOf('余额不足') >= 0 || msg.indexOf('没有能战斗') >= 0 ||
         msg.indexOf('无法到达') >= 0 || msg.indexOf('逃跑失败') >= 0) { SFX.error(); return; }
     if (msg.indexOf('成功逃跑了') >= 0) { SFX.select(); return; }

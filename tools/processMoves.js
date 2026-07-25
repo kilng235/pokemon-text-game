@@ -68,9 +68,9 @@ const needFetch = [...moveIds].filter(id => !cache[id])
 console.log(`还需抓取: ${needFetch.length}`)
 
 // 4. 并发抓取（用 spawn curl 避免阻塞）
-async function fetchOne(mid) {
+async function fetchOne(url) {
   return new Promise((resolve) => {
-    const proc = spawn('curl', ['-s', '--max-time', '30', `https://pokeapi.co/api/v2/move/${mid}`])
+    const proc = spawn('curl', ['-s', '--max-time', '30', url])
     let stdout = ''
     proc.stdout.on('data', d => stdout += d)
     proc.on('close', code => {
@@ -83,35 +83,41 @@ async function fetchOne(mid) {
   })
 }
 
+function parseMoveData(data, mid) {
+  return {
+    id: Number(mid),
+    zh: getZhName(data.names),
+    type: data.type.name,
+    typeZh: getZhName(data.type.names),
+    power: data.power || 0,
+    pp: data.pp || 0,
+  }
+}
+
 async function main() {
   if (needFetch.length > 0) {
     let cursor = 0
     const total = needFetch.length
+    let done = 0
     const workers = Array(CONCURRENCY).fill(0).map(async () => {
       while (true) {
         const i = cursor++
         if (i >= total) return
         const mid = needFetch[i]
-        const data = await fetchOne(mid)
+        const data = await fetchOne(`https://pokeapi.co/api/v2/move/${mid}`)
         if (data) {
-          cache[mid] = {
-            id: Number(mid),
-            zh: getZhName(data.names),
-            type: data.type.name,
-            typeZh: getZhName(data.type.names),
-            power: data.power || 0,
-            pp: data.pp || 0,
-          }
+          cache[mid] = parseMoveData(data, mid)
         }
-        if ((i + 1) % 50 === 0 || i === total - 1) {
-          process.stdout.write(`\r  ${i + 1}/${total} 已抓, 缓存 ${Object.keys(cache).length}`)
-          fs.writeFileSync(CACHE, JSON.stringify(cache, null, 2))
+        done++
+        if (done % 50 === 0 || done === total) {
+          process.stdout.write(`\r  ${done}/${total} 已抓, 缓存 ${Object.keys(cache).length}`)
         }
         await sleep(50)
       }
     })
     await Promise.all(workers)
     fs.writeFileSync(CACHE, JSON.stringify(cache, null, 2))
+    process.stdout.write(`\n`)
   }
   console.log(`\n最终缓存: ${Object.keys(cache).length}`)
 
@@ -126,20 +132,7 @@ async function main() {
   for (let i = 0; i < pokeNeed.length; i += CONCURRENCY) {
     const batch = pokeNeed.slice(i, i + CONCURRENCY)
     await Promise.all(batch.map(async id => {
-      const data = await fetchOne(`/pokemon-species/${id}`.replace(/^\//, ''))
-      // ^ 不行，重新拼
-    }))
-    // 改用直接拼 url
-    await Promise.all(batch.map(async id => {
-      const data = await new Promise((resolve) => {
-        const proc = spawn('curl', ['-s', '--max-time', '30', `https://pokeapi.co/api/v2/pokemon-species/${id}`])
-        let stdout = ''
-        proc.stdout.on('data', d => stdout += d)
-        proc.on('close', () => {
-          try { resolve(JSON.parse(stdout)) } catch { resolve(null) }
-        })
-        proc.on('error', () => resolve(null))
-      })
+      const data = await fetchOne(`https://pokeapi.co/api/v2/pokemon-species/${id}`)
       if (data) {
         pokeNameCache[id] = getZhName(data.names) || raw[id].name
       }

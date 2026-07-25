@@ -1,26 +1,71 @@
 // 验证脚本 - 模拟游戏内部行为
 const fs = require('fs')
-const vm = require('vm')
+const path = require('path')
+const os = require('os')
 
-const src = fs.readFileSync('/mnt/e/1/Juno/pokemon-text-game/js/data.js', 'utf-8')
-const m1 = src.match(/const MOVES = (\[[\s\S]*?\n\])/)
-const m2 = src.match(/const POKEMON = (\[[\s\S]*?\n\])/)
+const src = fs.readFileSync(path.join(__dirname, '..', 'js', 'data.js'), 'utf-8')
 
-// 写入临时文件作为模块加载
-const tempFile = '/tmp/opencode/verify-temp.js'
-fs.writeFileSync(tempFile, m1[1] + '\n' + m2[1] + '\nmodule.exports = { MOVES, POKEMON }')
+// 用唯一临时文件名避免并发冲突
+const tempFile = path.join(os.tmpdir(), `verify-temp-${process.pid}-${Date.now()}.js`)
+
+// 智能解析 MOVES 数组
+const movesMatch = src.match(/const MOVES = (\[[\s\S]*?\n\])/)
+if (!movesMatch) { console.error('MOVES not found'); process.exit(1) }
+
+// 智能解析 POKEMON 数组（处理嵌套括号）
+const pokemonStart = src.indexOf('const POKEMON = [')
+if (pokemonStart < 0) { console.error('POKEMON not found'); process.exit(1) }
+let depth = 1, inStr = null, pokemonEnd = -1
+for (let i = pokemonStart + 17; i < src.length; i++) {
+  const c = src[i]
+  if (inStr) { if (c === inStr) inStr = null; continue }
+  if (c === "'" || c === '"' || c === '`') inStr = c
+  else if (c === '[') depth++
+  else if (c === ']') { depth--; if (depth === 0) { pokemonEnd = i + 1; break } }
+}
+const pokeContent = src.slice(pokemonStart + 17, pokemonEnd - 1)
+const pokeLines = pokeContent.split('\n').map((line, i, arr) => {
+  if (i >= arr.length - 1) return line
+  const trimmed = line.trimEnd()
+  if (trimmed && !trimmed.endsWith(',')) return line + ','
+  return line
+}).join('\n')
+
+fs.writeFileSync(tempFile,
+  'const MOVES = ' + movesMatch[1] + ';\n' +
+  'const POKEMON_RAW = [' + pokeLines + '];\n' +
+  'module.exports = { MOVES, POKEMON: POKEMON_RAW };\n'
+)
 
 const { MOVES, POKEMON } = require(tempFile)
+try { fs.unlinkSync(tempFile) } catch {}
+
 console.log('MOVES:', MOVES.length, 'POKEMON:', POKEMON.length)
 
-function getMoveData(id) { return MOVES[id-1] }
+// 建立 Map 索引，避免假设 ID 连续
+const moveMap = new Map(MOVES.map(m => [m[0], m]))
+
+function getMoveData(id) { return moveMap.get(id) }
+
+function getMovesForLevel(moveList, level) {
+  if (!moveList || moveList.length === 0) return [1]
+  if (!Array.isArray(moveList[0])) return moveList
+  const sorted = [...moveList].sort((a, b) => a[1] - b[1] || a[0] - b[0])
+  const ids = []
+  for (const [mid, lv] of sorted) {
+    if (lv <= level) {
+      if (!ids.includes(mid)) ids.push(mid)
+      if (ids.length >= 4) break
+    }
+  }
+  return ids.length > 0 ? ids : [sorted[0][0]]
+}
 
 function createPokemon(id, level) {
   const base = POKEMON.find(p => p[0] === id)
   if (!base) return null
   const moveList = base[12] || [1]
-  if (!Array.isArray(moveList[0])) return { id, name: base[1], level, moves: moveList }
-  const ids = moveList.filter(([mid, lv]) => lv <= level).map(([mid]) => mid)
+  const ids = getMovesForLevel(moveList, level)
   return {
     id, name: base[1], level,
     moves: ids.map(mid => {
@@ -65,7 +110,7 @@ for (const p of POKEMON) {
   if (!p[12] || !Array.isArray(p[12])) continue
   for (const item of p[12]) {
     if (!Array.isArray(item)) continue
-    const [mid] = item
+    const mid = item[0]
     if (!getMoveData(mid)) {
       console.log(`❌ #${p[0]} 引用了不存在的 move ${mid}`)
       missingMove++
