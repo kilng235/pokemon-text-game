@@ -424,9 +424,26 @@
       }
       idx = (idx + 1) % track.notes.length;
     }
+    function scheduleNext() {
+      bgmTimer = setTimeout(step, 200);
+    }
+
+    function step() {
+      if (!bgmTimer) return; // 如果已停止，不继续
+      const n = track.notes[idx];
+      if (n && n[0] >= 0) {
+        const osc = playTone(n[0], n[1] * track.tempo);
+        bgmNodes.push(osc);
+        setTimeout(function () {
+          const i = bgmNodes.indexOf(osc);
+          if (i >= 0) bgmNodes.splice(i, 1);
+        }, (n[1] * track.tempo + 0.1) * 1000);
+      }
+      idx = (idx + 1) % track.notes.length;
+      scheduleNext(); // 递归调度下一次
+    }
+
     step();
-    function scheduleNext() { bgmTimer = setTimeout(step, 200); }
-    scheduleNext();
   }
 
   // ---------- 对外接口 ----------

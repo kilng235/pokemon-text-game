@@ -1,3 +1,18 @@
+// ========== 战斗计时器管理系统 ==========
+let battleTimers = []
+
+function trackBattleTimer(timerId) {
+  battleTimers.push(timerId)
+  return timerId
+}
+
+function clearAllBattleTimers() {
+  battleTimers.forEach(id => clearTimeout(id))
+  battleTimers = []
+}
+
+// ========== 战斗系统 ==========
+
 function getScaledLevel(baseMin, baseMax) {
   // 8% 概率遇到精英野生（等级+5~+10）
   if (Math.random() < 0.08) {
@@ -473,6 +488,7 @@ function playerAttack(moveIndex, skipTurnCheck) {
 
 function battleVictory() {
   const b = G.battle; if (!b) return
+  clearAllBattleTimers() // 清理所有战斗计时器
   let totalExp = b.enemyTeam.reduce((s,p) => {
     const d = getPokemonData(p.id); return s + Math.floor(p.level * (d ? d[10] : 60) / 5)
   }, 0)
@@ -520,7 +536,7 @@ function battleVictory() {
     addLog('--- 下一位挑战者 ---')
     setTimeout(() => {
       if (startEliteFour(next)) { G.view = 'battle'; render() }
-      else { G.battle = null; G.view = 'explore'; render() }
+      else { clearAllBattleTimers(); G.battle = null; G.view = 'explore'; render() }
     }, 300)
     return
   }
@@ -529,7 +545,7 @@ function battleVictory() {
     addLog('冠军 小茂 向你走来……')
     setTimeout(() => {
       if (startChampionBattle()) { G.view = 'battle'; render() }
-      else { G.battle = null; G.view = 'explore'; render() }
+      else { clearAllBattleTimers(); G.battle = null; G.view = 'explore'; render() }
     }, 500)
     return
   }
@@ -546,14 +562,14 @@ function battleVictory() {
       p.status = null; addLog(`${p.name} 的特性[自然回复]恢复了异常状态！`)
     }
   }
-  G.battle = null; saveGame(); render()
+  clearAllBattleTimers(); G.battle = null; saveGame(); render()
 }
 function syncEnemyAttack() {
   const b = G.battle; if (!b || !b.enemy || b.enemy.fainted) return false
   const pkm = getActivePokemon(); if (!pkm) {
     addLog('你没有能战斗的宝可梦了！')
     handlePlayerDefeat(b)
-    G.battle = null; saveGame(); return false
+    clearAllBattleTimers(); G.battle = null; saveGame(); return false
   }
 
   if (b.enemy.status && checkStatusSkip(b.enemy)) {
@@ -637,7 +653,7 @@ function syncEnemyAttack() {
     else {
       addLog('你已经没有能战斗的宝可梦了……')
       handlePlayerDefeat(b)
-      G.battle = null; saveGame(); return false
+      clearAllBattleTimers(); G.battle = null; saveGame(); return false
     }
   }
   return true
@@ -649,7 +665,7 @@ function enemyTurn() {
   const pkm = getActivePokemon(); if (!pkm) {
     addLog('你没有能战斗的宝可梦了！')
     handlePlayerDefeat(b)
-    G.battle = null; saveGame(); render(); return
+    clearAllBattleTimers(); G.battle = null; saveGame(); render(); return
   }
 
   if (b.enemy.status && checkStatusSkip(b.enemy)) {
@@ -742,7 +758,7 @@ function enemyTurn() {
     else {
       addLog('你已经没有能战斗的宝可梦了……')
       handlePlayerDefeat(b)
-      G.battle = null; saveGame(); render(); return
+      clearAllBattleTimers(); G.battle = null; saveGame(); render(); return
     }
   }
   b.turn = 'player'; setTimeout(render, 500)
@@ -832,7 +848,7 @@ function tryCapture() {
       if (window.FX && enemyEl) FX.flash('#FFD700', 400)
       if (G.player.pokemon.length < 6) G.player.pokemon.push(b.enemy)
       else { G.player.pc.push(b.enemy); addLog(`${b.enemy.name} 被传送到了电脑中。`) }
-      b.enemy = null; G.battle = null; saveGame(); render()
+      b.enemy = null; clearAllBattleTimers(); G.battle = null; saveGame(); render()
     } else {
       b.lock = false
       b.captureFails = fails + 1
@@ -851,7 +867,7 @@ function tryFlee() {
   const pkmSpe = pkm.spe + (pkm.tempDebuffs?.spe || 0)
   const enemySpe = b.enemy.spe + (b.enemy.tempDebuffs?.spe || 0)
   const chance = Math.min(0.9, 0.5 + (pkmSpe - enemySpe) / 200)
-  if (Math.random() < chance) { addLog('成功逃跑了！'); G.battle = null; saveGame(); render() }
+  if (Math.random() < chance) { addLog('成功逃跑了！'); clearAllBattleTimers(); G.battle = null; saveGame(); render() }
   else { b.lock = true; b.battleMsg = '无法逃脱！'; addLog('逃跑失败！'); b.turn = 'enemy'; setTimeout(enemyTurn, 500) }
 }
 

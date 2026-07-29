@@ -242,7 +242,8 @@ function addEV(pokemon, yields) {
     if (yields[i] > 0) {
       const key = names[i]
       const totalEvs = Object.values(pokemon.evs).reduce((a,b) => a + b, 0)
-      if (totalEvs >= 510) break // 总努力值上限 510
+      // 先检查是否会超出总上限，再添加
+      if (totalEvs + yields[i] > 510) break // 总努力值上限 510
       const old = pokemon.evs[key]
       pokemon.evs[key] = Math.min(255, pokemon.evs[key] + yields[i]) // 单项上限 255
       if (pokemon.evs[key] !== old) added = true
