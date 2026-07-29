@@ -1201,8 +1201,12 @@ const POKE_NAMES = POKEMON.map(p=>p[1])
 const POKE_BY_ID = {}
 for (const p of POKEMON) POKE_BY_ID[p[0]] = p
 
+// 创建MOVES Map供快速查找
+const MOVES_BY_ID = {}
+for (const m of MOVES) MOVES_BY_ID[m[0]] = m
+
 function getPokemonData(id) { return POKE_BY_ID[id] }
-function getMoveData(id) { return MOVES[id-1] }
+function getMoveData(id) { return MOVES_BY_ID[id] }
 function getAbility(id, slot) {
   const entry = POKEMON_ABILITIES[id]
   if (!entry || !entry[slot]) return null
@@ -1219,4 +1223,30 @@ function getEffectiveness(atkType, defTypes) {
     if (chart && chart[dt] !== undefined) mult *= chart[dt]
   }
   return mult
+}
+
+// 类型效果缓存（LRU，最多50个）
+const typeEffectCache = {}
+let cacheSize = 0
+const MAX_CACHE_SIZE = 50
+
+function getEffectivenessWithCache(atkType, defTypes) {
+  const key = atkType + ':' + defTypes.join(',')
+  if (typeEffectCache[key] !== undefined) {
+    return typeEffectCache[key]
+  }
+
+  const result = getEffectiveness(atkType, defTypes)
+
+  if (cacheSize >= MAX_CACHE_SIZE) {
+    // 简单的缓存淘汰：清空重建（实际应用中可用LRU）
+    Object.keys(typeEffectCache).forEach((k, i) => {
+      if (i >= MAX_CACHE_SIZE / 2) delete typeEffectCache[k]
+    })
+    cacheSize = MAX_CACHE_SIZE / 2
+  }
+
+  typeEffectCache[key] = result
+  cacheSize++
+  return result
 }

@@ -54,7 +54,17 @@ function render() {
   if (v === 'start') renderStart()
   else if (v === 'choose') renderChoose()
   else if (v === 'explore') { renderExplore(); enableFadeIn() }
-  else if (v === 'battle') { renderBattle(); enableFadeIn() }
+  else if (v === 'battle') {
+    // 战斗场景：使用智能更新而非完全重渲
+    if (!G.battle || !document.querySelector('#battle-stage')) {
+      // 第一次进入战斗或DOM不存在，执行完全渲染
+      renderBattle()
+    } else {
+      // 已在战斗中，使用选择性更新
+      smartRenderBattle()
+    }
+    enableFadeIn()
+  }
   else if (v === 'bag') { renderBag(); enableFadeIn() }
   else if (v === 'pokemon') { renderPokemon(); enableFadeIn() }
   else if (v === 'pokedex') { renderPokedex(); enableFadeIn() }
@@ -234,6 +244,134 @@ function renderExplore() {
     <button class="btn" onclick="restartGame()" style="color:#cc3333;border-color:#cc3333;">重新开始</button>
   `
 }
+
+// ========== 战斗UI选择性更新系统 ==========
+
+function updateBattleHP() {
+  const b = G.battle
+  if (!b) return
+  const pkm = getActivePokemon()
+
+  // 更新敌方HP条
+  const enemyHPBar = document.querySelector('.enemy-info-card .hp-bar-wrapper .hp-bar-fill')
+  if (enemyHPBar) {
+    const pct = Math.max(0, b.enemy.hp / b.enemy.maxHp) * 100
+    enemyHPBar.style.width = pct + '%'
+    enemyHPBar.className = 'hp-bar-fill' + (pct <= 20 ? ' hp-low' : pct <= 50 ? ' hp-medium' : '')
+    if (b.enemy.hp < (b.lastEnemyHp || b.enemy.maxHp)) {
+      enemyHPBar.classList.add('hp-damaged')
+    }
+  }
+
+  // 更新敌方HP数字
+  const enemyHPText = document.querySelector('.enemy-info-card .hp-text')
+  if (enemyHPText) {
+    enemyHPText.textContent = `${b.enemy.hp}/${b.enemy.maxHp}`
+  }
+
+  // 更新玩家HP条
+  const playerHPBar = document.querySelector('.player-info-card .hp-bar-wrapper .hp-bar-fill')
+  if (playerHPBar && pkm) {
+    const pct = Math.max(0, pkm.hp / pkm.maxHp) * 100
+    playerHPBar.style.width = pct + '%'
+    playerHPBar.className = 'hp-bar-fill' + (pct <= 20 ? ' hp-low' : pct <= 50 ? ' hp-medium' : '')
+    if (pkm.hp < (b.lastPlayerHp || pkm.maxHp)) {
+      playerHPBar.classList.add('hp-damaged')
+    }
+  }
+
+  // 更新玩家HP数字
+  const playerHPText = document.querySelector('.player-info-card .hp-text')
+  if (playerHPText && pkm) {
+    playerHPText.textContent = `${pkm.hp}/${pkm.maxHp}`
+  }
+
+  b.dirtyFlags.hp = false
+}
+
+function updateBattleStatus() {
+  const b = G.battle
+  if (!b) return
+  const pkm = getActivePokemon()
+
+  // 更新敌方状态徽章
+  const enemyStatusEl = document.querySelector('.enemy-info-card .status-badges')
+  if (enemyStatusEl) {
+    let badges = ''
+    if (b.enemy.status && b.enemy.status.type) {
+      const map = { sleep: '💤 睡眠', paralyze: '⚡ 麻痹', poison: '☠ 中毒', burn: '🔥 灼伤' }
+      const label = map[b.enemy.status.type]
+      if (label) badges = `<span class="status-badge status-${b.enemy.status.type}">${label}</span>`
+    }
+    if (b.enemy.confused) badges += `<span class="status-badge status-confuse">❓ 混乱</span>`
+    enemyStatusEl.innerHTML = badges
+  }
+
+  // 更新玩家状态徽章
+  if (pkm) {
+    const playerStatusEl = document.querySelector('.player-info-card .status-badges')
+    if (playerStatusEl) {
+      let badges = ''
+      if (pkm.status && pkm.status.type) {
+        const map = { sleep: '💤 睡眠', paralyze: '⚡ 麻痹', poison: '☠ 中毒', burn: '🔥 灼伤' }
+        const label = map[pkm.status.type]
+        if (label) badges = `<span class="status-badge status-${pkm.status.type}">${label}</span>`
+      }
+      if (pkm.confused) badges += `<span class="status-badge status-confuse">❓ 混乱</span>`
+      playerStatusEl.innerHTML = badges
+    }
+  }
+
+  b.dirtyFlags.status = false
+}
+
+function updateBattleMsg() {
+  const b = G.battle
+  if (!b) return
+
+  const msgEl = document.getElementById('battle-message')
+  if (msgEl) {
+    msgEl.textContent = b.battleMsg || ''
+  }
+
+  b.dirtyFlags.msg = false
+}
+
+function updateBattleActions() {
+  const b = G.battle
+  if (!b) return
+  const pkm = getActivePokemon()
+  if (!pkm) return
+
+  const actionsEl = document.getElementById('battle-actions')
+  if (actionsEl) {
+    if (b.turn === 'player' && b.subState === 'main') {
+      const moves = pkm.moves.map((m, i) =>
+        `<button class="move-btn" onclick="playerAttack(${i})">${m.name} (PP:${m.currentPp}/${m.pp})</button>`
+      ).join('')
+      actionsEl.innerHTML = moves +
+        `<button onclick="G.battle.subState='bag'; render()">背包</button>
+         <button onclick="tryFlee()">逃跑</button>`
+    } else {
+      actionsEl.innerHTML = '<p>对方出招中...</p>'
+    }
+  }
+
+  b.dirtyFlags.actions = false
+}
+
+function smartRenderBattle() {
+  const b = G.battle
+  if (!b) return
+
+  // 只更新脏的部分
+  if (b.dirtyFlags.hp) updateBattleHP()
+  if (b.dirtyFlags.status) updateBattleStatus()
+  if (b.dirtyFlags.msg) updateBattleMsg()
+  if (b.dirtyFlags.actions) updateBattleActions()
+}
+
+// ========== 原始renderBattle（完全重渲用于初始化）==========
 
 function renderBattle() {
   const b = G.battle

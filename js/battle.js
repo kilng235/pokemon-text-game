@@ -1,3 +1,17 @@
+// ========== 战斗UI更新标志 ==========
+function markBattleDirty(flag) {
+  if (G.battle && G.battle.dirtyFlags) {
+    if (flag === 'all') {
+      G.battle.dirtyFlags.hp = true
+      G.battle.dirtyFlags.status = true
+      G.battle.dirtyFlags.msg = true
+      G.battle.dirtyFlags.actions = true
+    } else {
+      G.battle.dirtyFlags[flag] = true
+    }
+  }
+}
+
 // ========== 战斗计时器管理系统 ==========
 let battleTimers = []
 
@@ -137,6 +151,8 @@ function startBattle(type, extra, enemyTeam) {
     lastEnemyHp: enemyTeam[0].hp, lastPlayerHp: lp ? lp.hp : 0,
     captureFails: 0,
     lock: false,
+    // 脏标志：标记哪些部分需要更新
+    dirtyFlags: { hp: true, status: true, msg: true, actions: true }
   }
   const name = enemyTeam[0].name
 
@@ -328,7 +344,7 @@ function calcDamage(atkPkm, defPkm, move) {
   const defStat = Math.max(1, (isSp ? defPkm.spd + (defPkm.tempDebuffs?.spd || 0) : defPkm.def + (defPkm.tempDebuffs?.def || 0)))
   const lvF = Math.floor((2 * atkPkm.level) / 5 + 2)
   let damage = Math.floor(Math.floor((lvF * atkStat * move.power) / defStat) / 50 + 2)
-  const eff = getEffectiveness(move.type, defPkm.types)
+  const eff = getEffectivenessWithCache(move.type, defPkm.types)
   damage = Math.floor(damage * eff)
   // STAB: 同属性加成 ×1.5
   if (atkPkm.types.includes(move.type)) {
@@ -371,7 +387,7 @@ function playerAttack(moveIndex, skipTurnCheck) {
   b.lock = true
   // Check player status
   if (pkm.status && checkStatusSkip(pkm)) {
-    b.turn = 'enemy'; b.battleMsg = `${pkm.name} 无法行动……`
+    b.turn = 'enemy'; markBattleDirty('msg'); b.battleMsg = `${pkm.name} 无法行动……`
     setTimeout(enemyTurn, 500); return
   }
 
@@ -392,7 +408,7 @@ function playerAttack(moveIndex, skipTurnCheck) {
   }
 
   if (result.missed) {
-    b.battleMsg = '没有命中！'
+    markBattleDirty('msg'); b.battleMsg = '没有命中！'
     if (window.FX && enemyEl) FX.showDamage(enemyEl, 0, 'miss')
     if (window.AU) AU.sfx('miss')
     if (skipTurnCheck) { b.lock = false; b.turn = 'player'; render(); return }
@@ -423,7 +439,7 @@ function playerAttack(moveIndex, skipTurnCheck) {
 
   // 0威力状态技能：立即渲染显示效果，然后进入敌方回合
   if (move.power === 0) {
-    b.battleMsg = `使用了 ${move.name}！`
+    markBattleDirty('msg'); b.battleMsg = `使用了 ${move.name}！`
     if (window.FX && enemyEl) FX.playMove(move, enemyEl, { isPlayer: true })
     render()
     if (skipTurnCheck) { b.lock = false; b.turn = 'player'; return }
@@ -453,10 +469,11 @@ function playerAttack(moveIndex, skipTurnCheck) {
   }
 
   b.enemy.hp -= result.damage
-  if (result.effectiveness >= 2) { b.battleMsg = '效果拔群！'; if (window.AU) AU.sfx('superEffective') }
-  else if (result.effectiveness === 0) b.battleMsg = '没有效果…'
-  else if (result.effectiveness < 1) { b.battleMsg = '效果不太好…'; if (window.AU) AU.sfx('notEffective') }
-  else b.battleMsg = `使用了 ${move.name}！`
+  markBattleDirty('hp')
+  if (result.effectiveness >= 2) { markBattleDirty('msg'); b.battleMsg = '效果拔群！'; if (window.AU) AU.sfx('superEffective') }
+  else if (result.effectiveness === 0) { markBattleDirty('msg'); b.battleMsg = '没有效果…' }
+  else if (result.effectiveness < 1) { markBattleDirty('msg'); b.battleMsg = '效果不太好…'; if (window.AU) AU.sfx('notEffective') }
+  else { markBattleDirty('msg'); b.battleMsg = `使用了 ${move.name}！` }
   if (b.enemy.hp <= 0) {
     b.enemy.hp = 0; b.enemy.fainted = true
     addLog(`${b.enemy.name} 倒下了！`)
@@ -474,7 +491,7 @@ function playerAttack(moveIndex, skipTurnCheck) {
       else if (b.type === 'story' || b.type === 'legendary') { prefix = `${b.extra.name} 派出了 `; msg = `${b.extra.name}：你等着！` }
       else prefix = '野生的 '
       addLog(`${prefix}${b.enemy.name}！`)
-      b.battleMsg = msg || ''
+      markBattleDirty('msg'); b.battleMsg = msg || ''
       b.lock = false; b.turn = 'player'; return
     } else {
       battleVictory(); return
@@ -573,7 +590,7 @@ function syncEnemyAttack() {
   }
 
   if (b.enemy.status && checkStatusSkip(b.enemy)) {
-    b.battleMsg = `${b.enemy.name} 无法行动……`; return false
+    markBattleDirty('msg'); b.battleMsg = `${b.enemy.name} 无法行动……`; return false
   }
 
   const usable = b.enemy.moves.filter(m => m.currentPp > 0)
@@ -582,23 +599,23 @@ function syncEnemyAttack() {
   move.currentPp--
 
   if (move.effect && ['sleep','paralyze','poison','burn','confuse','disable'].includes(move.effect)) {
-    const eff = getEffectiveness(move.type, pkm.types)
+    const eff = getEffectivenessWithCache(move.type, pkm.types)
     if (eff > 0) handleStatusEffect(pkm, move.effect)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
+    markBattleDirty('msg'); b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   }
 
   if (move.effect && ['accuracyDown','speedDown','atkDown','defDown','spDefDown','spAtkDown','poisonSpeedDown','clearAll'].includes(move.effect)) {
-    const eff = getEffectiveness(move.type, pkm.types)
+    const eff = getEffectivenessWithCache(move.type, pkm.types)
     if (eff > 0) handleStatusEffect(pkm, move.effect)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
+    markBattleDirty('msg'); b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   }
 
   // Enemy self-buff effects
   if (['atkUp','defUp','spAtkUp','spDefUp','speedUp','evasionUp','atkUpDefUp','atkUpSpeedUp','atkUpSpAtkUp','defUpSpDefUp','spAtkUpSpDefUpSpeedUp','recover','recoverAll','leechSeed'].includes(move.effect)) {
     applySelfBuff(move, b.enemy, pkm)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
+    markBattleDirty('msg'); b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     render(); return true
   }
 
@@ -612,7 +629,7 @@ function syncEnemyAttack() {
   }
   const result = calcDamage(b.enemy, pkm, move)
   if (result.missed) {
-    b.battleMsg = `${b.enemy.name} 的 ${move.name} 没有命中！`
+    markBattleDirty('msg'); b.battleMsg = `${b.enemy.name} 的 ${move.name} 没有命中！`
     if (window.FX && playerEl) FX.showDamage(playerEl, 0, 'miss')
     return true
   }
@@ -629,10 +646,10 @@ function syncEnemyAttack() {
     }
   }
 
-  if (result.effectiveness >= 2) b.battleMsg = '效果拔群！'
-  else if (result.effectiveness === 0) b.battleMsg = '没有效果…'
-  else if (result.effectiveness < 1) b.battleMsg = '效果不太好…'
-  else b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
+  if (result.effectiveness >= 2) { markBattleDirty('msg'); b.battleMsg = '效果拔群！' }
+  else if (result.effectiveness === 0) { markBattleDirty('msg'); b.battleMsg = '没有效果…' }
+  else if (result.effectiveness < 1) { markBattleDirty('msg'); b.battleMsg = '效果不太好…' }
+  else { markBattleDirty('msg'); b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！` }
 
   if (window.FX && playerEl) {
     setTimeout(() => {
@@ -669,7 +686,7 @@ function enemyTurn() {
   }
 
   if (b.enemy.status && checkStatusSkip(b.enemy)) {
-    b.battleMsg = `${b.enemy.name} 无法行动……`
+    markBattleDirty('msg'); b.battleMsg = `${b.enemy.name} 无法行动……`
     b.turn = 'player'; render(); return
   }
 
@@ -687,9 +704,9 @@ function enemyTurn() {
   }
 
   if (move.effect && ['sleep','paralyze','poison','burn','confuse','disable'].includes(move.effect)) {
-    const eff = getEffectiveness(move.type, pkm.types)
+    const eff = getEffectivenessWithCache(move.type, pkm.types)
     if (eff > 0) handleStatusEffect(pkm, move.effect)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
+    markBattleDirty('msg'); b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     if (window.FX && playerEl) {
       const statusKey = move.effect === 'confuse' ? 'confuse' : move.effect
       setTimeout(() => FX.playStatus(playerEl, statusKey), 350)
@@ -698,16 +715,16 @@ function enemyTurn() {
   }
 
   if (move.effect && ['accuracyDown','speedDown','atkDown','defDown','spDefDown','spAtkDown','poisonSpeedDown','clearAll'].includes(move.effect)) {
-    const eff = getEffectiveness(move.type, pkm.types)
+    const eff = getEffectivenessWithCache(move.type, pkm.types)
     if (eff > 0) handleStatusEffect(pkm, move.effect)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
+    markBattleDirty('msg'); b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     b.turn = 'player'; render(); return
   }
 
   // 敌方 self-buff
   if (move.effect && ['atkUp','defUp','spAtkUp','spDefUp','speedUp','evasionUp','atkUpDefUp','atkUpSpeedUp','atkUpSpAtkUp','defUpSpDefUp','spAtkUpSpDefUpSpeedUp','recover','recoverAll','leechSeed'].includes(move.effect)) {
     applySelfBuff(move, b.enemy, pkm)
-    b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
+    markBattleDirty('msg'); b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
     if (window.FX && enemyEl && (move.effect === 'recover' || move.effect === 'recoverAll')) {
       FX.playHeal(enemyEl)
     }
@@ -716,7 +733,7 @@ function enemyTurn() {
 
   const result = calcDamage(b.enemy, pkm, move)
   if (result.missed) {
-    b.battleMsg = `${b.enemy.name} 的 ${move.name} 没有命中！`
+    markBattleDirty('msg'); b.battleMsg = `${b.enemy.name} 的 ${move.name} 没有命中！`
     if (window.FX && playerEl) FX.showDamage(playerEl, 0, 'miss')
     if (window.AU) AU.sfx('miss')
     b.turn = 'player'; render(); return
@@ -743,10 +760,10 @@ function enemyTurn() {
     }
   }
 
-  if (result.effectiveness >= 2) { b.battleMsg = '效果拔群！'; if (window.AU) AU.sfx('superEffective') }
-  else if (result.effectiveness === 0) b.battleMsg = '没有效果…'
-  else if (result.effectiveness < 1) { b.battleMsg = '效果不太好…'; if (window.AU) AU.sfx('notEffective') }
-  else b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
+  if (result.effectiveness >= 2) { markBattleDirty('msg'); b.battleMsg = '效果拔群！'; if (window.AU) AU.sfx('superEffective') }
+  else if (result.effectiveness === 0) { markBattleDirty('msg'); b.battleMsg = '没有效果…' }
+  else if (result.effectiveness < 1) { markBattleDirty('msg'); b.battleMsg = '效果不太好…'; if (window.AU) AU.sfx('notEffective') }
+  else { markBattleDirty('msg'); b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！` }
   pkm.hp -= result.damage
   if (pkm.hp <= 0) {
     pkm.hp = 0; pkm.fainted = true
@@ -835,14 +852,14 @@ function tryCapture() {
   const bonusNote = fails > 0 ? `（含连失补偿 +${fails * 12}%）` : ''
   addLog(`你丢出了 ${item.name}！（捕捉率约 ${pct}%${bonusNote}）`)
   if (window.AU) AU.sfx('ballThrow')
-  b.battleMsg = '1… 2… 3…'
+  markBattleDirty('msg'); b.battleMsg = '1… 2… 3…'
   b.lock = true
   const enemyEl = document.querySelector('.sprite-container.enemy')
   if (window.FX && enemyEl) FX.playCapture(enemyEl, true)
   setTimeout(() => {
     if (!G.battle) return
     if (Math.random() < chance) {
-      b.battleMsg = `成功捕捉了 ${b.enemy.name}！`
+      markBattleDirty('msg'); b.battleMsg = `成功捕捉了 ${b.enemy.name}！`
       addLog(`★ 成功捕捉了 ${b.enemy.name}！`)
       if (window.AU) AU.sfx('capture')
       if (window.FX && enemyEl) FX.flash('#FFD700', 400)
@@ -868,7 +885,7 @@ function tryFlee() {
   const enemySpe = b.enemy.spe + (b.enemy.tempDebuffs?.spe || 0)
   const chance = Math.min(0.9, 0.5 + (pkmSpe - enemySpe) / 200)
   if (Math.random() < chance) { addLog('成功逃跑了！'); clearAllBattleTimers(); G.battle = null; saveGame(); render() }
-  else { b.lock = true; b.battleMsg = '无法逃脱！'; addLog('逃跑失败！'); b.turn = 'enemy'; setTimeout(enemyTurn, 500) }
+  else { b.lock = true; markBattleDirty('msg'); b.battleMsg = '无法逃脱！'; addLog('逃跑失败！'); b.turn = 'enemy'; setTimeout(enemyTurn, 500) }
 }
 
 function useItem(itemKey) {
