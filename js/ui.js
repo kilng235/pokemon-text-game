@@ -55,14 +55,8 @@ function render() {
   else if (v === 'choose') renderChoose()
   else if (v === 'explore') { renderExplore(); enableFadeIn() }
   else if (v === 'battle') {
-    // 战斗场景：使用智能更新而非完全重渲
-    if (!G.battle || !document.querySelector('#battle-stage')) {
-      // 第一次进入战斗或DOM不存在，执行完全渲染
-      renderBattle()
-    } else {
-      // 已在战斗中，使用选择性更新
-      smartRenderBattle()
-    }
+    // 临时禁用选择性更新，回到完全重渲以修复bug
+    renderBattle()
     enableFadeIn()
   }
   else if (v === 'bag') { renderBag(); enableFadeIn() }
