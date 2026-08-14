@@ -8,6 +8,17 @@ function spriteSrc(id, isShiny, animated) {
   return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${isShiny ? 'shiny/' : ''}${id}.gif`
 }
 
+// 精灵图预加载缓存：提前加载常用精灵，减少切宠/换宠/图鉴滚动时的闪烁
+// 浏览器对相同 src 的 img 会命中缓存，decode() 触发解码避免首帧空白
+const spritePreloadCache = new Map()
+function preloadSprite(url) {
+  if (!url || spritePreloadCache.has(url)) return
+  const img = new Image()
+  img.src = url
+  if (img.decode) img.decode().catch(() => {})
+  spritePreloadCache.set(url, img)
+}
+
 function spriteHTML(id, isShiny, extraClass, opts) {
   const animated = !opts || opts.animated !== false
   const shinyClass = isShiny ? ' shiny' : ''
@@ -15,8 +26,10 @@ function spriteHTML(id, isShiny, extraClass, opts) {
   const cls = extraClass || ''
   const gif = spriteSrc(id, isShiny, true)
   const png = spriteSrc(id, isShiny, false)
+  preloadSprite(gif)
+  preloadSprite(png)
   const pData = typeof getPokemonData === 'function' ? getPokemonData(id) : null
-  const pName = pData ? pData[1] : `宝可梦#${id}`
+  const pName = pData ? pData.name : `宝可梦#${id}`
   const altText = isShiny ? `${pName}(闪光)` : pName
   return `<div class="sprite-container${shinyClass}${cls ? ' ' + cls : ''}">${shinyStars}<div class="sprite-shadow"></div><img class="sprite-img" src="${gif}" alt="${altText}" data-png="${png}" onerror="if(this.dataset.fallback!=='1'){this.dataset.fallback='1';this.src=this.dataset.png}else{this.style.display='none'}" loading="lazy"></div>`
 }
@@ -156,7 +169,7 @@ function renderChoose() {
   for (const id of [4,7,1]) {
     const p = getPokemonData(id)
     if (!p) continue
-    const types = p[2].split(',')
+    const types = p.types.split(',')
     const typeBadges = types.map(t => `<span class="type-badge" style="background:${FX.typeBg(t)}">${t}</span>`).join('')
     grid.innerHTML += `
       <div class="choose-card">
@@ -164,11 +177,11 @@ function renderChoose() {
           <div class="sprite-shadow"></div>
           <img class="sprite-img" src="${spriteSrc(id, false, true)}" data-png="${spriteSrc(id, false, false)}" onerror="if(this.dataset.fallback!=='1'){this.dataset.fallback='1';this.src=this.dataset.png}else{this.style.display='none'}" loading="lazy">
         </div>
-        <div class="pkm-name">${p[1]}</div>
+        <div class="pkm-name">${p.name}</div>
         <div class="pkm-types">${typeBadges}</div>
-        <div class="pkm-stat">HP:${p[3]} 攻:${p[4]} 防:${p[5]}</div>
-        <div class="pkm-stat">特攻:${p[6]} 特防:${p[7]} 速:${p[8]}</div>
-        <button class="btn" onclick="selectStarter(${id})">选择 ${p[1]}</button>
+        <div class="pkm-stat">HP:${p.stats.hp} 攻:${p.stats.atk} 防:${p.stats.def}</div>
+        <div class="pkm-stat">特攻:${p.stats.spa} 特防:${p.stats.spd} 速:${p.stats.spe}</div>
+        <button class="btn" onclick="selectStarter(${id})">选择 ${p.name}</button>
       </div>
     `
   }
@@ -187,39 +200,39 @@ function renderExplore() {
     return
   }
   const main = $('main')
-  let html = `<div class="location-name">◈ ${loc[0]}</div>
-    <div class="loc-type">${loc[2] === 'town' ? '🏘 城镇' : loc[2] === 'route' ? '🌿 道路' : loc[2] === 'cave' ? '⛰ 洞穴' : '🌊 水道'}</div>
-    <p class="area-desc">${loc[1]}</p>
+  let html = `<div class="location-name">◈ ${loc.name}</div>
+    <div class="loc-type">${loc.type === 'town' ? '🏘 城镇' : loc.type === 'route' ? '🌿 道路' : loc.type === 'cave' ? '⛰ 洞穴' : '🌊 水道'}</div>
+    <p class="area-desc">${loc.desc}</p>
     <div class="location-strip">
-      ${loc[3] ? '<span class="has-center">🏥 有宝可梦中心</span>' : ''}
-      ${loc[2] === 'town' ? '<span class="has-center">🛒 有商店</span>' : ''}
+      ${loc.hasCenter ? '<span class="has-center">🏥 有宝可梦中心</span>' : ''}
+      ${loc.type === 'town' ? '<span class="has-center">🛒 有商店</span>' : ''}
     </div>
     <div class="btn-col">`
-  const connections = loc[5] || []
+  const connections = loc.connects || []
   const labels = LINK_LABELS[G.player.position] || {}
   for (const conn of connections) {
     const c = getLocation(conn)
     if (!c) continue
-    let label = labels[conn] || c[0]
-    if (c[2] === 'town' && c[3]) label += ' 🏥'
+    let label = labels[conn] || c.name
+    if (c.type === 'town' && c.hasCenter) label += ' 🏥'
     html += `<button class="btn" onclick="travelTo('${conn}')">→ ${label}</button>`
   }
-  if (loc[2] === 'town') {
+  if (loc.type === 'town') {
     for (const [k, v] of Object.entries(GYM_LEADERS)) {
       const townMap = { brock:'pewter', misty:'cerulean', ltSurge:'vermilion', erika:'celadon', sabrina:'saffron', koga:'fuchsia', blaine:'cinnabar', giovanni:'viridian' }
       const tKey = townMap[k]
       if (tKey === G.player.position) {
-        if (v[4] <= G.player.badge) {
-          html += `<button class="btn disabled">✔ ${v[0]}道馆（已通过）</button>`
+        if (v.badge <= G.player.badge) {
+          html += `<button class="btn disabled">✔ ${v.name}道馆（已通过）</button>`
         } else {
-          html += `<button class="btn" onclick="challengeGym('${k}')">⚔ 挑战 ${v[0]}（${v[2]}属性）</button>`
+          html += `<button class="btn" onclick="challengeGym('${k}')">⚔ 挑战 ${v.name}（${v.type}属性）</button>`
         }
       }
     }
     html += `<button class="btn" onclick="G.view='shop';render()">🛒 商店</button>`
-    if (loc[3]) html += `<button class="btn" onclick="healAtCenter()">🏥 宝可梦中心</button>`
+    if (loc.hasCenter) html += `<button class="btn" onclick="healAtCenter()">🏥 宝可梦中心</button>`
   }
-  if (loc[2] !== 'town') {
+  if (loc.type !== 'town') {
     const shinyChance = getShinyChance()
     const shinyPercent = (shinyChance * 100).toFixed(2)
     const chain = G.player.shinyChain
@@ -372,6 +385,16 @@ function renderBattle() {
   if (!b || !b.enemy) { G.view = 'explore'; render(); return }
   const pkm = getActivePokemon()
 
+  // 预加载敌方剩余队伍与己方全队精灵，换宠/敌方换宠时即时显示
+  for (const ep of b.enemyTeam) {
+    preloadSprite(spriteSrc(ep.id, ep.isShiny, true))
+    preloadSprite(spriteSrc(ep.id, ep.isShiny, false))
+  }
+  for (const pp of G.player.pokemon) {
+    preloadSprite(spriteSrc(pp.id, pp.isShiny, true))
+    preloadSprite(spriteSrc(pp.id, pp.isShiny, false))
+  }
+
   // HP条渲染函数
   const renderHpBar = (pokemon, isEnemy = false) => {
     if (!pokemon) return '<div class="hp-bar-container"><div class="hp-text">倒下了</div></div>'
@@ -424,7 +447,7 @@ function renderBattle() {
 
   // 战斗场景类型（背景）
   const area = LOCATIONS[G.player.position]
-  const areaType = area ? area[2] : 'route'
+  const areaType = area ? area.type : 'route'
   let bgClass = 'battle-bg-route'
   if (areaType === 'cave') bgClass = 'battle-bg-cave'
   else if (areaType === 'water') bgClass = 'battle-bg-water'
@@ -468,7 +491,7 @@ function renderBattle() {
           </div>
         </div>
       </div>
-      <div class="battle-status">#${b.enemyIndex+1}/${b.enemyTeam.length} ${b.type==='gym'?'🏛 '+b.extra.data[1]:b.type==='elite'?'👑 四天王 '+b.extra.name:b.type==='story'?'💀 '+b.extra.name:b.type==='rival'?'💢 '+b.extra.name:'🌿 野生'}</div>
+      <div class="battle-status">#${b.enemyIndex+1}/${b.enemyTeam.length} ${b.type==='gym'?'🏛 '+b.extra.data.name:b.type==='elite'?'👑 四天王 '+b.extra.name:b.type==='story'?'💀 '+b.extra.name:b.type==='rival'?'💢 '+b.extra.name:'🌿 野生'}</div>
       <div class="battle-scanlines"></div>
     </div>
   `
@@ -721,25 +744,25 @@ function renderPokedex() {
   if (G.pokedexDetail) {
     const p = getPokemonData(G.pokedexDetail)
     if (!p) { G.pokedexDetail = null; renderPokedex(); return }
-    const seen = G.player.seen.includes(p[0])
-    const evoInfo = p[11] ? `-> Lv.${p[11][0]} ${getPokemonData(p[11][1])?.[1] || '???'}` : '最终形态'
-    const isShinySeen = G.player.shinySeen.includes(p[0])
-    const types = seen ? p[2].split(',') : []
+    const seen = G.player.seen.includes(p.id)
+    const evoInfo = p.evo ? `-> Lv.${p.evo[0]} ${getPokemonData(p.evo[1])?.name || '???'}` : '最终形态'
+    const isShinySeen = G.player.shinySeen.includes(p.id)
+    const types = seen ? p.types.split(',') : []
     const typeBadges = types.map(t => `<span class="type-badge" style="background:${FX.typeBg(t)}">${t}</span>`).join(' ')
     main.innerHTML = `
-      <p class="section-title">📖 #${String(p[0]).padStart(2,'0')} ${seen ? p[1] : '???'}${isShinySeen ? ' <span class="shiny-badge">✨</span>' : ''}</p>
+      <p class="section-title">📖 #${String(p.id).padStart(2,'0')} ${seen ? p.name : '???'}${isShinySeen ? ' <span class="shiny-badge">✨</span>' : ''}</p>
         <div class="pkm-card${isShinySeen ? ' shiny-card' : ''}" style="border-color:var(--accent);">
-        ${seen ? spriteHTML(p[0], isShinySeen, 'large') : ''}
+        ${seen ? spriteHTML(p.id, isShinySeen, 'large') : ''}
         <div class="pkm-types">${typeBadges || '???'}</div>
         <hr style="border-color:#003a10;margin:6px 0;">
-        <div class="pkm-stat">HP: ${seen ? p[3] : '???'}</div>
-        <div class="pkm-stat">攻击: ${seen ? p[4] : '???'}</div>
-        <div class="pkm-stat">防御: ${seen ? p[5] : '???'}</div>
-        <div class="pkm-stat">特攻: ${seen ? p[6] : '???'}</div>
-        <div class="pkm-stat">特防: ${seen ? p[7] : '???'}</div>
-        <div class="pkm-stat">速度: ${seen ? p[8] : '???'}</div>
+        <div class="pkm-stat">HP: ${seen ? p.stats.hp : '???'}</div>
+        <div class="pkm-stat">攻击: ${seen ? p.stats.atk : '???'}</div>
+        <div class="pkm-stat">防御: ${seen ? p.stats.def : '???'}</div>
+        <div class="pkm-stat">特攻: ${seen ? p.stats.spa : '???'}</div>
+        <div class="pkm-stat">特防: ${seen ? p.stats.spd : '???'}</div>
+        <div class="pkm-stat">速度: ${seen ? p.stats.spe : '???'}</div>
         <hr style="border-color:#003a10;margin:6px 0;">
-        <div class="pkm-stat">捕获率: ${seen ? p[9] : '???'}</div>
+        <div class="pkm-stat">捕获率: ${seen ? p.catchRate : '???'}</div>
         <div class="pkm-stat">进化: ${seen ? evoInfo : '???'}</div>
       </div>
       <div class="btn-row">
@@ -852,6 +875,7 @@ function renderSidebarTeam() {
     if (inBattle && !isActive && !fainted) action = `switchPokemon(${i})`
 
     const src = spriteSrc(p.id, p.isShiny, false) // 侧边栏用静态图省资源
+    preloadSprite(src)
     html += `<div class="${cls.join(' ')}" onclick="${action}">
       <div class="team-sprite">${p.isShiny ? '<span class="team-shiny-star" title="闪光">✨</span>' : ''}<img src="${src}" onerror="this.style.visibility='hidden'" loading="lazy" alt="${p.name}"></div>
       <div class="team-info">

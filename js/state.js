@@ -42,6 +42,7 @@ function createInitialState() {
     soundEnabled: true,
     musicEnabled: true,
     volume: 0.4,
+    levelScaling: true, // 动态等级缩放开关（false 时恢复固定等级）
   }
 }
 
@@ -53,9 +54,27 @@ function getShinyChance() {
   return Math.min(base + bonus, 0.25)
 }
 
-function saveGame() {
+// 存档防抖：高频操作（移动/探索/购买）合并写入，避免每步全量 JSON.stringify 卡顿
+// 关键节点（战斗结束/捕捉/进化等）调用 saveGame(true) 强制同步保存
+let saveTimer = null
+function writeSave() {
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(G)) }
   catch (e) { console.warn('存档失败:', e) }
+}
+function saveGame(force) {
+  if (force) {
+    if (saveTimer) { clearTimeout(saveTimer); saveTimer = null }
+    writeSave()
+    return
+  }
+  if (saveTimer) clearTimeout(saveTimer)
+  saveTimer = setTimeout(() => { saveTimer = null; writeSave() }, 150)
+}
+// 页面关闭/刷新前强制落盘，防止防抖中的进度丢失
+if (typeof window !== 'undefined' && window.addEventListener) {
+  window.addEventListener('beforeunload', () => {
+    if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; writeSave() }
+  })
 }
 
 function loadGame() {
@@ -77,6 +96,7 @@ function loadGame() {
       if (G.soundEnabled === undefined) G.soundEnabled = true
       if (G.musicEnabled === undefined) G.musicEnabled = true
       if (G.volume === undefined) G.volume = 0.4
+      if (G.levelScaling === undefined) G.levelScaling = true
       if (window.AU) {
         AU.setSoundOn(G.soundEnabled)
         AU.setMusicOn(G.musicEnabled)
@@ -88,7 +108,7 @@ function loadGame() {
         if (!p.nature) p.nature = ['认真','spe','spe']
         if (!p.gender) p.gender = getGender(p.id)
         if (!p.ability) p.ability = getPokemonAbility(p.id)
-        if (!p.moveList) { const b = getPokemonData(p.id); p.moveList = b ? b[12] : null }
+        if (!p.moveList) { const b = getPokemonData(p.id); p.moveList = b ? b.moveList : null }
         if (p.status === undefined) p.status = null
         if (p.accuracy === undefined) p.accuracy = 100
         if (p.evasion === undefined) p.evasion = 100
@@ -97,8 +117,8 @@ function loadGame() {
         if (p.moves) for (const m of p.moves) {
           const md = getMoveData(m.id)
           if (md) {
-            m.desc = md[5] || ''
-            if (m.effect === undefined || m.effect === null) m.effect = md[6] || null
+            m.desc = md.desc || ''
+            if (m.effect === undefined || m.effect === null) m.effect = md.effect || null
           }
         }
       }
@@ -124,7 +144,7 @@ function getPokemonStats(id, level, ivs, evs, nature) {
   if (!base) return null
   const iv = ivs || { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
   const ev = evs || { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
-  const [,,,bhp,batk,bdef,bspa,bspd,bspe] = base
+  const { hp:bhp, atk:batk, def:bdef, spa:bspa, spd:bspd, spe:bspe } = base.stats
   const calcStat = (baseStat, ivVal, evVal, isHp) => {
     const s = Math.floor((2 * baseStat + ivVal + Math.floor(evVal / 4)) * level / 100)
     return isHp ? s + level + 10 : s + 5
@@ -185,7 +205,7 @@ function getNewMovesAtLevel(moveList, currentLevel) {
 function createPokemon(id, level, movesOverride) {
   const base = getPokemonData(id)
   if (!base) return null
-  const types = base[2].split(',')
+  const types = base.types.split(',')
   const ivs = { hp:randIV(), atk:randIV(), def:randIV(), spa:randIV(), spd:randIV(), spe:randIV() }
   const evs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
   const nature = randNature()
@@ -193,16 +213,16 @@ function createPokemon(id, level, movesOverride) {
   const ability = getPokemonAbility(id)
   const isShiny = Math.random() < (1 / 4096)
   const stats = getPokemonStats(id, level, ivs, evs, nature)
-  const rawMoves = movesOverride || base[12] || [1]
+  const rawMoves = movesOverride || base.moveList || [1]
   const moveIds = getMovesForLevel(rawMoves, level)
   return {
-    id, name: base[1], types, level, ...stats,
+    id, name: base.name, types, level, ...stats,
     moves: moveIds.map(mid => {
       const m = getMoveData(mid)
-      return m ? { id:mid, name:m[1], type:m[2], power:m[3], pp:m[4], currentPp:m[4], desc:m[5]||'', effect:m[6]||null } : null
+      return m ? { id:mid, name:m.name, type:m.type, power:m.power, pp:m.pp, currentPp:m.pp, desc:m.desc||'', effect:m.effect||null } : null
     }).filter(Boolean),
     relearnMoves: [],
-    moveList: base[12] || null, // 保存完整的技能学习表（含等级信息）
+    moveList: base.moveList || null, // 保存完整的技能学习表（含等级信息）
     exp: 0, nextLevel: Math.floor(level ** 3 * 0.8 + 10),
     ivs, evs, nature, gender, ability, isShiny, status: null, fainted: false,
     accuracy: 100, evasion: 100, tempDebuffs: { accuracy: 0, evasion: 0, spe: 0, atk: 0, def: 0, spd: 0, spa: 0 },
@@ -226,11 +246,12 @@ function getEVYield(id) {
   const base = getPokemonData(id)
   if (!base) return [0,0,0,0,0,0]
   if (id === 150 || id === 151) return [3,3,3,3,3,3] // 超梦/梦幻全+3
-  const stats = [base[3],base[4],base[5],base[6],base[7],base[8]]
+  const { hp, atk, def, spa, spd, spe } = base.stats
+  const stats = [hp, atk, def, spa, spd, spe]
   const max = Math.max(...stats)
   const yields = [0,0,0,0,0,0]
   for (let i = 0; i < 6; i++) {
-    if (stats[i] === max) yields[i] = base[11] ? 1 : 2
+    if (stats[i] === max) yields[i] = base.evo ? 1 : 2
   }
   return yields
 }
@@ -284,20 +305,20 @@ function addExp(pokemon, exp) {
         G.pendingMoveLearn.push({
           pokemonIndex: G.player.pokemon.indexOf(pokemon),
           moveId: mid,
-          moveName: mData[1],
+          moveName: mData.name,
         })
-        addLog(`${pokemon.name} 想要学习新技能「${mData[1]}」！`)
+        addLog(`${pokemon.name} 想要学习新技能「${mData.name}」！`)
       }
     }
 
     // 进化检测
     const base = getPokemonData(pokemon.id)
-    if (base && base[11] && pokemon.level >= base[11][0]) {
-      const evoTo = base[11][1]; const evoData = getPokemonData(evoTo)
+    if (base && base.evo && pokemon.level >= base.evo[0]) {
+      const evoTo = base.evo[1]; const evoData = getPokemonData(evoTo)
       if (evoData) {
         addLog(`咦？${pokemon.name} 开始发光了！`)
         // 进化动画触发（UI 层监听此标记）
-        G.evolutionPending = { fromId: pokemon.id, toId: evoData[0], fromName: pokemon.name, toName: evoData[1] }
+        G.evolutionPending = { fromId: pokemon.id, toId: evoData.id, fromName: pokemon.name, toName: evoData.name }
         if (window.AU) AU.sfx('evolve')
         if (window.FX) {
           const el = document.querySelector('.sprite-container.player') || document.querySelector('.sprite-container')
@@ -308,13 +329,13 @@ function addExp(pokemon, exp) {
         }
         const oldMoves = [...(pokemon.moves || [])]
         const oldMoveIds = new Set(oldMoves.map(m => m.id))
-        pokemon.id = evoData[0]; pokemon.name = evoData[1]; pokemon.types = evoData[2].split(',')
-        pokemon.moveList = evoData[12] || null
+        pokemon.id = evoData.id; pokemon.name = evoData.name; pokemon.types = evoData.types.split(',')
+        pokemon.moveList = evoData.moveList || null
         // 保留原有招式，不覆盖
         pokemon.moves = oldMoves
         // 检查进化形态在当前等级可学的新招式，触发待学习
-        if (evoData[12]) {
-          const newMoveIds = getNewMovesAtLevel(evoData[12], pokemon.level)
+        if (evoData.moveList) {
+          const newMoveIds = getNewMovesAtLevel(evoData.moveList, pokemon.level)
           for (const mid of newMoveIds) {
             if (oldMoveIds.has(mid)) continue
             const mData = getMoveData(mid)
@@ -323,9 +344,9 @@ function addExp(pokemon, exp) {
             G.pendingMoveLearn.push({
               pokemonIndex: G.player.pokemon.indexOf(pokemon),
               moveId: mid,
-              moveName: mData[1],
+              moveName: mData.name,
             })
-            addLog(`${pokemon.name} 想要学习新技能「${mData[1]}」！`)
+            addLog(`${pokemon.name} 想要学习新技能「${mData.name}」！`)
           }
         }
         recalcStats(pokemon)
