@@ -116,13 +116,56 @@ function assert(name, cond, detail) {
   assert('applySelfBuff 覆盖全部 buff', allOk)
 }
 
-// ===== 测试 5：敌方 AI 路径完整性检查（静态分析） =====
+// ===== 测试 5：统一效果处理覆盖 MOVES 数据中全部 effect 类型 =====
 {
-  // 检查 enemyTurn 函数源码中是否包含所有 effect 关键字
-  const src = G.enemyTurn.toString()
-  const required = ['poison','burn','confuse','disable','atkDown','defDown','spDefDown','spAtkDown','clearAll','atkUp','recover','leechSeed']
-  const missing = required.filter(k => !src.includes(k))
-  assert('enemyTurn 包含所有敌方effect处理', missing.length === 0, `missing: ${missing.join(',')}`)
+  // 统一函数分类表 + drain（伤害路径单独处理）应覆盖数据中出现的全部效果
+  const known = [...G.STATUS_EFFECTS, ...G.DEBUFF_EFFECTS, ...G.SELFBUFF_EFFECTS, 'drain']
+  const missing = []
+  for (const mv of G.MOVES) {
+    const eff = mv[6]
+    if (eff && !known.includes(eff)) missing.push(`${eff}(id ${mv[0]})`)
+  }
+  assert('applyMoveEffects 覆盖全部技能效果类型', missing.length === 0, `未覆盖: ${missing.join(',')}`)
+  // 敌方 AI 两个入口都必须调用统一函数（防回归）
+  const eSrc = G.enemyTurn.toString() + G.syncEnemyAttack.toString()
+  assert('敌方AI入口调用统一效果处理', eSrc.includes('applyMoveEffects'), '')
+}
+
+// ===== 测试 5b：applyMoveEffects 统一函数行为 =====
+{
+  G.G = G.createInitialState()
+  const pkm = G.createPokemon(1, 5)   // 草,毒
+  const enemy = G.createPokemon(4, 5) // 火
+  const opts = { statusEl: null, healEl: null }
+
+  // 状态效果（催眠粉 草系 vs 火系，克制 0.5 > 0，应生效）
+  pkm.status = null
+  enemy.status = null
+  const stMove = { id: 24, name: '催眠粉', type: '草', power: 0, pp: 15, currentPp: 15, effect: 'sleep' }
+  const r1 = G.applyMoveEffects(stMove, pkm, enemy, opts)
+  assert('applyMoveEffects 施加睡眠', r1 === 'status' && enemy.status && enemy.status.type === 'sleep', `r=${r1} status=${enemy.status && enemy.status.type}`)
+
+  // 削弱效果（飞沙脚 地面系 vs 火系，应生效）
+  enemy.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0, atk: 0, def: 0, spd: 0, spa: 0 }
+  const dbMove = { id: 50, name: '飞沙脚', type: '地面', power: 0, pp: 15, currentPp: 15, effect: 'accuracyDown' }
+  const r2 = G.applyMoveEffects(dbMove, pkm, enemy, opts)
+  assert('applyMoveEffects 施加命中下降', r2 === 'debuff' && enemy.tempDebuffs.accuracy === -20, `r=${r2} acc=${enemy.tempDebuffs.accuracy}`)
+
+  // 自强化（剑舞 普通系，应生效）
+  const sbMove = { id: 134, name: '剑舞', type: '普通', power: 0, pp: 20, currentPp: 20, effect: 'atkUp' }
+  const r3 = G.applyMoveEffects(sbMove, pkm, enemy, opts)
+  assert('applyMoveEffects 施加攻击提升', r3 === 'selfbuff' && pkm.tempDebuffs.atk === 20, `r=${r3} atk=${pkm.tempDebuffs.atk}`)
+
+  // 属性免疫：地面系 vs 飞行系（浮游/免疫）不生效 → 效果仍返回类别但未施加
+  const flyer = G.createPokemon(16, 5) // 波波 普通,飞行
+  flyer.tempDebuffs = { accuracy: 0, evasion: 0, spe: 0, atk: 0, def: 0, spd: 0, spa: 0 }
+  const r4 = G.applyMoveEffects(dbMove, pkm, flyer, opts)
+  assert('地面系变化技对飞行系不生效', r4 === 'debuff' && flyer.tempDebuffs.accuracy === 0, `r=${r4} acc=${flyer.tempDebuffs.accuracy}`)
+
+  // 无 effect 的普通攻击技 → null（走伤害流程）
+  const plainMove = { id: 1, name: '撞击', type: '普通', power: 40, pp: 35, currentPp: 35, effect: null }
+  const r5 = G.applyMoveEffects(plainMove, pkm, enemy, opts)
+  assert('无效果技能返回 null', r5 === null, `r=${r5}`)
 }
 
 // ===== 测试 6：变化技能 effect 在 effectiveness>0 时应用 =====
