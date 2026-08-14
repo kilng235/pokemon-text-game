@@ -77,6 +77,8 @@
 
 ## 二、动态等级缩放
 
+> ✅ **已实现（2026-08）**：`js/battle.js` 的 `getScaledLevel()` 已按 2.2 方案落地，返回 `{ level, elite }` 对象（精英判定独立于缩放，不再依赖 `level > 区域上限`）；区域基础范围作为边界，`adjMax` 封顶 `playerMax + 3`；提供 `G.levelScaling = false` 开关恢复固定等级。见下文方案与验证。
+
 ### 2.1 当前问题
 
 ```javascript
