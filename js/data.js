@@ -73,7 +73,6 @@ const MOVES = [
   [71,'逆鳞','龙',120,10,'失控攻击2-3回合后混乱'],
   [72,'龙息','龙',60,20,'喷射龙息攻击'],
   [73,'泡沫','水',20,30,'喷射泡沫攻击'],
-  [74,'怪力','普通',80,15,'发挥怪力攻击'],
   [75,'生长','普通',0,40,'让身体成长，提升攻击和特攻','atkUpSpAtkUp'],
   [76,'火焰拳','火',75,15,'用火焰之拳攻击'],
   [77,'抓','普通',25,35,'用爪子抓对手'],
@@ -814,22 +813,22 @@ const POKEMON = [
 
 // 道馆馆主数据 [id, name, title, type, badge, money, [pokemonId,level, ...]]
 const GYM_LEADERS = {
-  brock:   ['小刚','深灰道馆馆主','岩石',1200,1, 74,10, 95,12],
-  misty:   ['小霞','华蓝道馆馆主','水',1400,2, 120,16, 121,19],
-  ltSurge: ['马志士','枯叶道馆馆主','电',1600,3, 100,19, 25,16, 26,22],
-  erika:   ['莉佳','彩虹道馆馆主','草',1800,4, 43,20, 70,22, 45,24],
-  sabrina: ['娜姿','金黄道馆馆主','超能',2000,5, 96,22, 64,24, 65,26],
-  koga:    ['阿桔','浅红道馆馆主','毒',2200,6, 23,23, 109,23, 24,25, 42,27],
-  blaine:  ['夏伯','红莲道馆馆主','火',2400,7, 58,27, 77,26, 126,28, 59,30],
-  giovanni:['坂木','常青道馆馆主','地面',2600,8, 111,23, 50,22, 27,25, 112,27],
+  brock:   { name:'小刚', title:'深灰道馆馆主', type:'岩石', prize:1200, badge:1, team:[[74,10],[95,12]] },
+  misty:   { name:'小霞', title:'华蓝道馆馆主', type:'水', prize:1400, badge:2, team:[[120,16],[121,19]] },
+  ltSurge: { name:'马志士', title:'枯叶道馆馆主', type:'电', prize:1600, badge:3, team:[[100,19],[25,16],[26,22]] },
+  erika:   { name:'莉佳', title:'彩虹道馆馆主', type:'草', prize:1800, badge:4, team:[[43,20],[70,22],[45,24]] },
+  sabrina: { name:'娜姿', title:'金黄道馆馆主', type:'超能', prize:2000, badge:5, team:[[96,22],[64,24],[65,26]] },
+  koga:    { name:'阿桔', title:'浅红道馆馆主', type:'毒', prize:2200, badge:6, team:[[23,23],[109,23],[24,25],[42,27]] },
+  blaine:  { name:'夏伯', title:'红莲道馆馆主', type:'火', prize:2400, badge:7, team:[[58,27],[77,26],[126,28],[59,30]] },
+  giovanni:{ name:'坂木', title:'常青道馆馆主', type:'地面', prize:2600, badge:8, team:[[111,23],[50,22],[27,25],[112,27]] },
 }
 
 // 四天王 [name, type, [[pokemonId,level], ...]]
 const ELITE_FOUR = [
-  ['科拿','冰', [[86,25],[87,27],[124,24],[131,26],[80,25]]],
-  ['志霸','格斗', [[66,26],[67,28],[57,26],[106,28],[68,30]]],
-  ['菊子','幽灵', [[92,27],[93,29],[94,31],[24,23],[42,27]]],
-  ['渡','龙', [[147,28],[148,30],[142,28],[130,30],[149,32]]],
+  { name:'科拿', type:'冰', team: [[86,25],[87,27],[124,24],[131,26],[80,25]] },
+  { name:'志霸', type:'格斗', team: [[66,26],[67,28],[57,26],[106,28],[68,30]] },
+  { name:'菊子', type:'幽灵', team: [[92,27],[93,29],[94,31],[24,23],[42,27]] },
+  { name:'渡', type:'龙', team: [[147,28],[148,30],[142,28],[130,30],[149,32]] },
 ]
 
 // 属性相克 (attacker: { defender: multiplier })
@@ -1205,8 +1204,22 @@ for (const p of POKEMON) POKE_BY_ID[p[0]] = p
 const MOVES_BY_ID = {}
 for (const m of MOVES) MOVES_BY_ID[m[0]] = m
 
-function getPokemonData(id) { return POKE_BY_ID[id] }
-function getMoveData(id) { return MOVES_BY_ID[id] }
+function getPokemonData(id) {
+  const r = POKE_BY_ID[id]
+  if (!r) return null
+  return {
+    id: r[0], name: r[1], types: r[2],
+    stats: { hp:r[3], atk:r[4], def:r[5], spa:r[6], spd:r[7], spe:r[8] },
+    catchRate: r[9], exp: r[10],
+    evo: r[11],   // [evoLvl, evoTo] | null
+    moveList: r[12]
+  }
+}
+function getMoveData(id) {
+  const r = MOVES_BY_ID[id]
+  if (!r) return null
+  return { id:r[0], name:r[1], type:r[2], power:r[3], pp:r[4], desc:r[5], effect:r[6] }
+}
 function getAbility(id, slot) {
   const entry = POKEMON_ABILITIES[id]
   if (!entry || !entry[slot]) return null

@@ -147,119 +147,70 @@ const TRAINERS = {
 
 // 关都地图
 const LOCATIONS = {
-  pallet:    ['真新镇','大木博士的研究所就在这里。','town',true,false, ['route1','route21']],
-  viridian:  ['常青市','通往联盟的关卡城市。','town',true,false, ['route1','route2','route22','viridianForest']],
-  pewter:    ['深灰市','化石研究室所在地。','town',true,'brock', ['route2','route3','victoryRoad']],
-  cerulean:    ['华蓝市','水边的美丽城市。','town',true,'misty', ['route4','route5','route9','route24','ceruleanCave']],
-  vermilion: ['枯叶市','港口城市，圣安奴号在此。从这里可以乘船前往七之岛。','town',true,'ltSurge', ['route5','route6','route11','ssAnne','island1']],
-  lavender:  ['紫苑镇','安宁的墓园小镇。','town',true,false, ['route6','route7','route8','route10','route12']],
-  celadon:   ['彩虹市','关都最大的商业城市。','town',true,'erika', ['route7','route8','route16','route17','rocketHideout']],
-  saffron:   ['金黄市','交通枢纽大都市。','town',true,'sabrina', ['route8','route5','route6','route7']],
-  fuchsia:   ['浅红市','拥有野生原野区。','town',true,'koga', ['route15','route17','safariZone']],
-  cinnabar:  ['红莲镇','火山岛上的研究城市。','town',true,'blaine', ['route21','route20','pokemonMansion']],
-  indigo:    ['宝可梦联盟','关都顶点！','town',false,false, ['route23']],
-  route1:    ['1号道路','真新镇到常青市的平坦道路。','route',false,false, ['pallet','viridian','route21'],
-    { common:{ids:[16,19],lv:[2,4],w:60}, uncommon:{ids:[21],lv:[3,5],w:30}, rare:{ids:[56],lv:[4,6],w:10} }],
-  route2:    ['2号道路','常青市到深灰市的森林路。','route',false,false, ['viridian','pewter','viridianForest'],
-    { common:{ids:[10,13,16],lv:[3,5],w:60}, uncommon:{ids:[19,48],lv:[4,6],w:30}, rare:{ids:[25],lv:[5,7],w:10} }],
-  route3:    ['3号道路','深灰市到月见山的山路。','route',false,false, ['pewter','mtMoon'],
-    { common:{ids:[16,56,66],lv:[8,12],w:60}, uncommon:{ids:[23,27],lv:[10,14],w:30}, rare:{ids:[52,39],lv:[12,16],w:10} }],
-  mtMoon:    ['月见山','据说有化石的洞穴。','cave',false,false, ['route3','route4'],
-    { common:{ids:[41,74],lv:[10,14],w:55}, uncommon:{ids:[35,96],lv:[12,16],w:30}, rare:{ids:[104,46],lv:[14,18],w:15} }],
-  route4:    ['4号道路','月见山到华蓝市的山道。','route',false,false, ['mtMoon','cerulean'],
-    { common:{ids:[16,19,56],lv:[12,15],w:60}, uncommon:{ids:[37,54],lv:[13,17],w:30}, rare:{ids:[27,66],lv:[15,19],w:10} }],
-  route5:    ['5号道路','华蓝市到金黄市的近路。','route',false,false, ['cerulean','saffron','vermilion'],
-    { common:{ids:[19,56,52],lv:[14,18],w:60}, uncommon:{ids:[63,39],lv:[16,20],w:30}, rare:{ids:[35,133],lv:[18,22],w:10} }],
-  route6:    ['6号道路','枯叶市与紫苑镇间。','route',false,false, ['vermilion','saffron','lavender'],
-    { common:{ids:[19,52,48],lv:[16,20],w:60}, uncommon:{ids:[54,120],lv:[18,22],w:30}, rare:{ids:[84,128],lv:[20,24],w:10} }],
-  route7:    ['7号道路','彩虹市到金黄市的短程。','route',false,false, ['celadon','saffron','lavender'],
-    { common:{ids:[19,56,117],lv:[18,22],w:60}, uncommon:{ids:[84,37],lv:[20,24],w:30}, rare:{ids:[58,123],lv:[22,26],w:10} }],
-  route8:    ['8号道路','彩虹市到紫苑镇的另一条路。','route',false,false, ['celadon','lavender','saffron','powerPlant'],
-    { common:{ids:[48,23,56],lv:[18,22],w:60}, uncommon:{ids:[81,96],lv:[20,24],w:30}, rare:{ids:[125,126],lv:[22,26],w:10} }],
-  route9:    ['9号道路','华蓝市到浅红市的岩石路。','route',false,false, ['cerulean','route10','powerPlant'],
-    { common:{ids:[19,84,98],lv:[20,24],w:60}, uncommon:{ids:[23,111],lv:[22,26],w:30}, rare:{ids:[61,22],lv:[24,28],w:10} }],
-  route10:   ['10号道路','紫苑镇到浅红市的电力之路。','route',false,false, ['lavender','route9','route12','powerPlant'],
-    { common:{ids:[100,81,41],lv:[22,26],w:55}, uncommon:{ids:[25,100],lv:[24,28],w:30}, rare:{ids:[125,135],lv:[26,30],w:15} }],
-  route11:   ['11号道路','枯叶市到浅红市。','route',false,false, ['vermilion','route12'],
-    { common:{ids:[19,84,98],lv:[22,26],w:60}, uncommon:{ids:[21,100],lv:[24,28],w:30}, rare:{ids:[113,128],lv:[26,30],w:10} }],
-  route12:   ['12号道路','紫苑镇通往南方的道路。','route',false,false,['lavender','route10','route11'],
-    { common:{ids:[16,43,69],lv:[24,28],w:60}, uncommon:{ids:[44,70,83],lv:[26,30],w:30}, rare:{ids:[132,143],lv:[28,32],w:10} }],
-  route15:   ['15号道路','浅红市向东。','route',false,false, ['fuchsia'],
-    { common:{ids:[48,56,84],lv:[24,28],w:60}, uncommon:{ids:[43,64],lv:[26,30],w:30}, rare:{ids:[83,106],lv:[28,32],w:10} }],
-  route16:   ['16号道路','彩虹市向东南。','route',false,false, ['celadon','route17','viridianForest'],
-    { common:{ids:[19,21,84],lv:[24,28],w:60}, uncommon:{ids:[37,48],lv:[26,30],w:30}, rare:{ids:[52,123],lv:[28,32],w:10} }],
-  route17:   ['17号道路','彩虹市到浅红市的自行车道。','route',false,false,['celadon','route16','fuchsia','viridianForest'],
-    { common:{ids:[16,19,77],lv:[26,30],w:60}, uncommon:{ids:[22,78,84],lv:[28,32],w:30}, rare:{ids:[128,132],lv:[30,34],w:10} }],
-  route20:   ['20号水道','红莲镇附近的水路。','water',false,false, ['cinnabar','seafoamIslands'],
-    { common:{ids:[72,118,98],lv:[28,32],w:55}, uncommon:{ids:[54,116],lv:[30,34],w:30}, rare:{ids:[129,131],lv:[32,36],w:15} }],
-  route21:   ['21号水道','真新镇到红莲镇的水路。','water',false,false, ['pallet','cinnabar','route1'],
-    { common:{ids:[72,118,129],lv:[5,10],w:55}, uncommon:{ids:[98,54],lv:[8,14],w:30}, rare:{ids:[79,120],lv:[10,18],w:15} }],
-  route22:   ['22号道路','常青市向西的山道。','route',false,false, ['viridian','route23'],
-    { common:{ids:[19,21,56],lv:[2,6],w:60}, uncommon:{ids:[54,23],lv:[4,8],w:30}, rare:{ids:[25,133],lv:[6,10],w:10} }],
-  route23:   ['23号道路','联盟的最终考验之路。','route',false,false, ['route22','victoryRoad','indigo'],
-    { common:{ids:[75,42,34],lv:[38,42],w:50}, uncommon:{ids:[64,22],lv:[40,44],w:30}, rare:{ids:[65,149],lv:[42,46],w:20} }],
-  victoryRoad: ['冠军之路','通往联盟的险峻洞穴。','cave',false,false, ['pewter','route23'],
-    { common:{ids:[41,74,42],lv:[34,38],w:50}, uncommon:{ids:[95,111],lv:[36,40],w:30}, rare:{ids:[112,142],lv:[38,42],w:20} }],
-  viridianForest: ['常青森林','常青市旁的密林。','cave',false,false, ['viridian','route2','route16','route17'],
-    { common:{ids:[10,13,16],lv:[4,6],w:60}, uncommon:{ids:[48,46],lv:[5,7],w:30}, rare:{ids:[25,69],lv:[6,8],w:10} }],
-  route24: ['24号道路','华蓝市北侧的海滨道路。','route',false,false,['cerulean','billHouse'],
-    { common:{ids:[10,13,16],lv:[10,14],w:60}, uncommon:{ids:[43,63,69],lv:[12,16],w:30}, rare:{ids:[48],lv:[14,18],w:10} }],
-  billHouse: ['海角小屋','正辉的海边研究所。','town',false,false,['route24']],
-  ssAnne: ['圣安奴号','枯叶港停靠的豪华客轮。','route',false,false,['vermilion']],
-  rocketHideout: ['火箭队地下基地','彩虹市游戏厅下方。','cave',false,false,['celadon'],
-    { common:{ids:[19,41,52],lv:[18,22],w:55}, uncommon:{ids:[23,109],lv:[20,24],w:30}, rare:{ids:[24,110],lv:[22,26],w:15} }],
-  powerPlant: ['无人发电站','废弃的发电厂深处。','cave',false,false,['route8','route9','route10'],
-    { common:{ids:[81,100],lv:[24,28],w:55}, uncommon:{ids:[25,82],lv:[26,30],w:30}, rare:{ids:[125,145],lv:[28,35],w:15} }],
-  seafoamIslands: ['双子岛','冰冷洞穴深处传来神秘的声音……','cave',false,false,['route20'],
-    { common:{ids:[41,86,98],lv:[28,32],w:55}, uncommon:{ids:[42,79,120],lv:[30,34],w:30}, rare:{ids:[124,144],lv:[32,38],w:15} }],
-  pokemonMansion: ['宝可梦屋','红莲岛上的废弃豪宅。','cave',false,false,['cinnabar'],
-    { common:{ids:[37,58,77],lv:[30,35],w:55}, uncommon:{ids:[88,126],lv:[32,37],w:30}, rare:{ids:[89,132],lv:[34,40],w:15} }],
-  ceruleanCave: ['华蓝洞穴','深不见底的传说洞穴。','cave',false,false,['cerulean'],
-    { common:{ids:[41,42,111],lv:[50,55],w:55}, uncommon:{ids:[113,115,132],lv:[52,55],w:30}, rare:{ids:[150],lv:[70,70],w:15} }],
-  safariZone: ['狩猎地带','浅红市北部的野生原野保护区。','route',false,false,['fuchsia'],
-    { common:{ids:[29,30,32,33,102,111],lv:[20,28],w:50}, uncommon:{ids:[113,115,123,127],lv:[24,30],w:35}, rare:{ids:[112,128,132],lv:[26,32],w:15} }],
-  // 七之岛（火红/叶绿新增地区）
-  island1: ['脐眼岛','七之岛的玄关口，有宝可梦中心和商店。','town',true,false,['vermilion','island1_route1','island2'],
-    { common:{ids:[16,278],lv:[25,30],w:55}, uncommon:{ids:[277,279],lv:[28,33],w:30}, rare:{ids:[25,176],lv:[30,35],w:15} }],
-  island1_route1: ['脐眼森林','通往岛内深处的森林小径。','route',false,false,['island1','island1_mtember'],
-    { common:{ids:[10,13,163],lv:[25,32],w:55}, uncommon:{ids:[46,41,48],lv:[28,35],w:30}, rare:{ids:[165,285],lv:[32,38],w:15} }],
-  island1_mtember: ['ember山','脐眼岛的火山上散布着神秘化石。','cave',false,false,['island1_route1'],
-    { common:{ids:[37,66,77],lv:[30,38],w:50}, uncommon:{ids:[58,126],lv:[33,40],w:30}, rare:{ids:[38,219],lv:[36,45],w:20} }],
-  island2: ['高岗岛','有游戏角的悠闲岛屿。','town',true,false,['island1','island2_route2'],
-    { common:{ids:[19,278],lv:[28,34],w:55}, uncommon:{ids:[274,277],lv:[30,36],w:30}, rare:{ids:[176,25],lv:[33,38],w:15} }],
-  island2_route2: ['高岗林间路','连接高岗岛各处的林间小道。','route',false,false,['island2','island3'],
-    { common:{ids:[16,43,69],lv:[28,35],w:55}, uncommon:{ids:[44,114,274],lv:[32,38],w:30}, rare:{ids:[189,103],lv:[35,42],w:15} }],
-  island3: ['绿色岛','充满树果和自然气息的岛屿。','town',true,false,['island2_route2','island3_forest','island3_route3'],
-    { common:{ids:[102,114,191],lv:[30,36],w:55}, uncommon:{ids:[44,192,315],lv:[33,39],w:30}, rare:{ids:[103,182,45],lv:[36,44],w:15} }],
-  island3_forest: ['树果森林','果实累累的茂密森林。','route',false,false,['island3','island3_route3'],
-    { common:{ids:[43,102,114],lv:[30,38],w:55}, uncommon:{ids:[44,114,315],lv:[34,42],w:30}, rare:{ids:[182,83],lv:[38,48],w:15} }],
-  island3_route3: ['绿色岛水路','通往四岛的碧蓝水道。','water',false,false,['island3','island3_forest','island4'],
-    { common:{ids:[72,278,118],lv:[32,40],w:55}, uncommon:{ids:[73,279,119],lv:[35,42],w:30}, rare:{ids:[131,230],lv:[38,48],w:15} }],
-  island4: ['冰霜岛','覆盖着厚厚冰层的岛屿。','route',true,false,['island3_route3','island4_cave'],
-    { common:{ids:[86,220,278],lv:[34,42],w:50}, uncommon:{ids:[42,87,221],lv:[38,45],w:35}, rare:{ids:[124,131],lv:[40,50],w:15} }],
-  island4_cave: ['冰霜洞穴','极寒的天然冰洞。','cave',false,false,['island4','island4_route4'],
-    { common:{ids:[41,86,220],lv:[35,44],w:50}, uncommon:{ids:[42,87,221],lv:[38,48],w:35}, rare:{ids:[144,124],lv:[42,55],w:15} }],
-  island4_route4: ['冰霜岛水路','通往五岛的冰冷海域。','water',false,false,['island4_cave','island5'],
-    { common:{ids:[72,116,118],lv:[36,45],w:55}, uncommon:{ids:[73,117,119],lv:[40,48],w:30}, rare:{ids:[131,230],lv:[44,55],w:15} }],
-  island5: ['群兰岛','火箭队秘密基地所在的岛屿。','town',true,false,['island4_route4','island5_rocket','island5_route5'],
-    { common:{ids:[261,278],lv:[36,44],w:50}, uncommon:{ids:[262,279],lv:[40,48],w:35}, rare:{ids:[262],lv:[44,50],w:15} }],
-  island5_rocket: ['火箭队仓库','火箭队残党盘踞的旧仓库。','cave',false,false,['island5'],
-    { common:{ids:[19,41,109],lv:[38,46],w:50}, uncommon:{ids:[42,24,110],lv:[42,50],w:35}, rare:{ids:[169,89],lv:[46,55],w:15} }],
-  island5_route5: ['群兰岛水路','通往六岛的危险海域。','water',false,false,['island5','island6'],
-    { common:{ids:[116,118,223],lv:[38,46],w:55}, uncommon:{ids:[117,119,224],lv:[42,50],w:30}, rare:{ids:[350],lv:[46,55],w:15} }],
-  island6: ['战怪岛','古代遗迹所在的谜之岛屿。','town',true,false,['island5_route5','island6_ruins','island6_route6'],
-    { common:{ids:[355,352,200],lv:[40,48],w:50}, uncommon:{ids:[356,354,201],lv:[44,52],w:35}, rare:{ids:[302,292],lv:[48,58],w:15} }],
-  island6_ruins: ['谜之遗迹','Dotted Hole —— 刻满古老文字的战怪岛遗迹。','cave',false,false,['island6'],
-    { common:{ids:[353,355,201],lv:[42,50],w:50}, uncommon:{ids:[354,356,292],lv:[46,55],w:35}, rare:{ids:[386],lv:[55,70],w:15} }],
-  island7_birth: ['Birth Island','空无一物的神秘三角小岛。','cave',false,false,['island7']],
-  island6_route6: ['战怪岛水路','连接七岛的最后水路。','water',false,false,['island6','island7'],
-    { common:{ids:[278,118,223],lv:[42,50],w:55}, uncommon:{ids:[279,119,224],lv:[46,54],w:30}, rare:{ids:[131,230],lv:[50,60],w:15} }],
-  island7: ['绝壁岛','训练家之塔所在的最终岛屿。','route',true,false,['island6_route6','island7_tower','island7_birth'],
-    { common:{ids:[278,276,207],lv:[44,52],w:50}, uncommon:{ids:[277,214,217],lv:[48,56],w:35}, rare:{ids:[330,373],lv:[52,62],w:15} }],
-  island7_tower: ['训练家之塔','强者云集的对战高塔。','cave',false,false,['island7'],
-    { common:{ids:[68,214,57],lv:[48,56],w:50}, uncommon:{ids:[64,65,68],lv:[52,60],w:35}, rare:{ids:[149],lv:[58,68],w:15} }],
+  pallet: { name:'真新镇', desc:'大木博士的研究所就在这里。', type:'town', hasCenter:true, connects:["route1","route21"] },
+  viridian: { name:'常青市', desc:'通往联盟的关卡城市。', type:'town', hasCenter:true, connects:["route1","route2","route22","viridianForest"] },
+  pewter: { name:'深灰市', desc:'化石研究室所在地。', type:'town', hasCenter:true, gymLeader:'brock', connects:["route2","route3","victoryRoad"] },
+  cerulean: { name:'华蓝市', desc:'水边的美丽城市。', type:'town', hasCenter:true, gymLeader:'misty', connects:["route4","route5","route9","route24","ceruleanCave"] },
+  vermilion: { name:'枯叶市', desc:'港口城市，圣安奴号在此。从这里可以乘船前往七之岛。', type:'town', hasCenter:true, gymLeader:'ltSurge', connects:["route5","route6","route11","ssAnne","island1"] },
+  lavender: { name:'紫苑镇', desc:'安宁的墓园小镇。', type:'town', hasCenter:true, connects:["route6","route7","route8","route10","route12"] },
+  celadon: { name:'彩虹市', desc:'关都最大的商业城市。', type:'town', hasCenter:true, gymLeader:'erika', connects:["route7","route8","route16","route17","rocketHideout"] },
+  saffron: { name:'金黄市', desc:'交通枢纽大都市。', type:'town', hasCenter:true, gymLeader:'sabrina', connects:["route8","route5","route6","route7"] },
+  fuchsia: { name:'浅红市', desc:'拥有野生原野区。', type:'town', hasCenter:true, gymLeader:'koga', connects:["route15","route17","safariZone"] },
+  cinnabar: { name:'红莲镇', desc:'火山岛上的研究城市。', type:'town', hasCenter:true, gymLeader:'blaine', connects:["route21","route20","pokemonMansion"] },
+  indigo: { name:'宝可梦联盟', desc:'关都顶点！', type:'town', hasCenter:false, connects:["route23"] },
+  route1: { name:'1号道路', desc:'真新镇到常青市的平坦道路。', type:'route', hasCenter:false, connects:["pallet","viridian","route21"], wild:{"common":{"ids":[16,19],"lv":[2,4],"w":60},"uncommon":{"ids":[21],"lv":[3,5],"w":30},"rare":{"ids":[56],"lv":[4,6],"w":10}} },
+  route2: { name:'2号道路', desc:'常青市到深灰市的森林路。', type:'route', hasCenter:false, connects:["viridian","pewter","viridianForest"], wild:{"common":{"ids":[10,13,16],"lv":[3,5],"w":60},"uncommon":{"ids":[19,48],"lv":[4,6],"w":30},"rare":{"ids":[25],"lv":[5,7],"w":10}} },
+  route3: { name:'3号道路', desc:'深灰市到月见山的山路。', type:'route', hasCenter:false, connects:["pewter","mtMoon"], wild:{"common":{"ids":[16,56,66],"lv":[8,12],"w":60},"uncommon":{"ids":[23,27],"lv":[10,14],"w":30},"rare":{"ids":[52,39],"lv":[12,16],"w":10}} },
+  mtMoon: { name:'月见山', desc:'据说有化石的洞穴。', type:'cave', hasCenter:false, connects:["route3","route4"], wild:{"common":{"ids":[41,74],"lv":[10,14],"w":55},"uncommon":{"ids":[35,96],"lv":[12,16],"w":30},"rare":{"ids":[104,46],"lv":[14,18],"w":15}} },
+  route4: { name:'4号道路', desc:'月见山到华蓝市的山道。', type:'route', hasCenter:false, connects:["mtMoon","cerulean"], wild:{"common":{"ids":[16,19,56],"lv":[12,15],"w":60},"uncommon":{"ids":[37,54],"lv":[13,17],"w":30},"rare":{"ids":[27,66],"lv":[15,19],"w":10}} },
+  route5: { name:'5号道路', desc:'华蓝市到金黄市的近路。', type:'route', hasCenter:false, connects:["cerulean","saffron","vermilion"], wild:{"common":{"ids":[19,56,52],"lv":[14,18],"w":60},"uncommon":{"ids":[63,39],"lv":[16,20],"w":30},"rare":{"ids":[35,133],"lv":[18,22],"w":10}} },
+  route6: { name:'6号道路', desc:'枯叶市与紫苑镇间。', type:'route', hasCenter:false, connects:["vermilion","saffron","lavender"], wild:{"common":{"ids":[19,52,48],"lv":[16,20],"w":60},"uncommon":{"ids":[54,120],"lv":[18,22],"w":30},"rare":{"ids":[84,128],"lv":[20,24],"w":10}} },
+  route7: { name:'7号道路', desc:'彩虹市到金黄市的短程。', type:'route', hasCenter:false, connects:["celadon","saffron","lavender"], wild:{"common":{"ids":[19,56,117],"lv":[18,22],"w":60},"uncommon":{"ids":[84,37],"lv":[20,24],"w":30},"rare":{"ids":[58,123],"lv":[22,26],"w":10}} },
+  route8: { name:'8号道路', desc:'彩虹市到紫苑镇的另一条路。', type:'route', hasCenter:false, connects:["celadon","lavender","saffron","powerPlant"], wild:{"common":{"ids":[48,23,56],"lv":[18,22],"w":60},"uncommon":{"ids":[81,96],"lv":[20,24],"w":30},"rare":{"ids":[125,126],"lv":[22,26],"w":10}} },
+  route9: { name:'9号道路', desc:'华蓝市到浅红市的岩石路。', type:'route', hasCenter:false, connects:["cerulean","rockTunnel","powerPlant"], wild:{"common":{"ids":[19,84,98],"lv":[20,24],"w":60},"uncommon":{"ids":[23,111],"lv":[22,26],"w":30},"rare":{"ids":[61,22],"lv":[24,28],"w":10}} },
+  rockTunnel: { name:'岩山隧道', desc:'连接9号道路与10号道路的漆黑隧道。', type:'cave', hasCenter:false, connects:["route9","route10"], wild:{"common":{"ids":[41,74],"lv":[16,20],"w":60},"uncommon":{"ids":[42,95],"lv":[18,22],"w":30},"rare":{"ids":[111],"lv":[20,24],"w":10}} },
+  route10: { name:'10号道路', desc:'紫苑镇到浅红市的电力之路。', type:'route', hasCenter:false, connects:["lavender","rockTunnel","route12","powerPlant"], wild:{"common":{"ids":[100,81,41],"lv":[22,26],"w":55},"uncommon":{"ids":[25,100],"lv":[24,28],"w":30},"rare":{"ids":[125,135],"lv":[26,30],"w":15}} },
+  route11: { name:'11号道路', desc:'枯叶市到浅红市。', type:'route', hasCenter:false, connects:["vermilion","route12"], wild:{"common":{"ids":[19,84,98],"lv":[22,26],"w":60},"uncommon":{"ids":[21,100],"lv":[24,28],"w":30},"rare":{"ids":[113,128],"lv":[26,30],"w":10}} },
+  route12: { name:'12号道路', desc:'紫苑镇通往南方的道路。', type:'route', hasCenter:false, connects:["lavender","route10","route11"], wild:{"common":{"ids":[16,43,69],"lv":[24,28],"w":60},"uncommon":{"ids":[44,70,83],"lv":[26,30],"w":30},"rare":{"ids":[132,143],"lv":[28,32],"w":10}} },
+  route15: { name:'15号道路', desc:'浅红市向东。', type:'route', hasCenter:false, connects:["fuchsia"], wild:{"common":{"ids":[48,56,84],"lv":[24,28],"w":60},"uncommon":{"ids":[43,64],"lv":[26,30],"w":30},"rare":{"ids":[83,106],"lv":[28,32],"w":10}} },
+  route16: { name:'16号道路', desc:'彩虹市向东南。', type:'route', hasCenter:false, connects:["celadon","route17","viridianForest"], wild:{"common":{"ids":[19,21,84],"lv":[24,28],"w":60},"uncommon":{"ids":[37,48],"lv":[26,30],"w":30},"rare":{"ids":[52,123],"lv":[28,32],"w":10}} },
+  route17: { name:'17号道路', desc:'彩虹市到浅红市的自行车道。', type:'route', hasCenter:false, connects:["celadon","route16","fuchsia","viridianForest"], wild:{"common":{"ids":[16,19,77],"lv":[26,30],"w":60},"uncommon":{"ids":[22,78,84],"lv":[28,32],"w":30},"rare":{"ids":[128,132],"lv":[30,34],"w":10}} },
+  route20: { name:'20号水道', desc:'红莲镇附近的水路。', type:'water', hasCenter:false, connects:["cinnabar","seafoamIslands"], wild:{"common":{"ids":[72,118,98],"lv":[28,32],"w":55},"uncommon":{"ids":[54,116],"lv":[30,34],"w":30},"rare":{"ids":[129,131],"lv":[32,36],"w":15}} },
+  route21: { name:'21号水道', desc:'真新镇到红莲镇的水路。', type:'water', hasCenter:false, connects:["pallet","cinnabar","route1"], wild:{"common":{"ids":[72,118,129],"lv":[5,10],"w":55},"uncommon":{"ids":[98,54],"lv":[8,14],"w":30},"rare":{"ids":[79,120],"lv":[10,18],"w":15}} },
+  route22: { name:'22号道路', desc:'常青市向西的山道。', type:'route', hasCenter:false, connects:["viridian","route23"], wild:{"common":{"ids":[19,21,56],"lv":[2,6],"w":60},"uncommon":{"ids":[54,23],"lv":[4,8],"w":30},"rare":{"ids":[25,133],"lv":[6,10],"w":10}} },
+  route23: { name:'23号道路', desc:'联盟的最终考验之路。', type:'route', hasCenter:false, connects:["route22","victoryRoad","indigo"], wild:{"common":{"ids":[75,42,34],"lv":[38,42],"w":50},"uncommon":{"ids":[64,22],"lv":[40,44],"w":30},"rare":{"ids":[65,149],"lv":[42,46],"w":20}} },
+  victoryRoad: { name:'冠军之路', desc:'通往联盟的险峻洞穴。', type:'cave', hasCenter:false, connects:["pewter","route23"], wild:{"common":{"ids":[41,74,42],"lv":[34,38],"w":50},"uncommon":{"ids":[95,111],"lv":[36,40],"w":30},"rare":{"ids":[112,142],"lv":[38,42],"w":20}} },
+  viridianForest: { name:'常青森林', desc:'常青市旁的密林。', type:'cave', hasCenter:false, connects:["viridian","route2","route16","route17"], wild:{"common":{"ids":[10,13,16],"lv":[4,6],"w":60},"uncommon":{"ids":[48,46],"lv":[5,7],"w":30},"rare":{"ids":[25,69],"lv":[6,8],"w":10}} },
+  route24: { name:'24号道路', desc:'华蓝市北侧的海滨道路。', type:'route', hasCenter:false, connects:["cerulean","billHouse"], wild:{"common":{"ids":[10,13,16],"lv":[10,14],"w":60},"uncommon":{"ids":[43,63,69],"lv":[12,16],"w":30},"rare":{"ids":[48],"lv":[14,18],"w":10}} },
+  billHouse: { name:'海角小屋', desc:'正辉的海边研究所。', type:'town', hasCenter:false, connects:["route24"] },
+  ssAnne: { name:'圣安奴号', desc:'枯叶港停靠的豪华客轮。', type:'route', hasCenter:false, connects:["vermilion"] },
+  rocketHideout: { name:'火箭队地下基地', desc:'彩虹市游戏厅下方。', type:'cave', hasCenter:false, connects:["celadon"], wild:{"common":{"ids":[19,41,52],"lv":[18,22],"w":55},"uncommon":{"ids":[23,109],"lv":[20,24],"w":30},"rare":{"ids":[24,110],"lv":[22,26],"w":15}} },
+  powerPlant: { name:'无人发电站', desc:'废弃的发电厂深处。', type:'cave', hasCenter:false, connects:["route8","route9","route10"], wild:{"common":{"ids":[81,100],"lv":[24,28],"w":55},"uncommon":{"ids":[25,82],"lv":[26,30],"w":30},"rare":{"ids":[125,145],"lv":[28,35],"w":15}} },
+  seafoamIslands: { name:'双子岛', desc:'冰冷洞穴深处传来神秘的声音……', type:'cave', hasCenter:false, connects:["route20"], wild:{"common":{"ids":[41,86,98],"lv":[28,32],"w":55},"uncommon":{"ids":[42,79,120],"lv":[30,34],"w":30},"rare":{"ids":[124,144],"lv":[32,38],"w":15}} },
+  pokemonMansion: { name:'宝可梦屋', desc:'红莲岛上的废弃豪宅。', type:'cave', hasCenter:false, connects:["cinnabar"], wild:{"common":{"ids":[37,58,77],"lv":[30,35],"w":55},"uncommon":{"ids":[88,126],"lv":[32,37],"w":30},"rare":{"ids":[89,132],"lv":[34,40],"w":15}} },
+  ceruleanCave: { name:'华蓝洞穴', desc:'深不见底的传说洞穴。', type:'cave', hasCenter:false, connects:["cerulean"], wild:{"common":{"ids":[41,42,111],"lv":[50,55],"w":55},"uncommon":{"ids":[113,115,132],"lv":[52,55],"w":30},"rare":{"ids":[150],"lv":[70,70],"w":15}} },
+  safariZone: { name:'狩猎地带', desc:'浅红市北部的野生原野保护区。', type:'route', hasCenter:false, connects:["fuchsia"], wild:{"common":{"ids":[29,30,32,33,102,111],"lv":[20,28],"w":50},"uncommon":{"ids":[113,115,123,127],"lv":[24,30],"w":35},"rare":{"ids":[112,128,132],"lv":[26,32],"w":15}} },
+  island1: { name:'脐眼岛', desc:'七之岛的玄关口，有宝可梦中心和商店。', type:'town', hasCenter:true, connects:["vermilion","island1_route1","island2"], wild:{"common":{"ids":[16,278],"lv":[25,30],"w":55},"uncommon":{"ids":[277,279],"lv":[28,33],"w":30},"rare":{"ids":[25,176],"lv":[30,35],"w":15}} },
+  island1_route1: { name:'脐眼森林', desc:'通往岛内深处的森林小径。', type:'route', hasCenter:false, connects:["island1","island1_mtember"], wild:{"common":{"ids":[10,13,163],"lv":[25,32],"w":55},"uncommon":{"ids":[46,41,48],"lv":[28,35],"w":30},"rare":{"ids":[165,285],"lv":[32,38],"w":15}} },
+  island1_mtember: { name:'ember山', desc:'脐眼岛的火山上散布着神秘化石。', type:'cave', hasCenter:false, connects:["island1_route1"], wild:{"common":{"ids":[37,66,77],"lv":[30,38],"w":50},"uncommon":{"ids":[58,126],"lv":[33,40],"w":30},"rare":{"ids":[38,219],"lv":[36,45],"w":20}} },
+  island2: { name:'高岗岛', desc:'有游戏角的悠闲岛屿。', type:'town', hasCenter:true, connects:["island1","island2_route2"], wild:{"common":{"ids":[19,278],"lv":[28,34],"w":55},"uncommon":{"ids":[274,277],"lv":[30,36],"w":30},"rare":{"ids":[176,25],"lv":[33,38],"w":15}} },
+  island2_route2: { name:'高岗林间路', desc:'连接高岗岛各处的林间小道。', type:'route', hasCenter:false, connects:["island2","island3"], wild:{"common":{"ids":[16,43,69],"lv":[28,35],"w":55},"uncommon":{"ids":[44,114,274],"lv":[32,38],"w":30},"rare":{"ids":[189,103],"lv":[35,42],"w":15}} },
+  island3: { name:'绿色岛', desc:'充满树果和自然气息的岛屿。', type:'town', hasCenter:true, connects:["island2_route2","island3_forest","island3_route3"], wild:{"common":{"ids":[102,114,191],"lv":[30,36],"w":55},"uncommon":{"ids":[44,192,315],"lv":[33,39],"w":30},"rare":{"ids":[103,182,45],"lv":[36,44],"w":15}} },
+  island3_forest: { name:'树果森林', desc:'果实累累的茂密森林。', type:'route', hasCenter:false, connects:["island3","island3_route3"], wild:{"common":{"ids":[43,102,114],"lv":[30,38],"w":55},"uncommon":{"ids":[44,114,315],"lv":[34,42],"w":30},"rare":{"ids":[182,83],"lv":[38,48],"w":15}} },
+  island3_route3: { name:'绿色岛水路', desc:'通往四岛的碧蓝水道。', type:'water', hasCenter:false, connects:["island3","island3_forest","island4"], wild:{"common":{"ids":[72,278,118],"lv":[32,40],"w":55},"uncommon":{"ids":[73,279,119],"lv":[35,42],"w":30},"rare":{"ids":[131,230],"lv":[38,48],"w":15}} },
+  island4: { name:'冰霜岛', desc:'覆盖着厚厚冰层的岛屿。', type:'route', hasCenter:true, connects:["island3_route3","island4_cave"], wild:{"common":{"ids":[86,220,278],"lv":[34,42],"w":50},"uncommon":{"ids":[42,87,221],"lv":[38,45],"w":35},"rare":{"ids":[124,131],"lv":[40,50],"w":15}} },
+  island4_cave: { name:'冰霜洞穴', desc:'极寒的天然冰洞。', type:'cave', hasCenter:false, connects:["island4","island4_route4"], wild:{"common":{"ids":[41,86,220],"lv":[35,44],"w":50},"uncommon":{"ids":[42,87,221],"lv":[38,48],"w":35},"rare":{"ids":[144,124],"lv":[42,55],"w":15}} },
+  island4_route4: { name:'冰霜岛水路', desc:'通往五岛的冰冷海域。', type:'water', hasCenter:false, connects:["island4_cave","island5"], wild:{"common":{"ids":[72,116,118],"lv":[36,45],"w":55},"uncommon":{"ids":[73,117,119],"lv":[40,48],"w":30},"rare":{"ids":[131,230],"lv":[44,55],"w":15}} },
+  island5: { name:'群兰岛', desc:'火箭队秘密基地所在的岛屿。', type:'town', hasCenter:true, connects:["island4_route4","island5_rocket","island5_route5"], wild:{"common":{"ids":[261,278],"lv":[36,44],"w":50},"uncommon":{"ids":[262,279],"lv":[40,48],"w":35},"rare":{"ids":[262],"lv":[44,50],"w":15}} },
+  island5_rocket: { name:'火箭队仓库', desc:'火箭队残党盘踞的旧仓库。', type:'cave', hasCenter:false, connects:["island5"], wild:{"common":{"ids":[19,41,109],"lv":[38,46],"w":50},"uncommon":{"ids":[42,24,110],"lv":[42,50],"w":35},"rare":{"ids":[169,89],"lv":[46,55],"w":15}} },
+  island5_route5: { name:'群兰岛水路', desc:'通往六岛的危险海域。', type:'water', hasCenter:false, connects:["island5","island6"], wild:{"common":{"ids":[116,118,223],"lv":[38,46],"w":55},"uncommon":{"ids":[117,119,224],"lv":[42,50],"w":30},"rare":{"ids":[350],"lv":[46,55],"w":15}} },
+  island6: { name:'战怪岛', desc:'古代遗迹所在的谜之岛屿。', type:'town', hasCenter:true, connects:["island5_route5","island6_ruins","island6_route6"], wild:{"common":{"ids":[355,352,200],"lv":[40,48],"w":50},"uncommon":{"ids":[356,354,201],"lv":[44,52],"w":35},"rare":{"ids":[302,292],"lv":[48,58],"w":15}} },
+  island6_ruins: { name:'谜之遗迹', desc:'Dotted Hole —— 刻满古老文字的战怪岛遗迹。', type:'cave', hasCenter:false, connects:["island6"], wild:{"common":{"ids":[353,355,201],"lv":[42,50],"w":50},"uncommon":{"ids":[354,356,292],"lv":[46,55],"w":35},"rare":{"ids":[386],"lv":[55,70],"w":15}} },
+  island7_birth: { name:'Birth Island', desc:'空无一物的神秘三角小岛。', type:'cave', hasCenter:false, connects:["island7"] },
+  island6_route6: { name:'战怪岛水路', desc:'连接七岛的最后水路。', type:'water', hasCenter:false, connects:["island6","island7"], wild:{"common":{"ids":[278,118,223],"lv":[42,50],"w":55},"uncommon":{"ids":[279,119,224],"lv":[46,54],"w":30},"rare":{"ids":[131,230],"lv":[50,60],"w":15}} },
+  island7: { name:'绝壁岛', desc:'训练家之塔所在的最终岛屿。', type:'route', hasCenter:true, connects:["island6_route6","island7_tower","island7_birth"], wild:{"common":{"ids":[278,276,207],"lv":[44,52],"w":50},"uncommon":{"ids":[277,214,217],"lv":[48,56],"w":35},"rare":{"ids":[330,373],"lv":[52,62],"w":15}} },
+  island7_tower: { name:'训练家之塔', desc:'强者云集的对战高塔。', type:'cave', hasCenter:false, connects:["island7"], wild:{"common":{"ids":[68,214,57],"lv":[48,56],"w":50},"uncommon":{"ids":[64,65,68],"lv":[52,60],"w":35},"rare":{"ids":[149],"lv":[58,68],"w":15}} },
 }
-
 const LINK_LABELS = {
   pallet:    { route1:'1号道路', route21:'21号水道' },
   viridian:  { route1:'1号道路', route2:'2号道路', route22:'22号道路', viridianForest:'常青森林' },
@@ -275,8 +226,9 @@ const LINK_LABELS = {
   route23:   { route22:'22号道路', victoryRoad:'冠军之路', indigo:'宝可梦联盟' },
   victoryRoad: { pewter:'深灰市', route23:'23号道路' },
   indigo:    { route23:'23号道路' },
-  route9:    { cerulean:'华蓝市', route10:'10号道路', powerPlant:'无人发电站' },
-  route10:   { lavender:'紫苑镇', route9:'9号道路', route12:'12号道路', powerPlant:'无人发电站' },
+  route9:    { cerulean:'华蓝市', rockTunnel:'岩山隧道', route10:'10号道路', powerPlant:'无人发电站' },
+  rockTunnel:{ route9:'9号道路', route10:'10号道路' },
+  route10:   { lavender:'紫苑镇', rockTunnel:'岩山隧道', route9:'9号道路', route12:'12号道路', powerPlant:'无人发电站' },
   powerPlant: { route8:'8号道路', route9:'9号道路', route10:'10号道路' },
   route11:   { vermilion:'枯叶市', route12:'12号道路' },
   route12:   { lavender:'紫苑镇', route10:'10号道路', route11:'11号道路' },
@@ -295,7 +247,7 @@ const LINK_LABELS = {
 
 function getLocation(id) { return LOCATIONS[id] }
 function getLeader(id) { return GYM_LEADERS[id] }
-function getLocationConnections(id) { const l = LOCATIONS[id]; return l ? l[5] : [] }
+function getLocationConnections(id) { const l = LOCATIONS[id]; return l ? l.connects : [] }
 function getTrainersForArea(id) { return TRAINERS[id] || [] }
 
 // 关都地图坐标 (用于全屏ASCII地图)
@@ -320,6 +272,7 @@ const MAP_COORDS = {
   route7:      { x:16, y:12, icon:'·' },
   route8:      { x:20, y:8,  icon:'·' },
   route9:      { x:34, y:12, icon:'·' },
+  rockTunnel:  { x:29, y:12, icon:'⛰' },
   route10:     { x:24, y:12, icon:'·' },
   route11:     { x:40, y:14, icon:'·' },
   route12:     { x:30, y:16, icon:'·' },
@@ -467,6 +420,7 @@ const MAP_LABEL_OVERRIDES = {
   safariZone: '狩猎地带',
   victoryRoad: '冠军之路',
   viridianForest: '常青森林',
+  rockTunnel: '岩山隧道',
   island1_route1: '脐眼森林',
   island1_mtember: 'Ember山',
   island2_route2: '高岗林间路',
@@ -509,6 +463,7 @@ const MAP_STAGE_LAYOUTS = {
     saffron:        {x:50, y:42},
     route5:         {x:60, y:32},   // 华蓝↔金黄，东偏
     route9:         {x:70, y:30},   // 华蓝↔10号路，更东
+    rockTunnel:     {x:78, y:42},   // 9号路与10号路之间的漆黑隧道
     route7:         {x:40, y:48},   // 朝彩虹（与 viridianForest 错开 x）
     route8:         {x:62, y:48},   // 朝紫苑，东移避开 saffron
     route6:         {x:50, y:54},   // 南下枯叶，从 saffron 正下方延伸
@@ -639,7 +594,7 @@ function getQuestTargetLocationId() {
 function getMapNodeLabel(id, loc) {
   if (MAP_LABEL_OVERRIDES[id]) return MAP_LABEL_OVERRIDES[id]
   if (!loc) return id
-  return loc[0]
+  return loc.name
 }
 
 function getMapNodeGlyph(id, loc) {
@@ -648,10 +603,10 @@ function getMapNodeGlyph(id, loc) {
   if (id === 'rocketHideout' || id === 'island5_rocket') return '火'
   if (id === 'powerPlant') return '电'
   if (id === 'safariZone') return '狩'
-  if (loc[2] === 'town') return '城'
-  if (loc[2] === 'route') return '路'
-  if (loc[2] === 'cave') return '洞'
-  if (loc[2] === 'water') return '水'
+  if (loc.type === 'town') return '城'
+  if (loc.type === 'route') return '路'
+  if (loc.type === 'cave') return '洞'
+  if (loc.type === 'water') return '水'
   return '点'
 }
 
@@ -672,7 +627,7 @@ function getMapLabelDirection(regionKey, id, loc) {
     if (coord.x >= maxX - 0.6) return 'label-left'
     if (coord.x <= minX + 0.6) return 'label-right'
   }
-  if (loc && loc[2] === 'route') {
+  if (loc && loc.type === 'route') {
     return coord.x > centerX ? 'label-left' : 'label-right'
   }
   return coord.x >= centerX + 1 ? 'label-left' : 'label-right'
@@ -687,7 +642,7 @@ function getMapRegionConnections(regionKey) {
   for (const id of region.nodeIds) {
     const loc = LOCATIONS[id]
     if (!loc) continue
-    for (const targetId of loc[5] || []) {
+    for (const targetId of loc.connects || []) {
       if (!nodeSet.has(targetId)) continue
       const key = [id, targetId].sort().join('::')
       if (seen.has(key)) continue
@@ -732,7 +687,7 @@ function getMapLabelOffset(regionKey, id) {
 // 节点视觉半径（用于连线避让：让连线从节点边缘开始，不穿过节点圆圈）
 function getMapNodeRadius(loc) {
   if (!loc) return 22
-  const type = loc[2]
+  const type = loc.type
   if (type === 'town' || type === 'cave') return 30
   if (type === 'route' || type === 'water') return 18
   return 22
@@ -760,9 +715,9 @@ function renderExpandedMapStage(regionKey, currentId, targetId) {
   if (!region) return ''
 
   const currentLoc = LOCATIONS[currentId]
-  const neighbors = new Set(((currentLoc && currentLoc[5]) || []).filter(id => region.nodeIds.includes(id)))
+  const neighbors = new Set(((currentLoc && currentLoc.connects) || []).filter(id => region.nodeIds.includes(id)))
   const targetNeighbors = targetId && LOCATIONS[targetId]
-    ? new Set(((LOCATIONS[targetId][5]) || []).filter(id => region.nodeIds.includes(id)))
+    ? new Set(((LOCATIONS[targetId].connects) || []).filter(id => region.nodeIds.includes(id)))
     : new Set()
 
   let linesHtml = ''
@@ -798,16 +753,16 @@ function renderExpandedMapStage(regionKey, currentId, targetId) {
     const point = getMapStagePoint(regionKey, id)
     if (!loc || !point) continue
 
-    const classes = ['map-node', `node-${loc[2]}`, getMapLabelDirection(regionKey, id, loc)]
+    const classes = ['map-node', `node-${loc.type}`, getMapLabelDirection(regionKey, id, loc)]
     if (id === currentId) classes.push('is-current')
     if (id === targetId) classes.push('is-target')
     if (neighbors.has(id)) classes.push('is-neighbor')
     if (targetNeighbors.has(id)) classes.push('is-target-neighbor')
 
     let gymBadge = ''
-    if (loc[4]) {
-      const gymData = GYM_LEADERS[loc[4]]
-      const cleared = gymData && gymData[4] <= G.player.badge
+    if (loc.gymLeader) {
+      const gymData = GYM_LEADERS[loc.gymLeader]
+      const cleared = gymData && gymData.badge <= G.player.badge
       classes.push(cleared ? 'gym-cleared' : 'gym-open')
       gymBadge = `<span class="map-node-badge ${cleared ? 'cleared' : 'open'}">${cleared ? 'OK' : 'GYM'}</span>`
     }
@@ -834,8 +789,8 @@ function renderExpandedMapStage(regionKey, currentId, targetId) {
           <div class="world-map-subtitle">${region.subtitle}</div>
         </div>
         <div class="world-map-summary">
-          <span class="info-badge">${LOCATIONS[currentId] ? LOCATIONS[currentId][0] : '???'}</span>
-          ${targetId && LOCATIONS[targetId] ? `<span class="info-badge target-badge">目标 ${LOCATIONS[targetId][0]}</span>` : ''}
+          <span class="info-badge">${LOCATIONS[currentId] ? LOCATIONS[currentId].name : '???'}</span>
+          ${targetId && LOCATIONS[targetId] ? `<span class="info-badge target-badge">目标 ${LOCATIONS[targetId].name}</span>` : ''}
         </div>
       </div>
       <div class="world-map-stage-wrap">
@@ -882,7 +837,7 @@ function renderSidebarMap() {
     ['cinnabar','pallet'],['victoryRoad','indigo'],['victoryRoad','cerulean'],
   ]
 
-  const neighborSet = new Set(loc && loc[5] ? loc[5] : [])
+  const neighborSet = new Set(loc && loc.connects ? loc.connects : [])
 
   // 连线（百分比宽度近似：画布宽高比约 1.4:1，y 方向缩放补偿）
   let linksHtml = ''
@@ -908,8 +863,8 @@ function renderSidebarMap() {
     const isTarget = n.id === targetId
     const isNeighbor = neighborSet.has(n.id)
     const isVisited = visitedSet.has(n.id)
-    const hasGym = nloc[4]
-    const gymCleared = hasGym && GYM_LEADERS[nloc[4]] && GYM_LEADERS[nloc[4]][4] <= badge
+    const hasGym = nloc.gymLeader
+    const gymCleared = hasGym && GYM_LEADERS[nloc.gymLeader] && GYM_LEADERS[nloc.gymLeader].badge <= badge
 
     const classes = ['mini-node', `type-${n.type}`]
     if (isCurrent) classes.push('is-current')
@@ -918,7 +873,7 @@ function renderSidebarMap() {
     if (isVisited && !isCurrent) classes.push('is-visited')
     if (hasGym) classes.push(gymCleared ? 'gym-cleared' : 'gym-open')
 
-    const label = nloc[0]
+    const label = nloc.name
     nodesHtml += `<span class="${classes.join(' ')}" style="left:${n.x}%;top:${n.y}%;" title="${label}"></span>`
   }
 
@@ -938,7 +893,7 @@ function renderSidebarMap() {
 
   // 信息条
   html += `<div class="mini-map-info">`
-  html += `<span class="info-badge">${loc ? loc[0] : '???'}</span>`
+  html += `<span class="info-badge">${loc ? loc.name : '???'}</span>`
   html += `<span class="info-badge">Lv.${pkmLevel}</span>`
   html += `<span class="info-badge">徽章${badge}/8</span>`
   html += `<span class="info-badge">💰${G.player.money}</span>`
@@ -1064,7 +1019,7 @@ function renderMapInfo() {
   // 当前位置
   html += `<div class="map-info-section">`
   html += `<div class="map-info-title">📍 当前位置</div>`
-  html += `<div class="map-info-content">${loc[0]} (${loc[2] === 'town' ? '城镇' : loc[2] === 'cave' ? '洞穴' : loc[2] === 'water' ? '水道' : '道路'})</div>`
+  html += `<div class="map-info-content">${loc.name} (${loc.type === 'town' ? '城镇' : loc.type === 'cave' ? '洞穴' : loc.type === 'water' ? '水道' : '道路'})</div>`
   html += `</div>`
   
   // 道馆进度
@@ -1075,8 +1030,8 @@ function renderMapInfo() {
   const gymNames = ['深灰','华蓝','枯叶','彩虹','金黄','浅红','红莲','常青']
   for (let i = 0; i < gymOrder.length; i++) {
     const g = GYM_LEADERS[gymOrder[i]]
-    const status = g[4] <= badge ? '✔' : '○'
-    html += `<span class="gym-badge ${g[4] <= badge ? 'completed' : ''}">[${status}]${gymNames[i]}</span> `
+    const status = g.badge <= badge ? '✔' : '○'
+    html += `<span class="gym-badge ${g.badge <= badge ? 'completed' : ''}">[${status}]${gymNames[i]}</span> `
   }
   html += `</div></div>`
   
@@ -1106,16 +1061,16 @@ function renderMapInfo() {
   html += `<div class="map-info-section">`
   html += `<div class="map-info-title">🐾 周边宝可梦</div>`
   html += `<div class="map-info-content">`
-  const connections = loc[5] || []
+  const connections = loc.connects || []
   for (const conn of connections.slice(0, 3)) {
     const cLoc = LOCATIONS[conn]
-    if (!cLoc || !cLoc[6]) continue
-    const enc = cLoc[6]
+    if (!cLoc || !cLoc.wild) continue
+    const enc = cLoc.wild
     const common = enc.common.ids.slice(0, 3).map(id => {
       const p = getPokemonData(id)
-      return p ? p[1] : '?'
+      return p ? p.name : '?'
     }).join('/')
-    html += `<div class="pokemon-area">${cLoc[0]}: ${common} (Lv.${enc.common.lv[0]}-${enc.common.lv[1]})</div>`
+    html += `<div class="pokemon-area">${cLoc.name}: ${common} (Lv.${enc.common.lv[0]}-${enc.common.lv[1]})</div>`
   }
   html += `</div></div>`
   
