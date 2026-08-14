@@ -96,7 +96,7 @@ function travelTo(key) {
   if (window.AU) AU.sfx('move')
   updateQuest()
   // 城镇剧情触发
-  if (loc[2] === 'town') {
+  if (loc.type === 'town') {
     const storyKey = checkStoryTrigger(key)
     if (storyKey) {
       const ev = STORY_EVENTS[storyKey]
@@ -106,7 +106,7 @@ function travelTo(key) {
   }
   G.view = 'explore'; saveGame(); render()
   // 自动遇敌（非城镇）
-  if (loc[2] !== 'town') {
+  if (loc.type !== 'town') {
     if (encounterTimer) clearTimeout(encounterTimer)
     encounterTimer = setTimeout(() => { encounterTimer = null; if (G.view === 'explore') tryWildEncounter(true) }, 200)
   }
@@ -138,7 +138,7 @@ function challengeGym(leaderId) {
 
 function tryWildEncounter(fromTravel) {
   const loc = getLocation(G.player.position)
-  if (!loc || loc[2] === 'town') return
+  if (!loc || loc.type === 'town') return
   // 先检查剧情触发
   const storyKey = checkStoryTrigger(G.player.position)
   if (storyKey) {
@@ -153,7 +153,7 @@ function tryWildEncounter(fromTravel) {
     const t = undefeated[Math.floor(Math.random() * undefeated.length)]
     if (startTrainerBattle(t)) { G.view = 'battle'; render(); return }
   }
-  if (!loc[6]) { addLog('这里什么都没有。'); saveGame(); render(); return }
+  if (!loc.wild) { addLog('这里什么都没有。'); saveGame(); render(); return }
   const roll = Math.random()
   if (roll < 0.35) {
     if (startWildBattle()) { G.view = 'battle'; render() }
@@ -281,7 +281,7 @@ function confirmMove() {
 
   // Check player status first
   if (pkm.status && checkStatusSkip(pkm)) {
-    b.lock = true; b.turn = 'enemy'; setTimeout(enemyTurn, 500); render(); return
+    b.lock = true; b.turn = 'enemy'; trackBattleTimer(setTimeout(enemyTurn, 500)); render(); return
   }
 
   // Speed-based turn order
@@ -318,7 +318,7 @@ function switchPokemon(index) {
   if (!setActivePokemon(index)) { addLog('换宠失败！'); render(); return }
   addLog(`回来吧！${cur?.name||'---'}！`); addLog(`上吧！${p.name}！`)
   if (window.AU) AU.sfx('select')
-  if (G.battle) { G.battle.lock = true; G.battle.turn = 'enemy'; G.battle.subState = 'main'; setTimeout(enemyTurn,500) }
+  if (G.battle) { G.battle.lock = true; G.battle.turn = 'enemy'; G.battle.subState = 'main'; trackBattleTimer(setTimeout(enemyTurn,500)) }
   render()
 }
 
@@ -350,7 +350,7 @@ function restartGame() {
 // 学习新技能：直接学会（不足4个时）
 function createMoveFromData(mData) {
   if (!mData) return null
-  return { id:mData[0], name:mData[1], type:mData[2], power:mData[3], pp:mData[4], currentPp:mData[4], desc:mData[5]||'', effect:mData[6]||null }
+  return { id:mData.id, name:mData.name, type:mData.type, power:mData.power, pp:mData.pp, currentPp:mData.pp, desc:mData.desc||'', effect:mData.effect||null }
 }
 
 function ensureRelearnMoves(pkm) {
@@ -416,7 +416,7 @@ function swapRelearnMove(pokemonIndex, moveIndex) {
   const remembered = pool[manager.relearnIndex]
   const current = pkm.moves[moveIndex]
   if (!remembered || !current) return
-  pkm.moves.splice(moveIndex, 1, createMoveFromData([remembered.id, remembered.name, remembered.type, remembered.power, remembered.pp, remembered.desc || '', remembered.effect || null]))
+  pkm.moves.splice(moveIndex, 1, remembered)
   pool.splice(manager.relearnIndex, 1)
   addRelearnMove(pkm, current)
   G.pokemonManager = { pokemonIndex, relearnIndex: null }
@@ -438,7 +438,7 @@ function learnMoveDirect(pokemonIndex) {
   }
   removeRelearnMoveById(pkm, info.moveId)
   pkm.moves.push(createMoveFromData(mData))
-  addLog(`★ ${pkm.name} 学会了「${mData[1]}」！`)
+  addLog(`★ ${pkm.name} 学会了「${mData.name}」！`)
   G.pendingMoveLearn.shift()
   saveGame(); render()
 }
@@ -456,7 +456,7 @@ function forgetMove(pokemonIndex, moveIndex) {
   addRelearnMove(pkm, forgotten)
   removeRelearnMoveById(pkm, info.moveId)
   pkm.moves.splice(moveIndex, 1, createMoveFromData(mData))
-  addLog(`★ ${pkm.name} 将「${forgotten.name}」放入可换回技能库，\n   学会了「${mData[1]}」！`)
+  addLog(`★ ${pkm.name} 将「${forgotten.name}」放入可换回技能库，\n   学会了「${mData.name}」！`)
 
   G.pendingMoveLearn.shift()
   saveGame(); render()
