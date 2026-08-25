@@ -265,7 +265,9 @@ function battleSub(state, moveIndex) {
   if (!G.battle) return
   G.battle.subState = state
   G.battle.selectedMove = moveIndex !== undefined ? moveIndex : undefined
-  render()
+  // 战斗中切子状态会改变 #actions 整块视图，用 renderBattleUI 走智能分支；
+  // subState/turn 变化会自动触发整块重渲（见 ui.js）
+  try { window.renderBattleUI() } catch (e) { render() }
 }
 
 function confirmMove() {
@@ -281,7 +283,9 @@ function confirmMove() {
 
   // Check player status first
   if (pkm.status && checkStatusSkip(pkm)) {
-    b.lock = true; b.turn = 'enemy'; trackBattleTimer(setTimeout(enemyTurn, 500)); render(); return
+    b.lock = true; b.turn = 'enemy'; trackBattleTimer(setTimeout(enemyTurn, 500))
+    try { window.renderBattleUI() } catch (e) { render() }
+    return
   }
 
   // Speed-based turn order
@@ -297,7 +301,8 @@ function confirmMove() {
       playerAttack(idx, true)
     }
   }
-  render()
+  // 末尾局部刷新：玩家/敌方已通过 markBattleDirty 标记脏，渲染一次即可
+  try { window.renderBattleUI() } catch (e) { render() }
 }
 
 function cancelMove() {
@@ -318,7 +323,12 @@ function switchPokemon(index) {
   if (!setActivePokemon(index)) { addLog('换宠失败！'); render(); return }
   addLog(`回来吧！${cur?.name||'---'}！`); addLog(`上吧！${p.name}！`)
   if (window.AU) AU.sfx('select')
-  if (G.battle) { G.battle.lock = true; G.battle.turn = 'enemy'; G.battle.subState = 'main'; trackBattleTimer(setTimeout(enemyTurn,500)) }
+  if (G.battle) {
+    G.battle.lock = true; G.battle.turn = 'enemy'; G.battle.subState = 'main'
+    // 换宠后精灵图变化，标记 arena=true 触发整块重渲（仅一次）
+    if (typeof markBattleDirty === 'function') markBattleDirty('arena')
+    trackBattleTimer(setTimeout(enemyTurn, 500))
+  }
   render()
 }
 

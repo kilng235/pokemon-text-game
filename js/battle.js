@@ -6,6 +6,7 @@ function markBattleDirty(flag) {
       G.battle.dirtyFlags.status = true
       G.battle.dirtyFlags.msg = true
       G.battle.dirtyFlags.actions = true
+      G.battle.dirtyFlags.arena = true
     } else {
       G.battle.dirtyFlags[flag] = true
     }
@@ -161,8 +162,8 @@ function startBattle(type, extra, enemyTeam) {
     lastEnemyHp: enemyTeam[0].hp, lastPlayerHp: lp ? lp.hp : 0,
     captureFails: 0,
     lock: false,
-    // 脏标志：标记哪些部分需要更新
-    dirtyFlags: { hp: true, status: true, msg: true, actions: true }
+    // 脏标志：标记哪些部分需要更新（arena=true 触发整块重渲用于换宠/敌方换宠等需要重建 DOM 的场景）
+    dirtyFlags: { hp: true, status: true, msg: true, actions: true, arena: true }
   }
   const name = enemyTeam[0].name
 
@@ -459,7 +460,7 @@ function playerAttack(moveIndex, skipTurnCheck) {
     markBattleDirty('msg'); b.battleMsg = '没有命中！'
     if (window.FX && enemyEl) FX.showDamage(enemyEl, 0, 'miss')
     if (window.AU) AU.sfx('miss')
-    if (skipTurnCheck) { b.lock = false; b.turn = 'player'; render(); return }
+    if (skipTurnCheck) { b.lock = false; b.turn = 'player'; try { window.renderBattleUI() } catch (e) { render() }; return }
     b.turn = 'enemy'; trackBattleTimer(setTimeout(enemyTurn, 500)); return
   }
 
@@ -473,7 +474,7 @@ function playerAttack(moveIndex, skipTurnCheck) {
   if (move.power === 0) {
     markBattleDirty('msg'); b.battleMsg = `使用了 ${move.name}！`
     if (window.FX && enemyEl) FX.playMove(move, enemyEl, { isPlayer: true })
-    render()
+    try { window.renderBattleUI() } catch (e) { render() }
     if (skipTurnCheck) { b.lock = false; b.turn = 'player'; return }
     b.turn = 'enemy'; trackBattleTimer(setTimeout(enemyTurn, 800)); return
   }
@@ -524,13 +525,19 @@ function playerAttack(moveIndex, skipTurnCheck) {
       else prefix = '野生的 '
       addLog(`${prefix}${b.enemy.name}！`)
       markBattleDirty('msg'); b.battleMsg = msg || ''
-      b.lock = false; b.turn = 'player'; return
+      // 敌方换人：精灵图变化，需要重建舞台
+      markBattleDirty('arena')
+      b.lock = false; b.turn = 'player'
+      try { window.renderBattleUI() } catch (e) { render() }
+      return
     } else {
       battleVictory(); return
     }
   }
   if (skipTurnCheck) {
-    b.lock = false; b.turn = 'player'; render(); return
+    b.lock = false; b.turn = 'player'
+    try { window.renderBattleUI() } catch (e) { render() }
+    return
   }
   b.turn = 'enemy'; trackBattleTimer(setTimeout(enemyTurn, 700))
 }
@@ -584,7 +591,7 @@ function battleVictory() {
     const next = b.extra.round + 1
     addLog('--- 下一位挑战者 ---')
     trackBattleTimer(setTimeout(() => {
-      if (startEliteFour(next)) { G.view = 'battle'; render() }
+      if (startEliteFour(next)) { G.view = 'battle'; if (typeof markBattleDirty === 'function') markBattleDirty('arena'); render() }
       else { clearAllBattleTimers(); G.battle = null; G.view = 'explore'; render() }
     }, 300))
     return
@@ -593,7 +600,7 @@ function battleVictory() {
     addLog('★ 你击败了四天王！')
     addLog('冠军 小茂 向你走来……')
     trackBattleTimer(setTimeout(() => {
-      if (startChampionBattle()) { G.view = 'battle'; render() }
+      if (startChampionBattle()) { G.view = 'battle'; if (typeof markBattleDirty === 'function') markBattleDirty('arena'); render() }
       else { clearAllBattleTimers(); G.battle = null; G.view = 'explore'; render() }
     }, 500))
     return
@@ -677,6 +684,7 @@ function syncEnemyAttack() {
     }, 200))
   }
 
+  markBattleDirty('hp')  // 修复：原代码遗漏 HP 脏标志，导致玩家 HP 不更新
   pkm.hp -= result.damage
   if (pkm.hp <= 0) {
     pkm.hp = 0; pkm.fainted = true
@@ -684,7 +692,12 @@ function syncEnemyAttack() {
     if (window.FX && playerEl) trackBattleTimer(setTimeout(() => FX.playFaint(playerEl), 400))
     if (window.AU) AU.sfx('faint')
     const next = getActivePokemon()
-    if (next) { addLog(`派出 ${next.name}！`); b.subState = 'main' }
+    if (next) {
+      addLog(`派出 ${next.name}！`)
+      b.subState = 'main'
+      // 同步换宠：精灵图变化，需要重建舞台
+      markBattleDirty('arena')
+    }
     else {
       addLog('你已经没有能战斗的宝可梦了……')
       handlePlayerDefeat(b)
@@ -703,13 +716,16 @@ function enemyTurn() {
     clearAllBattleTimers(); G.battle = null; saveGame(true); render(); return
   }
 
+  // 战斗中局部刷新辅助：selective update，DOM 已存在时不再 innerHTML 重写
+  const smartRender = () => { try { window.renderBattleUI() } catch (e) { render() } }
+
   if (b.enemy.status && checkStatusSkip(b.enemy)) {
     markBattleDirty('msg'); b.battleMsg = `${b.enemy.name} 无法行动……`
-    b.turn = 'player'; render(); return
+    b.turn = 'player'; smartRender(); return
   }
 
   const usable = b.enemy.moves.filter(m => m.currentPp > 0)
-  if (!usable.length) { b.turn = 'player'; render(); return }
+  if (!usable.length) { b.turn = 'player'; smartRender(); return }
   const move = usable[Math.floor(Math.random() * usable.length)]
   move.currentPp--
 
@@ -727,7 +743,7 @@ function enemyTurn() {
     healEl: enemyEl,
   })) {
     markBattleDirty('msg'); b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！`
-    b.turn = 'player'; render(); return
+    b.turn = 'player'; smartRender(); return
   }
 
   const result = calcDamage(b.enemy, pkm, move)
@@ -735,7 +751,7 @@ function enemyTurn() {
     markBattleDirty('msg'); b.battleMsg = `${b.enemy.name} 的 ${move.name} 没有命中！`
     if (window.FX && playerEl) FX.showDamage(playerEl, 0, 'miss')
     if (window.AU) AU.sfx('miss')
-    b.turn = 'player'; render(); return
+    b.turn = 'player'; smartRender(); return
   }
 
   // 招式特效
@@ -763,6 +779,7 @@ function enemyTurn() {
   else if (result.effectiveness === 0) { markBattleDirty('msg'); b.battleMsg = '没有效果…' }
   else if (result.effectiveness < 1) { markBattleDirty('msg'); b.battleMsg = '效果不太好…'; if (window.AU) AU.sfx('notEffective') }
   else { markBattleDirty('msg'); b.battleMsg = `${b.enemy.name} 使用了 ${move.name}！` }
+  markBattleDirty('hp')
   pkm.hp -= result.damage
   if (pkm.hp <= 0) {
     pkm.hp = 0; pkm.fainted = true
@@ -770,14 +787,19 @@ function enemyTurn() {
     if (window.FX && playerEl) trackBattleTimer(setTimeout(() => FX.playFaint(playerEl), 400))
     if (window.AU) AU.sfx('faint')
     const next = getActivePokemon()
-    if (next) { addLog(`派出 ${next.name}！`); b.subState = 'main' }
+    if (next) {
+      addLog(`派出 ${next.name}！`)
+      b.subState = 'main'
+      // 玩家换宠：精灵图变化，需要重建舞台
+      markBattleDirty('arena')
+    }
     else {
       addLog('你已经没有能战斗的宝可梦了……')
       handlePlayerDefeat(b)
       clearAllBattleTimers(); G.battle = null; saveGame(true); render(); return
     }
   }
-  b.turn = 'player'; trackBattleTimer(setTimeout(render, 500))
+  b.turn = 'player'; trackBattleTimer(setTimeout(smartRender, 500))
 }
 
 function handlePlayerDefeat(b) {
@@ -855,6 +877,8 @@ function tryCapture() {
   b.lock = true
   const enemyEl = document.querySelector('.sprite-container.enemy')
   if (window.FX && enemyEl) FX.playCapture(enemyEl, true)
+  // 立即局部刷新消息（不重写 #main.innerHTML，避免整屏 fade-in）
+  try { window.renderBattleUI() } catch (e) { render() }
   trackBattleTimer(setTimeout(() => {
     if (!G.battle) return
     if (Math.random() < chance) {
@@ -892,10 +916,10 @@ function useItem(itemKey) {
   if (G.battle && G.battle.lock) return
   if (!G.player.items[itemKey] || G.player.items[itemKey] <= 0) { addLog('没有这个道具了！'); return }
   if (item.catchRate && G.player.position === 'safariZone') {
-    G.bagView = 'safariBall'; tryCapture(); render(); return
+    G.bagView = 'safariBall'; tryCapture(); /* 内部已 renderBattleUI，战斗内不再 render 避免双重重渲 */ return
   }
   if (item.catchRate) {
-    G.bagView = itemKey; tryCapture(); render(); return
+    G.bagView = itemKey; tryCapture(); return
   }
   if (item.heal) {
     let target = getActivePokemon()
@@ -920,7 +944,9 @@ function useItem(itemKey) {
       G.battle.turn = 'enemy'
       G.battle.subState = 'main'
       G.battle.battleMsg = `使用了 ${item.name}，${target.name} 的HP回复了！`
-      render()
+      // 局部刷新：更新 HP 条 / 消息 / 行动按钮（不重建整个 #main）
+      markBattleDirty('hp'); markBattleDirty('msg'); markBattleDirty('actions')
+      try { window.renderBattleUI() } catch (e) { render() }
       trackBattleTimer(setTimeout(enemyTurn, 800))
     }
     saveGame()

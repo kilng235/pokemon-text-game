@@ -68,9 +68,17 @@ function render() {
   else if (v === 'choose') renderChoose()
   else if (v === 'explore') { renderExplore(); enableFadeIn() }
   else if (v === 'battle') {
-    // 临时禁用选择性更新，回到完全重渲以修复bug
-    renderBattle()
-    enableFadeIn()
+    // 战斗中入口：委托给 renderBattleUI() 统一处理
+    // - 首次进入战斗（舞台不存在）→ 整块重渲 + fade-in
+    // - subState/turn 切换 → 整块重渲 #actions 区域（解决"点击攻击按钮无反应"的 bug）
+    // - 普通脏标志更新 → 局部更新
+    const stage = document.getElementById('battle-stage')
+    if (stage && G.battle && G.battle.dirtyFlags) {
+      renderBattleUI()  // 走智能分支；其中 subStateChanged 会自动触发整块重渲
+    } else {
+      renderBattle()    // 首次进入战斗：整块重渲
+      enableFadeIn()    // 首次进入战斗才需要整屏 fade-in
+    }
   }
   else if (v === 'bag') { renderBag(); enableFadeIn() }
   else if (v === 'pokemon') { renderPokemon(); enableFadeIn() }
@@ -371,11 +379,65 @@ function smartRenderBattle() {
   const b = G.battle
   if (!b) return
 
+  // arena=true 表示需要重建整个舞台（换宠、敌方换宠、濒死切换等）
+  if (b.dirtyFlags.arena) {
+    renderBattle()
+    b.dirtyFlags.arena = false
+    b.dirtyFlags.hp = false
+    b.dirtyFlags.status = false
+    b.dirtyFlags.msg = false
+    b.dirtyFlags.actions = false
+    return
+  }
+
   // 只更新脏的部分
   if (b.dirtyFlags.hp) updateBattleHP()
   if (b.dirtyFlags.status) updateBattleStatus()
   if (b.dirtyFlags.msg) updateBattleMsg()
   if (b.dirtyFlags.actions) updateBattleActions()
+}
+
+// ========== 战斗UI选择性更新路由 ==========
+
+// 追踪上一次的战斗 subState / turn，用于检测结构性 UI 变化（必须整块重渲 #actions）
+let lastBattleSubState = null
+let lastBattleTurn = null
+
+// 战斗中调用入口（暴露到 window 供 battle.js / main.js 调用）。
+// - 战斗舞台已存在 → smartRenderBattle() 仅更新脏部分
+// - 否则（战斗结束、首次进入战斗）→ 全量 render()
+//
+// 重要：subState 变化（main ↔ attack ↔ selectMove ↔ switch ↔ item 等）
+// 决定了 #actions 区域的完全不同的视图，必须整块重渲；仅靠 dirtyFlags
+// 不能表达这种结构性变化。
+function renderBattleUI() {
+  const stage = document.getElementById('battle-stage')
+  const b = G.battle
+  if (stage && b && b.dirtyFlags) {
+    // subState 或 turn 变化 → 必须整块重渲 actions 区域
+    const subStateChanged = lastBattleSubState !== b.subState
+    const turnChanged = lastBattleTurn !== b.turn
+    if (subStateChanged || turnChanged) {
+      lastBattleSubState = b.subState
+      lastBattleTurn = b.turn
+      renderBattle()
+      // 重置所有 flags（renderBattle 已经生成了完整 DOM）
+      b.dirtyFlags.hp = false
+      b.dirtyFlags.status = false
+      b.dirtyFlags.msg = false
+      b.dirtyFlags.actions = false
+      b.dirtyFlags.arena = false
+      return
+    }
+    smartRenderBattle()
+    lastBattleSubState = b.subState
+    lastBattleTurn = b.turn
+  } else {
+    render()
+    // 进入新战斗 / 战斗结束，重新初始化追踪
+    lastBattleSubState = b ? b.subState : null
+    lastBattleTurn = b ? b.turn : null
+  }
 }
 
 // ========== 原始renderBattle（完全重渲用于初始化）==========
@@ -915,4 +977,11 @@ function renderLog() {
   requestAnimationFrame(() => {
     logDiv.scrollTop = logDiv.scrollHeight
   })
+}
+
+// 全局暴露（battle.js / main.js 会通过 window.* 调用，避免脚本加载顺序问题）
+if (typeof window !== 'undefined') {
+  window.renderBattleUI = renderBattleUI
+  window.renderBattle = renderBattle
+  window.smartRenderBattle = smartRenderBattle
 }
