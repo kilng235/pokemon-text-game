@@ -21,6 +21,8 @@ ctx.console = console
 ctx.Math = Math
 ctx.Date = Date
 ctx.JSON = JSON
+ctx.setTimeout = setTimeout
+ctx.clearTimeout = clearTimeout
 
 // 用 vm 在独立上下文执行，所有声明自动挂到 ctx
 const vm = require('vm')
@@ -208,6 +210,51 @@ function assert(name, cond, detail) {
   pkm.status = { type: 'burn', turns: 0 }
   G.checkStatusSkip(pkm)
   assert('灼伤导致掉血', pkm.hp < hpBefore2, `hp ${hpBefore2} -> ${pkm.hp}`)
+}
+
+// ===== 测试 8：0-PP 招式不会让战斗锁死（软锁回归）=====
+// 复现 #2：确认 0-PP 招式后 b.lock 必须被释放，否则攻击/道具/逃跑全部静默失效。
+{
+  G.G = G.createInitialState()
+  // 构造一场战斗上下文（与 playerAttack 所需字段一致）
+  const pkm = G.createPokemon(1, 5)
+  const enemy = G.createPokemon(4, 5)
+  const zeroPpMove = { id: 10, name: '撞击', type: '普通', power: 40, pp: 35, currentPp: 0, effect: null }
+  pkm.moves = [zeroPpMove, { id: 24, name: '催眠粉', type: '草', power: 0, pp: 15, currentPp: 15, effect: 'sleep' }]
+  // 让 getActivePokemon() 返回该 pkm（读取 G.player.pokemon[activeIndex]）
+  G.G.player.pokemon = [pkm]
+  G.G.player.activeIndex = 0
+  G.G.battle = {
+    enemy, enemyTeam: [enemy], enemyIndex: 0, type: 'wild',
+    lock: false, turn: 'player', subState: 'main', selectedMove: undefined,
+    dirtyFlags: { hp: false, status: false, msg: false, actions: false, arena: false },
+  }
+  // 提供无副作用的 mock，避免依赖 DOM/计时器
+  let scheduled = 0
+  G.trackBattleTimer = (fn) => { scheduled++; return 1 }
+  G.enemyTurn = () => {}
+  G.markBattleDirty = () => {}
+  G.addLog = () => {}
+  G.renderBattleUI = () => {}
+  G.render = () => {}
+  G.calcDamage = () => ({ damage: 10, effectiveness: 1, missed: false })
+  G.applyMoveEffects = () => null
+
+  // 调用 0-PP 招式路径（moveIndex=0 即 currentPp=0）
+  G.playerAttack(0)
+  assert('0-PP 招式后战斗锁被释放（无软锁）', G.G.battle.lock === false, `lock=${G.G.battle.lock}`)
+  assert('0-PP 招式不排敌方回合', scheduled === 0, `scheduled=${scheduled}`)
+
+  // 对照：正常 PP 招式仍能正常上锁并进入敌方回合
+  const okMove = { id: 1, name: '撞击', type: '普通', power: 40, pp: 35, currentPp: 35, effect: null }
+  pkm.moves = [okMove]
+  G.G.battle.lock = false; scheduled = 0
+  // 提供 document mock（命中特效路径会访问真实 DOM 选择器）
+  const fakeEl = { classList: { add() {}, remove() {} } }
+  G.document = { querySelector: () => fakeEl }
+  G.playerAttack(0)
+  assert('正常招式仍会锁定战斗', G.G.battle.lock === true, `lock=${G.G.battle.lock}`)
+  assert('正常招式排敌方回合', scheduled >= 1, `scheduled=${scheduled}`)
 }
 
 // 输出结果

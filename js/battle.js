@@ -440,8 +440,9 @@ function playerAttack(moveIndex, skipTurnCheck) {
     trackBattleTimer(setTimeout(enemyTurn, 500)); return
   }
 
-  const move = pkm.moves[moveIndex]; if (!move) return
-  if (move.currentPp <= 0) { addLog(`${move.name} 的PP已经用完了！`); return }
+  const move = pkm.moves[moveIndex]; if (!move) { b.lock = false; return }
+  // 0-PP 招式：解锁并直接返回，避免确认后战斗锁死（攻击/道具/逃跑全部静默失效）
+  if (move.currentPp <= 0) { addLog(`${move.name} 的PP已经用完了！`); b.lock = false; return }
   move.currentPp--
 
   b.lastEnemyHp = b.enemy.hp
