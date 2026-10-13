@@ -2212,3 +2212,398 @@ body {
   .shiny-badge { font-size: 11px; }
   .shiny-stars span { width: 5px; height: 5px; }
 }
+
+.map4-road-label {
+  pointer-events: none;
+}
+
+.map4-road-tagbg {
+  fill: rgba(255, 252, 240, 0.88);
+  stroke: #c9a227;
+  stroke-width: 1.4;
+}
+
+.map4-road-name {
+  font-size: 12px;
+  font-weight: 700;
+  font-style: italic;
+  fill: #7a5c14;
+}
+
+/* 当前/目标相关的路线名加亮，一眼看清该往哪走 */
+.map4-road-label.is-active .map4-road-tagbg {
+  fill: #fff3cd;
+  stroke: #e65100;
+  stroke-width: 2;
+}
+
+.map4-road-label.is-active .map4-road-name {
+  fill: #bf360c;
+  font-weight: 800;
+}
+
+.map4-svg.is-mini .map4-road-labels { display: none; }
+   —— 不依赖描边颜色区分，而是给它们独立、醒目的身份标识。
+   ================================================================ */
+
+.map4-markers-layer {
+  pointer-events: none;
+}
+
+.map4-halo {
+  fill: #ffffff;
+  opacity: 0.16;
+}
+
+/* 标记实心底盘：遮住从下方穿过的道路线，保证标记清晰可读 */
+.map4-marker-base {
+  fill: #ffffff;
+  stroke: rgba(0, 0, 0, 0.12);
+  stroke-width: 1;
+}
+
+/* ---------- 主线目标：星旗 ---------- */
+.map4-marker.is-target .map4-halo {
+  fill: #ff8a3d;
+  opacity: 0.28;
+  animation: map4TargetHalo 1.7s ease-in-out infinite;
+}
+
+@keyframes map4TargetHalo {
+  0%, 100% { r: 23; opacity: 0.3; }
+  50%      { r: 30; opacity: 0.12; }
+}
+
+.map4-target-ring {
+  fill: none;
+  stroke: #e65100;
+  stroke-width: 4.5;
+  stroke-dasharray: 7 5;
+  animation: map4TargetSpin 9s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes map4TargetSpin {
+  to { transform: rotate(360deg); }
+}
+
+.map4-star {
+  font-size: 20px;
+  fill: #ffc107;
+  stroke: #7a3c00;
+  stroke-width: 2.5px;
+  paint-order: stroke;
+}
+
+/* 小旗子：插在目标旁，方向感强 */
+.map4-flag-pole {
+  stroke: #5d4037;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.map4-flag-cloth {
+  fill: #e65100;
+  stroke: #7a3c00;
+  stroke-width: 1.5;
+}
+
+/* ---------- 当前位置：训练家小人 ---------- */
+.map4-marker.is-current .map4-halo {
+  fill: #1e88e5;
+}
+
+.map4-halo-2 {
+  fill: none;
+  stroke: #1e88e5;
+  stroke-width: 3;
+  opacity: 0.85;
+  animation: map4CurrentRipple 1.9s ease-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes map4CurrentRipple {
+  0%   { transform: scale(0.72); opacity: 0.9; }
+  100% { transform: scale(1.9);  opacity: 0; }
+}
+
+.map4-player-disc {
+  fill: #1565c0;
+  stroke: #ffffff;
+  stroke-width: 3;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
+  animation: map4PlayerBounce 1.9s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes map4PlayerBounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3.5px); }
+}
+
+.map4-player-glyph {
+  font-size: 17px;
+  font-weight: 900;
+  fill: #ffffff;
+}
+
+/* 「現在地」/「主线」标签：写在图标下方最显眼的位置 */
+.map4-now-tag {
+  font-size: 12.5px;
+  font-weight: 800;
+  fill: #ffffff;
+  paint-order: stroke;
+  stroke: #1565c0;
+  stroke-width: 4.5px;
+  stroke-linejoin: round;
+}
+
+.map4-target-tag {
+  font-size: 12.5px;
+  font-weight: 800;
+  fill: #ffffff;
+  paint-order: stroke;
+  stroke: #e65100;
+  stroke-width: 4.5px;
+  stroke-linejoin: round;
+}
+
+/* 迷你图里不带文字标签，但保留光环 */
+.map4-svg.is-mini .map4-now-tag,
+.map4-svg.is-mini .map4-target-tag { display: none; }
+.map4-svg.is-mini .map4-player-disc { r: 14; }
+.map4-svg.is-mini .map4-marker.is-current .map4-marker-base { r: 17; }
+.map4-svg.is-mini .map4-marker.is-target .map4-marker-base { r: 15; }
+.map4-svg.is-mini .map4-target-ring { r: 18; }
+
+.map4-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.map4-topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px;
+}
+
+.map4-heading {
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.map4-subtitle {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.map4-summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+  max-width: 45%;
+}
+
+/* 舞台：GBA 掌机绿底 + 描边 */
+.map4-stage-wrap {
+  overflow: auto;
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, #e2f2da 0%, #cfe7c7 100%);
+  border: 3px solid #4a7a44;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.4), 0 3px 0 #3c6a37;
+}
+
+.map4-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 460px;
+  user-select: none;
+}
+
+/* 地图本征尺寸较大时宁可横向滚动，也不要压缩到看不清 */
+.map4-stage-wrap .map4-svg {
+  min-width: 620px;
+}
+
+.map4-svg.is-mini {
+  min-height: 0;
+}
+
+/* ---------- 地形瓦片 ---------- */
+.map4-tile {
+  opacity: 0.8;
+}
+
+/* ---------- 道路：GBA 的土黄色路 ---------- */
+.map4-path {
+  fill: none;
+  stroke: #e0c07a;
+  stroke-width: 9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.map4-path.is-current-path {
+  stroke: #ffd54a;
+  stroke-width: 12;
+}
+
+.map4-path.is-target-path {
+  stroke: #ffa726;
+  stroke-width: 11;
+}
+
+/* ---------- 地点图标 ---------- */
+.map4-icon {
+  stroke-width: 3.5;
+  transition: transform 0.15s ease;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.map4-place:hover .map4-icon {
+  transform: scale(1.14);
+}
+
+.map4-place.is-unvisited .map4-icon {
+  opacity: 0.62;
+}
+
+.map4-place.is-neighbor .map4-icon {
+  stroke: #2f7fd0;
+  stroke-width: 5;
+}
+
+.map4-place.is-target .map4-icon {
+  stroke: #e65100;
+  stroke-width: 5;
+}
+
+.map4-place.is-current .map4-icon {
+  stroke: #1565c0;
+  stroke-width: 5;
+  animation: map4Pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes map4Pulse {
+  0%, 100% { filter: drop-shadow(0 0 2px rgba(21,101,192,0.65)); }
+  50%      { filter: drop-shadow(0 0 10px rgba(21,101,192,1)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map4-place.is-current .map4-icon { animation: none; }
+}
+
+.map4-place.gym-open .map4-icon   { stroke: #f9a825; stroke-width: 5; }
+.map4-place.gym-cleared .map4-icon { stroke: #2e9e4b; stroke-width: 5; }
+
+.map4-glyph {
+  font-size: 17px;
+  font-weight: 800;
+  fill: #fff;
+  paint-order: stroke;
+  stroke: rgba(0,0,0,0.32);
+  stroke-width: 2.5px;
+  pointer-events: none;
+}
+
+.map4-gym {
+  font-size: 14px;
+  fill: #ffd75e;
+  paint-order: stroke;
+  stroke: rgba(0,0,0,0.55);
+  stroke-width: 3px;
+  pointer-events: none;
+}
+
+/* ---------- 标签：图标正下方 + 白描边，永不压图标 ---------- */
+.map4-label {
+  font-size: 15px;
+  font-weight: 700;
+  fill: #2f3f2f;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 4.5px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.map4-place.is-target .map4-label   { fill: #bf360c; }
+.map4-place.is-current .map4-label  { fill: #0d47a1; font-weight: 800; }
+.map4-place.is-unvisited .map4-label { fill: #788878; }
+
+.map4-svg.is-mini .map4-label { display: none; }
+
+/* ---------- 图例 ---------- */
+.map4-legend text {
+  font-size: 14px;
+  font-weight: 700;
+  fill: #3c4a3c;
+}
+
+.map4-lg {
+  stroke: #fff;
+  stroke-width: 2.5;
+}
+
+.map4-lg.type-town  { fill: #F2B880; }
+.map4-lg.type-cave  { fill: #A8B2BE; }
+.map4-lg.type-water { fill: #84CCE6; }
+.map4-lg.is-current { fill: #1565c0; }
+.map4-lg.is-target  { fill: #e65100; }
+
+/* ---------- 侧边栏迷你地图 ---------- */
+.mini-map-v4 {
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, #e2f2da 0%, #cfe7c7 100%);
+  border: 2px solid #4a7a44;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4);
+}
+
+.mini-map-v4 .map4-svg {
+  max-height: 300px;
+}
+
+.mini-map-v4 .mini-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(0,0,0,0.12);
+}
+
+.mini-map-v4 .mini-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.mini-map-v4 .mini-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1.5px solid #fff;
+}
+
+.mini-map-v4 .mini-dot.town    { background: #F2B880; }
+.mini-map-v4 .mini-dot.cave    { background: #A8B2BE; }
+.mini-map-v4 .mini-dot.water   { background: #84CCE6; }
+.mini-map-v4 .mini-dot.current { background: #1565c0; }
+.mini-map-v4 .mini-dot.target  { background: #e65100; }

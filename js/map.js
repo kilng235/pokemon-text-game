@@ -283,6 +283,7 @@ const MAP_COORDS = {
   route21:     { x:18, y:18, icon:'~' },
   route22:     { x:22, y:10, icon:'·' },
   route23:     { x:50, y:6,  icon:'·' },
+  route24:     { x:42, y:4,  icon:'·' },
   mtMoon:      { x:22, y:6,  icon:'⛰' },
   viridianForest:{x:24, y:10, icon:'🌲' },
   victoryRoad: { x:46, y:6,  icon:'🏔' },
@@ -804,101 +805,37 @@ function renderExpandedMapStage(regionKey, currentId, targetId) {
   `
 }
 
+// 侧边栏迷你地图（v2）：与展开地图共用同一套数据驱动布局，
+// 因此反映的是真实地点拓扑，而非手写的少量节点。
 function renderSidebarMap() {
   const pos = G.player.position
   const loc = LOCATIONS[pos]
-  const pkmLevel = G.player.pokemon.length > 0 ? Math.max(...G.player.pokemon.map(p => p.level)) : 1
+  const pkmLevel = G.player.pokemon.length > 0 ? Math.max.apply(null, G.player.pokemon.map(p => p.level)) : 1
   const badge = G.player.badge
   const targetId = getQuestTargetLocationId()
+  const regionKey = getMapRegionKey(pos)
 
-  // 侧边栏迷你地图：只画关都关键节点（城镇 + 特殊地点），百分比坐标定位
-  const miniNodes = [
-    { id:'pallet',     x:46, y:78, type:'town' },
-    { id:'viridian',   x:46, y:55, type:'town' },
-    { id:'pewter',     x:30, y:30, type:'town' },
-    { id:'cerulean',   x:62, y:30, type:'town' },
-    { id:'vermilion',  x:68, y:62, type:'town' },
-    { id:'lavender',   x:34, y:62, type:'town' },
-    { id:'celadon',    x:20, y:62, type:'town' },
-    { id:'saffron',    x:46, y:46, type:'town' },
-    { id:'fuchsia',    x:62, y:82, type:'town' },
-    { id:'cinnabar',   x:12, y:90, type:'town' },
-    { id:'indigo',     x:82, y:20, type:'town' },
-    { id:'mtMoon',     x:38, y:30, type:'cave' },
-    { id:'victoryRoad',x:74, y:30, type:'cave' },
-  ]
+  const svg = map4RenderMiniSvg(regionKey, pos, targetId)
 
-  // 简化连线（主干道）
-  const miniLinks = [
-    ['pallet','viridian'],['viridian','pewter'],['viridian','saffron'],
-    ['pewter','mtMoon'],['mtMoon','cerulean'],['cerulean','saffron'],
-    ['saffron','celadon'],['saffron','lavender'],['saffron','vermilion'],
-    ['lavender','celadon'],['lavender','fuchsia'],['vermilion','fuchsia'],
-    ['cinnabar','pallet'],['victoryRoad','indigo'],['victoryRoad','cerulean'],
-  ]
-
-  const neighborSet = new Set(loc && loc.connects ? loc.connects : [])
-
-  // 连线（百分比宽度近似：画布宽高比约 1.4:1，y 方向缩放补偿）
-  let linksHtml = ''
-  for (const [a, b] of miniLinks) {
-    const na = miniNodes.find(n => n.id === a)
-    const nb = miniNodes.find(n => n.id === b)
-    if (!na || !nb) continue
-    const dx = nb.x - na.x, dy = nb.y - na.y
-    const len = Math.sqrt(dx*dx + (dy/0.7)*(dy/0.7))
-    const angle = Math.atan2(dy, dx) * 180 / Math.PI
-    const cls = (a === pos || b === pos) ? 'mini-link is-current' :
-                (targetId && (a === targetId || b === targetId)) ? 'mini-link is-target' : 'mini-link'
-    linksHtml += `<span class="${cls}" style="left:${na.x}%;top:${na.y}%;width:${len}%;transform:rotate(${angle}deg);"></span>`
-  }
-
-  // 节点
-  let nodesHtml = ''
-  const visitedSet = new Set(G.player.visited || [])
-  for (const n of miniNodes) {
-    const nloc = LOCATIONS[n.id]
-    if (!nloc) continue
-    const isCurrent = n.id === pos
-    const isTarget = n.id === targetId
-    const isNeighbor = neighborSet.has(n.id)
-    const isVisited = visitedSet.has(n.id)
-    const hasGym = nloc.gymLeader
-    const gymCleared = hasGym && GYM_LEADERS[nloc.gymLeader] && GYM_LEADERS[nloc.gymLeader].badge <= badge
-
-    const classes = ['mini-node', `type-${n.type}`]
-    if (isCurrent) classes.push('is-current')
-    if (isTarget) classes.push('is-target')
-    if (isNeighbor) classes.push('is-neighbor')
-    if (isVisited && !isCurrent) classes.push('is-visited')
-    if (hasGym) classes.push(gymCleared ? 'gym-cleared' : 'gym-open')
-
-    const label = nloc.name
-    nodesHtml += `<span class="${classes.join(' ')}" style="left:${n.x}%;top:${n.y}%;" title="${label}"></span>`
-  }
-
-  let html = `<div class="mini-map">
-    <div class="mini-map-canvas">
-      <div class="mini-map-grid"></div>
-      ${linksHtml}
-      ${nodesHtml}
-    </div>
-    <div class="mini-map-legend">
-      <span class="mini-legend-item"><span class="mini-dot town"></span>城镇</span>
-      <span class="mini-legend-item"><span class="mini-dot cave"></span>洞穴</span>
-      <span class="mini-legend-item"><span class="mini-dot current"></span>当前</span>
-      <span class="mini-legend-item"><span class="mini-dot target"></span>目标</span>
-    </div>
-  </div>`
+  const hasBase = !!MAP4_BASEMAP[regionKey]
+  let html = '<div class="mini-map mini-map-v4' + (hasBase ? ' has-basemap' : '') + '">' + svg +
+    '<div class="mini-map-legend">' +
+      '<span class="mini-legend-item"><span class="mini-dot town"></span>城镇</span>' +
+      '<span class="mini-legend-item"><span class="mini-dot cave"></span>洞穴</span>' +
+      '<span class="mini-legend-item"><span class="mini-dot water"></span>水道</span>' +
+      '<span class="mini-legend-item"><span class="mini-dot current"></span>当前</span>' +
+      '<span class="mini-legend-item"><span class="mini-dot target"></span>目标</span>' +
+    '</div>' +
+  '</div>'
 
   // 信息条
-  html += `<div class="mini-map-info">`
-  html += `<span class="info-badge">${loc ? loc.name : '???'}</span>`
-  html += `<span class="info-badge">Lv.${pkmLevel}</span>`
-  html += `<span class="info-badge">徽章${badge}/8</span>`
-  html += `<span class="info-badge">💰${G.player.money}</span>`
-  html += `<span class="info-badge">📖${G.player.seen.length}</span>`
-  html += `</div>`
+  html += '<div class="mini-map-info">'
+  html += '<span class="info-badge">' + (loc ? loc.name : '???') + '</span>'
+  html += '<span class="info-badge">Lv.' + pkmLevel + '</span>'
+  html += '<span class="info-badge">徽章' + badge + '/8</span>'
+  html += '<span class="info-badge">💰' + G.player.money + '</span>'
+  html += '<span class="info-badge">📖' + G.player.seen.length + '</span>'
+  html += '</div>'
 
   return html
 }
@@ -1076,4 +1013,560 @@ function renderMapInfo() {
   
   html += `</div>`
   return html
+}
+
+// ================================================================
+// 地图前端 v2 —— SVG 自动布局引擎
+// 设计目标：
+//   1. 节点与连线完全由 LOCATIONS.connects 驱动，不再依赖手写 miniLinks
+//      与 MAP_STAGE_LAYOUTS / MAP_LABEL_DIRECTION_OVERRIDES 等硬编码覆写表。
+//   2. 自动布局：按地形分列、列内按 y 排序，相邻错位，降低重叠。
+//   3. 连线自动裁剪到节点边缘（不穿过节点圆心）。
+//   4. 标签智能避让：按邻居密度选择朝上或朝下，减少压字。
+//   5. SVG 矢量：缩放不失真，天然支持 hover 高亮与响应式。
+// ================================================================
+
+// ================================================================
+// 地图前端 v3 —— GBA 风格瓦片地图
+//
+// 相比 v2 的关键修正：
+//   v2 把「道路」也画成节点，结果是一堆无标签绿点 + 长距离斜线，
+//   视觉上是意大利面。GBA 地图的语义是：
+//     · 道路 = 连通线路（path），不是图标
+//     · 城镇 / 洞穴 / 水域 = 可进入的地点图标
+//   因此本版本：
+//     1. 只有非道路地点渲染图标与名称；
+//     2. 道路参与连线计算，使拓扑连线完整，但不单独成点；
+//     3. 使用地理坐标做瓦片网格排布（GBA 俯视视角），而非分列；
+//     4. 地形底图用瓦片色块表达，与节点配色统一；
+//     5. 标签统一置于图标下方并加描边底衬，杜绝压字。
+// ================================================================
+
+// ================================================================
+// 地图前端 v4 —— GBA 风格紧凑瓦片地图
+//
+// v3 的问题：把「道路」也放进网格坐标，导致 6 个空列撑宽画布、
+// 网格占用率仅 24%，内容被 width:100% 压缩到看不清。
+//
+// v4 的做法：
+//   1. 只有「地点」(town/cave/water) 参与坐标压缩排布，道路不占格；
+//   2. 坐标做单调压缩（去掉没有任何地点的行列），画布紧贴内容；
+//   3. 道路不画成节点，而是把 connects 折成正交折线（GBA 的路）；
+//   4. 地点图标 + 名称固定在图标下方，白色描边底衬，永不压字；
+//   5. 用 tile 尺寸放大图标，保证在任何容器宽度下都清晰可读。
+// ================================================================
+
+const MAP4_TILE_W = 86
+const MAP4_TILE_H = 72
+const MAP4_THEME = {
+  town:  { fill: '#F2B880', stroke: '#B9722F', glyph: '\u57ce', terrain: '#E9F2D8' },
+  cave:  { fill: '#A8B2BE', stroke: '#57626F', glyph: '\u6d1e', terrain: '#E1E7EE' },
+  water: { fill: '#84CCE6', stroke: '#2F86AE', glyph: '\u6c34', terrain: '#D6EDF7' },
+}
+
+// ---------- 1. 收集：地点与道路分离 ----------
+function map4Collect(regionKey) {
+  const region = MAP_REGION_CONFIGS[regionKey]
+  if (!region) return { places: [], roads: [] }
+  const inRegion = function (id) { return region.nodeIds.includes(id) }
+
+  const places = []
+  const roads = []
+  for (const id of Object.keys(LOCATIONS)) {
+    const loc = LOCATIONS[id]
+    if (!loc || !loc.connects || !inRegion(id) || !MAP_COORDS[id]) continue
+    const item = { id: id, loc: loc, coord: MAP_COORDS[id] }
+    if (loc.type === 'route') roads.push(item)
+    else places.push(item)
+  }
+  return { places: places, roads: roads }
+}
+
+// ---------- 2. 布局：底图模式 / 网格模式 ----------
+//
+// 底图模式（MAP4_BASEMAP 命中时）：
+//   地点坐标不再压缩成抽象网格，而是按原始 MAP_COORDS 的归一化比例，
+//   直接映射到底图像素坐标系（SVG viewBox 与图片尺寸 1:1），
+//   从而让标记落在底图上对应的建筑/地形位置。
+//   scaleX/scaleY/offX/offY 是校准旋钮，用于微调对位。
+// 网格模式（无底图时）：沿用紧凑网格 + 安全间距排布。
+// 底图配置：留空则不启用底图，回退到「网格模式」（纯 SVG 绘制）。
+// 如需启用，把 kanto 填上 { src, w, h, scaleX, scaleY, offX, offY, override }。
+const MAP4_BASEMAP = {}
+
+function map4Layout(regionKey) {
+  const col = map4Collect(regionKey)
+  const places = col.places
+  if (!places.length) return { places: [], roads: [], w: 200, h: 160 }
+
+  // 只按「地点」压缩出有效行列（道路不入列，避免撑宽画布）
+  const usedX = []
+  const usedY = []
+  for (const n of places) { usedX.push(n.coord.x); usedY.push(n.coord.y) }
+  const uniq = function (arr) {
+    return arr.slice().sort(function (a, b) { return a - b })
+      .filter(function (v, i, a) { return i === 0 || v !== a[i - 1] })
+  }
+  const xs = uniq(usedX)
+  const ys = uniq(usedY)
+
+  const nearestIdx = function (value, list) {
+    let best = 0
+    let bestD = Infinity
+    for (let i = 0; i < list.length; i++) {
+      const d = Math.abs(list[i] - value)
+      if (d < bestD) { bestD = d; best = i }
+    }
+    return best
+  }
+
+  const base = MAP4_BASEMAP[regionKey]
+
+  // ---- 归一化系数（按地点的真实坐标范围） ----
+  const rawX = places.map(function (n) { return n.coord.x })
+  const rawY = places.map(function (n) { return n.coord.y })
+  const minX = Math.min.apply(null, rawX)
+  const maxX = Math.max.apply(null, rawX)
+  const minY = Math.min.apply(null, rawY)
+  const maxY = Math.max.apply(null, rawY)
+  const spanX = Math.max(1, maxX - minX)
+  const spanY = Math.max(1, maxY - minY)
+  const norm = function (c) {
+    return { nx: (c.x - minX) / spanX, ny: (c.y - minY) / spanY }
+  }
+
+  for (const n of places) {
+    const p = norm(n.coord)
+    n.nx = p.nx; n.ny = p.ny
+    n.theme = MAP4_THEME[n.loc.type] || MAP4_THEME.town
+  }
+
+  // 道路锚点：底图模式下不再需要独立锚点（道路名改由中点推导），
+  // 但仍要记录归一化坐标，供道路标签定位使用。
+  const roadAnchors = []
+  for (const r of col.roads) {
+    const p = norm(r.coord)
+    roadAnchors.push({ id: r.id, loc: r.loc, coord: r.coord, nx: p.nx, ny: p.ny })
+  }
+
+  let w
+  let h
+
+  if (base) {
+    // ================= 底图模式 =================
+    const ov = base.override || {}
+    const toPx = function (p, id) {
+      // 优先用覆盖表（百分比），否则用归一化坐标
+      if (id && ov[id]) {
+        return { x: (ov[id][0] / 100) * base.w, y: (ov[id][1] / 100) * base.h }
+      }
+      return {
+        x: (p.nx - 0.5) * base.w * base.scaleX + base.w / 2 + base.offX,
+        y: (p.ny - 0.5) * base.h * base.scaleY + base.h / 2 + base.offY,
+      }
+    }
+    for (const n of places) { const q = toPx(n, n.id); n.x = q.x; n.y = q.y }
+    for (const r of roadAnchors) { const q = toPx(r, r.id); r.x = q.x; r.y = q.y }
+    w = base.w
+    h = base.h
+  } else {
+    // ================= 网格模式 =================
+    const colX = {}
+    const rowY = {}
+    xs.forEach(function (v, i) { colX[v] = i })
+    ys.forEach(function (v, i) { rowY[v] = i })
+
+    for (const n of places) { n.col = colX[n.coord.x]; n.row = rowY[n.coord.y] }
+    for (const r of roadAnchors) { r.col = nearestIdx(r.coord.x, xs); r.row = nearestIdx(r.coord.y, ys) }
+
+    const padX = MAP4_TILE_W * 0.7
+    const padTop = MAP4_TILE_H * 0.85
+    const padBottom = MAP4_TILE_H * 0.95
+    const cx = function (i) { return padX + i * MAP4_TILE_W }
+    const cy = function (i) { return padTop + i * MAP4_TILE_H }
+
+    for (const n of places) { n.x = cx(n.col); n.y = cy(n.row) }
+    for (const r of roadAnchors) { r.x = cx(r.col); r.y = cy(r.row) }
+
+    // 网格模式：把与地点重叠的道路锚点推开，避免玩家标记盖住地点
+    const SAFE = MAP4_TILE_W * 0.62
+    for (const r of roadAnchors) {
+      let near = null
+      let nd = Infinity
+      for (const p of places) {
+        const d = Math.hypot(p.x - r.x, p.y - r.y)
+        if (d < nd) { nd = d; near = p }
+      }
+      if (!near || nd >= SAFE) continue
+      let dx = r.x - near.x
+      let dy = r.y - near.y
+      let len = Math.hypot(dx, dy)
+      if (len < 0.01) {
+        const nearRaw = MAP_COORDS[near.id]
+        dx = r.coord.x - (nearRaw ? nearRaw.x : 0)
+        dy = r.coord.y - (nearRaw ? nearRaw.y : 0)
+        len = Math.hypot(dx, dy)
+        if (len < 0.01) { dx = 1; dy = 0; len = 1 }
+      }
+      r.x = near.x + (dx / len) * SAFE
+      r.y = near.y + (dy / len) * SAFE
+    }
+
+    w = padX * 2 + (xs.length - 1) * MAP4_TILE_W
+    h = padTop + padBottom + (ys.length - 1) * MAP4_TILE_H
+  }
+
+  return {
+    places: places,
+    roads: roadAnchors,
+    basemap: base || null,
+    w: Math.round(w), h: Math.round(h),
+    cols: xs.length, rows: ys.length,
+  }
+}
+
+// ---------- 3. 正交折线路径（GBA 风格道路） ----------
+function map4Path(a, b) {
+  if (Math.abs(a.x - b.x) < 0.5) return 'M' + a.x + ' ' + a.y + ' L' + b.x + ' ' + b.y
+  if (Math.abs(a.y - b.y) < 0.5) return 'M' + a.x + ' ' + a.y + ' L' + b.x + ' ' + b.y
+  // 走「先竖后横」或「先横后竖」中较短的一种，避免超长横段
+  const firstV = 'M' + a.x + ' ' + a.y + ' L' + a.x + ' ' + b.y + ' L' + b.x + ' ' + b.y
+  const firstH = 'M' + a.x + ' ' + a.y + ' L' + b.x + ' ' + a.y + ' L' + b.x + ' ' + b.y
+  return firstV.length <= firstH.length ? firstV : firstH
+}
+
+// 判断两节点在网格上是否“足够接近”。跨度太远的连线会让地图变成
+// 大量横穿全图的长线，视觉上比不画更糟。
+const MAP4_MAX_SPAN = 4
+function map4TooFar(a, b) {
+  return Math.abs(a.col - b.col) > MAP4_MAX_SPAN || Math.abs(a.row - b.row) > MAP4_MAX_SPAN
+}
+
+function map4Links(layout, currentId, targetId) {
+  const pos = {}
+  for (const n of layout.places) pos[n.id] = n
+  for (const r of layout.roads) pos[r.id] = r
+
+  const seen = {}
+  const out = []
+  const sources = layout.places.concat(layout.roads)
+  for (const n of sources) {
+    for (const t of (n.loc.connects || [])) {
+      if (!pos[t]) continue
+      const key = [n.id, t].sort().join('::')
+      if (seen[key]) continue
+      seen[key] = true
+      const b = pos[t]
+      // 跳过跨度过大的连线（地图只表达邻接关系，不做远程连线）
+      if (map4TooFar(pos[n.id], b)) continue
+      let cls = 'map4-path'
+      if (n.id === currentId || t === currentId) cls += ' is-current-path'
+      if (targetId && (n.id === targetId || t === targetId)) cls += ' is-target-path'
+      out.push({ d: map4Path(pos[n.id], b), cls: cls })
+    }
+  }
+  return out
+}
+
+// ---------- 4. 地形瓦片底（跟随地点，像 GBA 的地形格） ----------
+function map4Terrain(layout) {
+  let s = ''
+  for (const n of layout.places) {
+    const t = n.theme
+    const tw = MAP4_TILE_W * 0.62
+    const th = MAP4_TILE_H * 0.62
+    s += '<rect class="map4-tile" x="' + (n.x - tw / 2) + '" y="' + (n.y - th / 2) +
+      '" width="' + tw + '" height="' + th + '" rx="10" fill="' + t.terrain + '"/>'
+  }
+  return s
+}
+
+// ---------- 4b. 道路名称 ----------
+// GBA 地图会在路线上标出路线名（如「1号路」），便于玩家导航。
+// 定位策略：取该道路所有连线中最长的一段，在其**真实中点**放置标签，
+// 并与已放置的标签做简单的圆形碰撞检测，避免互相堆叠。
+function map4RoadLabels(layout, currentId, targetId) {
+  const pos = {}
+  for (const n of layout.places) pos[n.id] = n
+  for (const r of layout.roads) pos[r.id] = r
+
+  const highlight = new Set()
+  if (currentId && LOCATIONS[currentId]) {
+    highlight.add(currentId)
+    for (const c of (LOCATIONS[currentId].connects || [])) highlight.add(c)
+  }
+  if (targetId && LOCATIONS[targetId]) {
+    highlight.add(targetId)
+    for (const c of (LOCATIONS[targetId].connects || [])) highlight.add(c)
+  }
+
+  // 先算出每个道路的标签锚点（取最长连线的中点）
+  const anchors = []
+  for (const r of layout.roads) {
+    let best = null
+    let bestLen = 0
+    for (const t of (r.loc.connects || [])) {
+      const b = pos[t]
+      if (!b) continue
+      const len = Math.hypot(b.x - r.x, b.y - r.y)
+      if (len > bestLen) { bestLen = len; best = b }
+    }
+    if (!best || bestLen < 10) continue
+    anchors.push({
+      road: r,
+      x: (r.x + best.x) / 2,
+      y: (r.y + best.y) / 2,
+      // 横路（两端 y 相同）→ 标签找上下；竖路 → 找左右
+      horizontal: Math.abs(best.y - r.y) < Math.abs(best.x - r.x),
+      name: r.loc.name.replace(/号道路$/, '号路'),
+      active: highlight.has(r.id),
+    })
+  }
+
+  // 碰撞检测：地点图标周围预留空间；标签只沿垂直于道路的方向偏移，
+  // 避免跑到地图空白处或压到其他标签。
+  const placed = layout.places.map(function (n) { return { x: n.x, y: n.y, r: 42 } })
+  let s = ''
+  for (const a of anchors) {
+    const free = function (x, y) {
+      for (const p of placed) {
+        if (Math.hypot(p.x - x, p.y - y) < (p.r || 0) + 14) return false
+      }
+      return true
+    }
+    let x = a.x
+    let y = a.y
+    if (!free(x, y)) {
+      // 道路是横平竖直的，标签只能垂直于道路方向偏移；
+      // 横路 → 上下找位；竖路 → 左右找位。
+      const horizontalRoad = a.horizontal
+      const tries = horizontalRoad
+        ? [[0, -24], [0, 24], [0, -44], [0, 44]]
+        : [[-40, 0], [40, 0], [-64, 0], [64, 0]]
+      let ok = false
+      for (const [dx, dy] of tries) {
+        if (free(a.x + dx, a.y + dy)) { x = a.x + dx; y = a.y + dy; ok = true; break }
+      }
+      if (!ok) continue
+    }
+    placed.push({ x: x, y: y, r: 28 })
+
+    const cls = a.active ? 'map4-road-label is-active' : 'map4-road-label'
+    const w = a.name.length * 11 + 12
+    s += '<g class="' + cls + '" transform="translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ')">' +
+      '<rect class="map4-road-tagbg" x="' + (-w / 2) + '" y="-10" width="' + w + '" height="20" rx="6"/>' +
+      '<text class="map4-road-name" y="4" text-anchor="middle">' + a.name + '</text>' +
+      '</g>'
+  }
+  return s
+}
+
+// ---------- 5. 地点图标 + 标签 ----------
+function map4Places(layout, currentId, targetId, mini) {
+  const visited = new Set(G.player.visited || [])
+  const cur = LOCATIONS[currentId]
+  const neighborSet = new Set((cur && cur.connects) || [])
+  const badge = G.player.badge
+
+  let s = ''
+  for (const n of layout.places) {
+    const id = n.id
+    const loc = n.loc
+    const t = n.theme
+    const isCurrent = id === currentId
+    const isTarget = id === targetId
+    const isNeighbor = neighborSet.has(id)
+    const isVisited = visited.has(id) || isCurrent
+
+    const classes = ['map4-place', 'type-' + loc.type]
+    if (isVisited) classes.push('is-visited'); else classes.push('is-unvisited')
+    if (isNeighbor) classes.push('is-neighbor')
+    if (isTarget) classes.push('is-target')
+    if (isCurrent) classes.push('is-current')
+    if (!mini && loc.gymLeader) {
+      const g = GYM_LEADERS[loc.gymLeader]
+      classes.push(g && g.badge <= badge ? 'gym-cleared' : 'gym-open')
+    }
+
+    const r = mini ? 13 : 17
+    const glyph = t.glyph ? '<text class="map4-glyph" y="' + (r * 0.36) + '" text-anchor="middle">' + t.glyph + '</text>' : ''
+
+    let gymMark = ''
+    if (!mini && loc.gymLeader) {
+      const g = GYM_LEADERS[loc.gymLeader]
+      if (g && g.badge <= badge) {
+        gymMark = '<text class="map4-gym" y="' + (-r - 6) + '" text-anchor="middle">\u2605</text>'
+      }
+    }
+
+    const label = mini ? '' :
+      '<text class="map4-label" y="' + (r + 19) + '" text-anchor="middle">' + getMapNodeLabel(id, loc) + '</text>'
+
+    s += '<g class="' + classes.join(' ') + '" transform="translate(' + n.x.toFixed(1) + ',' + n.y.toFixed(1) + ')">' +
+      '<circle class="map4-icon" r="' + r + '" fill="' + t.fill + '" stroke="' + t.stroke + '"/>' +
+      glyph + gymMark + label +
+      '</g>'
+  }
+  return s
+}
+
+// ---------- 6. 标记层：当前位置 / 主线目标 ----------
+// 两者不能只靠描边颜色区分——在密集区域会认不出来。
+// 这里给它们独立身份：玩家用训练家小人 + 脉冲光环，主线用星旗 + 辉光。
+// 关键：标记画在最上层，并用实心底盘遮住下方道路线，保证清晰可读。
+function map4Markers(layout, currentId, targetId) {
+  // 重要：玩家/目标可能位于「道路」上，而道路在 layout.roads 中而非 places，
+  // 因此这里必须同时查两个集合，否则站在路上时标记会整个消失。
+  const pos = {}
+  for (const n of layout.places) pos[n.id] = n
+  for (const r of layout.roads) pos[r.id] = r
+
+  // 标记标签放上方还是下方：分别计算两侧的冲突数，选冲突更少的一侧。
+  // 冲突包括：与地点图标重叠、与地点名称文字重叠。
+  function conflictsAt(x, y, dy) {
+    const ty = y + dy
+    let c = 0
+    for (const p of layout.places) {
+      if (Math.abs(p.x - x) > 46) continue
+      if (Math.abs(ty - p.y) < 28) c++          // 压地点图标
+      if (Math.abs(ty - (p.y + 36)) < 20) c++   // 压地名字
+    }
+    return c
+  }
+  function tagY(x, y) {
+    // 上方 -32 / 下方 +44，优先上方
+    return conflictsAt(x, y, -32) <= conflictsAt(x, y, 44) ? -32 : 44
+  }
+
+  let s = ''
+
+  // 主线目标：星旗 + 虚线旋转环（先画，避免被当前位置盖住）
+  if (targetId && pos[targetId]) {
+    const n = pos[targetId]
+    const tagYPos = tagY(n.x, n.y)
+    s += '<g class="map4-marker is-target" transform="translate(' + n.x.toFixed(1) + ',' + n.y.toFixed(1) + ')">' +
+      '<circle class="map4-halo" r="26"/>' +
+      // 实心底盘：遮住穿过的道路线
+      '<circle class="map4-marker-base" r="18"/>' +
+      '<circle class="map4-target-ring" r="22"/>' +
+      // 星旗放在右上角，与上方标签错开
+      '<g class="map4-flag" transform="translate(19,-24)">' +
+        '<path class="map4-flag-pole" d="M0 0 L0 15"/>' +
+        '<path class="map4-flag-cloth" d="M0 0 L14 3.5 L0 8 Z"/>' +
+      '</g>' +
+      '<text class="map4-star" x="-17" y="-19">★</text>' +
+      // 「主线」根据空间自动放到上方或下方
+      '<text class="map4-target-tag" y="' + tagYPos + '" text-anchor="middle">主线</text>' +
+      '</g>'
+  }
+
+  // 当前位置：训练家小人（最上层，最显眼）
+  if (currentId && pos[currentId]) {
+    const n = pos[currentId]
+    const tagYPos = tagY(n.x, n.y)
+    s += '<g class="map4-marker is-current" transform="translate(' + n.x.toFixed(1) + ',' + n.y.toFixed(1) + ')">' +
+      '<circle class="map4-halo" r="30"/>' +
+      '<circle class="map4-halo-2" r="30"/>' +
+      // 实心白边底盘 + 蓝盘，遮住道路线
+      '<circle class="map4-marker-base" r="20"/>' +
+      '<circle class="map4-player-disc" r="17"/>' +
+      '<text class="map4-player-glyph" y="6" text-anchor="middle">▲</text>' +
+      // 「現在地」根据空间自动放到上方或下方
+      '<text class="map4-now-tag" y="' + tagYPos + '" text-anchor="middle">現在地</text>' +
+      '</g>'
+  }
+
+  return s
+}
+
+// ---------- 7. 展开地图 ----------
+function map4RenderSvg(regionKey, currentId, targetId) {
+  const layout = map4Layout(regionKey)
+  if (!layout.places.length) return ''
+  const useBase = !!layout.basemap
+  const links = map4Links(layout, currentId, targetId)
+
+  const paths = links.map(function (l) {
+    return '<path class="' + l.cls + '" d="' + l.d + '"/>'
+  }).join('')
+
+  const legend = [
+    '<g class="map4-legend" transform="translate(20,' + (layout.h - 14) + ')">',
+    '<circle class="map4-lg type-town" cx="7" cy="0" r="8"/><text x="20" y="4">城镇</text>',
+    '<circle class="map4-lg type-cave" cx="78" cy="0" r="8"/><text x="91" y="4">洞穴</text>',
+    '<circle class="map4-lg type-water" cx="150" cy="0" r="8"/><text x="163" y="4">水域</text>',
+    '<circle class="map4-lg is-current" cx="228" cy="0" r="8"/><text x="241" y="4">你在这里</text>',
+    '<circle class="map4-lg is-target" cx="326" cy="0" r="8"/><text x="339" y="4">主线目标</text>',
+    '</g>',
+  ].join('')
+
+  // 底图模式：地形与道路已由位图提供，不再重复绘制，避免双层错位。
+  const terrainLayer = useBase ? '' : '<g class="map4-terrain">' + map4Terrain(layout) + '</g>'
+  const pathLayer = useBase ? '' : '<g class="map4-paths">' + paths + '</g>'
+
+  return '<svg class="map4-svg' + (useBase ? ' on-basemap' : '') + '" viewBox="0 0 ' + layout.w + ' ' + layout.h +
+    '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="区域路线图">' +
+    terrainLayer +
+    pathLayer +
+    '<g class="map4-road-labels">' + map4RoadLabels(layout, currentId, targetId) + '</g>' +
+    '<g class="map4-places">' + map4Places(layout, currentId, targetId, false) + '</g>' +
+    '<g class="map4-markers-layer">' + map4Markers(layout, currentId, targetId) + '</g>' +
+    legend +
+    '</svg>'
+}
+
+// ---------- 6b. 迷你地图 ----------
+function map4RenderMiniSvg(regionKey, currentId, targetId) {
+  const layout = map4Layout(regionKey)
+  if (!layout.places.length) return ''
+  const links = map4Links(layout, currentId, targetId)
+
+  const paths = links.map(function (l) {
+    return '<path class="' + l.cls + '" d="' + l.d + '"/>'
+  }).join('')
+
+  return '<svg class="map4-svg is-mini' + (layout.basemap ? ' on-basemap' : '') + '" viewBox="0 0 ' + layout.w + ' ' + layout.h +
+    '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="迷你地图">' +
+    (layout.basemap ? '' : '<g class="map4-paths">' + paths + '</g>') +
+    '<g class="map4-places">' + map4Places(layout, currentId, targetId, true) + '</g>' +
+    '<g class="map4-markers-layer">' + map4Markers(layout, currentId, targetId) + '</g>' +
+    '</svg>'
+}
+
+// ---------- 6. 对外入口：渲染展开的世界地图 ----------
+function renderWorldMapV2() {
+  const pos = G.player.position
+  const regionKey = getMapRegionKey(pos)
+  const region = MAP_REGION_CONFIGS[regionKey]
+  const rawTargetId = getQuestTargetLocationId()
+  const targetId = rawTargetId && region && region.nodeIds.includes(rawTargetId) ? rawTargetId : null
+  const main = $('main')
+  if (!main) return
+
+  const svg = map4RenderSvg(regionKey, pos, targetId)
+
+  main.innerHTML = '<div class="map4-shell' + (region && MAP4_BASEMAP[getMapRegionKey(pos)] ? ' has-basemap' : '') + '">' +
+    '<div class="map4-topbar">' +
+      '<div>' +
+        '<div class="map4-heading">' + (region ? region.title : '地图') + '</div>' +
+        '<div class="map4-subtitle">GBA 风格路线图 · 道路即路径，城镇洞穴为地点</div>' +
+      '</div>' +
+      '<div class="map4-summary">' +
+        '<span class="info-badge">' + (LOCATIONS[pos] ? LOCATIONS[pos].name : '???') + '</span>' +
+        (targetId && LOCATIONS[targetId]
+          ? '<span class="info-badge target-badge">目标 ' + LOCATIONS[targetId].name + '</span>'
+          : '') +
+      '</div>' +
+    '</div>' +
+    '<div class="map4-stage-wrap">' + svg + '</div>' +
+  '</div>'
+
+  const panel = $('map-panel')
+  if (panel) {
+    const isMobile = window.innerWidth <= 750
+    panel.innerHTML = (isMobile ? '<div class="panel-toggle" onclick="toggleMapPanel()">📋 任务信息 ▼</div>' : '') +
+      '<div class="panel-content">' + renderMapQuestPanel() + '</div>'
+  }
+  const actions = $('actions')
+  if (actions) actions.innerHTML = '<button class="btn" onclick="G.view=\'explore\';render()">← 返回探索</button>'
 }

@@ -86,7 +86,7 @@ function render() {
   else if (v === 'shop') { renderShop(); enableFadeIn() }
   else if (v === 'center') { renderCenter(); enableFadeIn() }
   else if (v === 'dialogue') renderDialogue()
-  else if (v === 'worldMap') renderWorldMap()
+  else if (v === 'worldMap') renderWorldMapV2()
   else if (v === 'choice') renderChoice()
   // 探索/战斗/菜单场景在 #map-panel 渲染迷你地图
   try {
