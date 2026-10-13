@@ -107,5 +107,26 @@ if (!analyticPass) {
   process.exit(1)
 }
 
+// 回归断言（源级，防回退）：选择性更新依赖的选择器必须与模板一致，
+// 否则捕捉等“subState/turn 不变”路径的战斗消息/动作区永远不刷新（原 P0/P1 缺陷）。
+// 注意：这里对 ui.js 源码做正则校验，而非依赖 mock DOM——mock 元素无论源码如何都会返回，
+// 无法真正捕获回退。
+const regressionChecks = [
+  ['battle-message id 在模板中', /id="battle-message"/.test(uiSrc)],
+  ['updateBattleMsg 查 #battle-message', /updateBattleMsg[\s\S]{0,200}getElementById\('battle-message'\)/.test(uiSrc)],
+  ['updateBattleActions 查 #actions（非不存在的 #battle-actions）', /updateBattleActions[\s\S]{0,400}getElementById\('actions'\)/.test(uiSrc)],
+  ['无残留的 #battle-actions 选择器', !/getElementById\('battle-actions'\)/.test(uiSrc)],
+]
+let regressionPass = true
+for (const [name, ok] of regressionChecks) {
+  console.log(`${ok ? '✓' : '✗'} ${name}`)
+  if (!ok) regressionPass = false
+}
+if (!regressionPass) {
+  console.error('回归断言失败：选择性更新选择器与模板不一致，捕捉消息/动作区将静默失效。')
+  process.exit(1)
+}
+console.log('✓ #battle-message 选择器与模板一致，捕捉消息选择性刷新可用')
+
 console.log('--- 所有烟雾测试通过 ---')
 process.exit(0)

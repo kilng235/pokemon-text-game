@@ -358,7 +358,9 @@ function updateBattleActions() {
   const pkm = getActivePokemon()
   if (!pkm) return
 
-  const actionsEl = document.getElementById('battle-actions')
+  // 动作按钮实际渲染在全局导航 #actions 容器内（见 renderBattle()），
+  // 不再依赖不存在的 #battle-actions 元素，避免选择性更新时动作区永远不刷新。
+  const actionsEl = document.getElementById('actions')
   if (actionsEl) {
     if (b.turn === 'player' && b.subState === 'main') {
       const moves = pkm.moves.map((m, i) =>
@@ -536,7 +538,7 @@ function renderBattle() {
           </div>
         </div>
         <div class="battle-center">
-          ${b.battleMsg ? `<div class="battle-msg">${b.battleMsg}</div>` : `<div class="battle-divider">━━ ⚔ ━━</div>`}
+          ${b.battleMsg ? `<div class="battle-msg" id="battle-message">${b.battleMsg}</div>` : `<div class="battle-divider" id="battle-message">━━ ⚔ ━━</div>`}
         </div>
         <div class="battle-player-side">
           <div class="player-platform">
