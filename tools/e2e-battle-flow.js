@@ -268,13 +268,31 @@ log(`switchPokemon(1) → activeIndex = ${sandbox.G.player.activeIndex}, arena f
 snapBattle('switchPokemon(1)')
 
 // --- 关键场景 5：直接击倒敌方 1，让 enemyIndex 进入 1（敌方换人） ---
+// 注意：敌方 HP 被设为 1，是否命中取决于随机命中判定；
+// 一旦命中就会击倒最后敌人 → battleVictory → G.battle = null。
+// 因此这里必须做空值判断，不能假设战斗一定继续。
 sandbox.G.battle.enemy.hp = 1
 const enemyWritesBefore = mainInnerHTMLWrites
 sandbox.playerAttack(0) // 用 0 号招式（电击，power 40）
-log(`playerAttack(0) → subState=${sandbox.G.battle.subState}, enemyIndex=${sandbox.G.battle.enemyIndex}, main.innerHTML writes delta = ${mainInnerHTMLWrites - enemyWritesBefore}`)
-snapBattle('击倒敌方 1')
+if (sandbox.G.battle) {
+  log(`playerAttack(0) → subState=${sandbox.G.battle.subState}, enemyIndex=${sandbox.G.battle.enemyIndex}, main.innerHTML writes delta = ${mainInnerHTMLWrites - enemyWritesBefore}`)
+  snapBattle('击倒敌方 1')
+} else {
+  log(`playerAttack(0) → 敌方已被击倒，战斗结束（G.battle = null），main.innerHTML writes delta = ${mainInnerHTMLWrites - enemyWritesBefore}`)
+  snapBattle('击倒敌方 1（战斗结束）')
+}
 
 // --- 关键场景 6：再把敌方 2 也击倒，触发 battleVictory ---
+// 同上：若场景 5 已结束战斗，此处需安全退出而不是崩溃。
+if (!sandbox.G.battle) {
+  log('场景 5 已触发战斗结束，跳过“击倒敌方 2”步骤')
+  console.log('')
+  console.log('========== 汇总 ==========')
+  console.log(`#main.innerHTML 整块写入总次数: ${mainInnerHTMLWrites}`)
+  console.log(`#actions.innerHTML 写入次数:  ${actionsInnerHTMLWrites}`)
+  console.log('模拟战斗完成。')
+  process.exit(0)
+}
 const enemy2HpBefore = sandbox.G.battle.enemy.hp
 log(`当前敌方 2 HP = ${enemy2HpBefore}`)
 sandbox.G.battle.enemy.hp = 1
